@@ -1,0 +1,19 @@
+.question-card {
+  margin: 35px;
+  margin-right: 0;
+  background: #f8e5d6;
+  backdrop-filter: blur(152.5px);
+  border: 2px solid #e91e63;
+  width: 300px;
+  border-radius: 20px;
+  min-height: 300px;
+  padding: 10px;
+}
+
+.question-title {
+  color: #e91e63;
+  font-weight: 500;
+}
+.question-content {
+  color: black;
+}

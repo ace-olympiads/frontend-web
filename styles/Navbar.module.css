@@ -1,0 +1,42 @@
+.navigation-menu {
+  background: radial-gradient(
+    72.17% 30436.86% at 32.49% 100%,
+    #d46a43 0%,
+    #e91e63 50.48%,
+    #d46a43 95.76%
+  );
+  backdrop-filter: blur(37px);
+  display: flex;
+  padding: 10px 30px;
+  justify-content: space-between;
+  border-radius: 0px;
+}
+
+.navigation-container {
+  display: flex;
+  column-gap: 1.5rem;
+}
+
+.main-title {
+  font-size: 1.2rem;
+}
+.signup {
+  background: #1e1e1e;
+  backdrop-filter: blur(40px);
+  width: 124px;
+  font-weight: 600;
+  height: 34px;
+  font-size: 16px;
+  border-radius: 145px;
+}
+.login {
+  width: 125px;
+  height: 34px;
+  font-weight: 800;
+  font-size: 16px;
+  color: #d9584a;
+  text-decoration: transparent;
+  background: #f9efe7;
+  backdrop-filter: blur(40px);
+  border-radius: 145px;
+}

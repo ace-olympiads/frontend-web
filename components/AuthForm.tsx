@@ -1,9 +1,10 @@
 import { useCallback, useState } from "react";
 import { BsGoogle, BsFacebook, BsInstagram } from "react-icons/bs";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
+import { signIn } from 'next-auth/react';
 import SocialAuthButton from "./SocialAuthButton";
-import Input from "./Input";
 import Button from "./Button";
+import Input from "./Input";
 
 type Variant = "LOGIN" | "REGISTER";
 
@@ -76,21 +77,9 @@ const LoginPage: React.FC = () => {
       setIsLoading(false);
     }
   };
-
-  const handleSocialAuth = (provider: string) => {
-    switch (provider) {
-      case 'facebook':
-        // Perform Facebook authentication
-        break;
-      case 'google':
-        // Perform Google authentication
-        break;
-      case 'instagram':
-        // Perform Instagram authentication
-        break;
-      default:
-        break;
-    }
+  
+  const handleSocialAuth = async (provider: string) => {
+    signIn(provider);
   };
 
   return (
