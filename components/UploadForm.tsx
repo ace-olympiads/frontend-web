@@ -1,5 +1,5 @@
 import React, { useState, ChangeEvent, FormEvent, useEffect } from "react";
-import "../styles/Upload.module.css";
+import styles from "../styles/Upload.module.css";
 import { useSession } from "next-auth/react";
 import axios from "axios";
 
@@ -135,7 +135,7 @@ const UploadForm: React.FC = () => {
   };
 
   return (
-    <div className="container">
+    <div className={styles.container}>
       <h1>Upload Form</h1>
       <form onSubmit={handleSubmit}>
         <div>
@@ -144,6 +144,7 @@ const UploadForm: React.FC = () => {
             <select
               value={uploadType}
               onChange={(e) => setUploadType(e.target.value)}
+              className={styles.select}
             >
               <option value="">Select</option>
               <option value="question">Question</option>
@@ -163,6 +164,7 @@ const UploadForm: React.FC = () => {
                   name="question_text"
                   value={questionData.question_text}
                   onChange={handleChange}
+                  className={styles.input}
                 />
               </label>
             </div>
@@ -174,6 +176,7 @@ const UploadForm: React.FC = () => {
                   name="video_solution_url"
                   value={questionData.video_solution_url}
                   onChange={handleChange}
+                  className={styles.input}
                 />
               </label>
             </div>
@@ -184,6 +187,7 @@ const UploadForm: React.FC = () => {
                   name="text_solution"
                   value={questionData.text_solution}
                   onChange={handleChange}
+                  className={styles.textarea}
                 ></textarea>
               </label>
             </div>
@@ -194,6 +198,7 @@ const UploadForm: React.FC = () => {
                   name="text_solution_latex"
                   value={questionData.text_solution_latex}
                   onChange={handleChange}
+                  className={styles.textarea}
                 ></textarea>
               </label>
             </div>
@@ -204,6 +209,7 @@ const UploadForm: React.FC = () => {
                   name="category"
                   value={questionData.category}
                   onChange={handleChange}
+                  className={styles.select}
                 >
                   <option value="" selected>Select Category</option>
                   <option value="G">General User</option>
@@ -218,8 +224,9 @@ const UploadForm: React.FC = () => {
                   name="concept"
                   value={questionData.concept || 1}
                   onChange={handleChange}
+                  className={styles.select}
                 >
-                  <option value="" selected>Select Concept</option>
+                  <option key={0} value="" selected>Select Concept</option>
                   {concepts.map((concept) => (
                     <option key={concept.id} value={concept.id}>
                       {concept.title}
@@ -241,6 +248,7 @@ const UploadForm: React.FC = () => {
                   name="title"
                   value={conceptData.title}
                   onChange={handleChange}
+                  className={styles.input}
                 />
               </label>
             </div>
@@ -251,24 +259,25 @@ const UploadForm: React.FC = () => {
                   name="description"
                   value={conceptData.description}
                   onChange={handleChange}
+                  className={styles.textarea}
                 ></textarea>
               </label>
             </div>
           </div>
         )}
-
         {uploadType === "video" && (
           <div>
-            <h2>Video for Concept Form</h2>
+            <h2>Video Form</h2>
             <div>
               <label>
                 Concept:
                 <select
                   name="concept"
-                  value={videoData.concept || ""}
+                  value={videoData.concept || 1}
                   onChange={handleChange}
+                  className={styles.select}
                 >
-                  <option value="">Select or Add New Concept</option>
+                  <option value="" selected>Select Concept</option>
                   {concepts.map((concept) => (
                     <option key={concept.id} value={concept.id}>
                       {concept.title}
@@ -285,6 +294,7 @@ const UploadForm: React.FC = () => {
                   name="title"
                   value={videoData.title}
                   onChange={handleChange}
+                  className={styles.input}
                 />
               </label>
             </div>
@@ -296,6 +306,7 @@ const UploadForm: React.FC = () => {
                   name="youtube_url"
                   value={videoData.youtube_url}
                   onChange={handleChange}
+                  className={styles.input}
                 />
               </label>
             </div>
@@ -307,12 +318,12 @@ const UploadForm: React.FC = () => {
                   name="thumbnail_url"
                   value={videoData.thumbnail_url}
                   onChange={handleChange}
+                  className={styles.input}
                 />
               </label>
             </div>
           </div>
         )}
-
         <button type="submit">Submit</button>
       </form>
     </div>

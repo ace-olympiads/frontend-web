@@ -1,10 +1,12 @@
-import React from "react";
-import '../styles/Youtube.css'
-type id = {
+import React from 'react';
+import styles from '../styles/Youtube.module.css';
+
+type YoutubeProps = {
   embedId: string;
 };
-const YoutubeEmbed = ({ embedId }: id) => (
-  <div className="video-responsive">
+
+const YoutubeEmbed = ({ embedId }: YoutubeProps) => (
+  <div className={styles['video-responsive']}>
     <iframe
       width="853"
       height="480"

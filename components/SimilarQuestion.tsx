@@ -1,4 +1,4 @@
-import '../styles/Similar.module.css'
+import styles from '../styles/Similar.module.css'
 
 
 const SimilarQuestionBox = () => {
