@@ -1,0 +1,15 @@
+.comment-box{
+    border: 2px solid red;
+    min-height: 10vh;
+    color: black;
+}
+.commenter-details{
+    height: 5vh;
+    display: flex;
+    color: black;
+
+    justify-content: space-between;
+    font-size: 1.3rem;
+    border-bottom: 2px solid red;
+    padding: 6px;
+}

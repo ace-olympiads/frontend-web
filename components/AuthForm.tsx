@@ -1,16 +1,34 @@
-import { useCallback, useState } from "react";
+import { signIn, useSession } from "next-auth/react";
+import { useCallback, useEffect, useState } from "react";
 import { BsGoogle, BsFacebook, BsInstagram } from "react-icons/bs";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
-import { signIn } from 'next-auth/react';
-import SocialAuthButton from "./SocialAuthButton";
-import Button from "./Button";
+import { useRouter } from "next/navigation";
+import { toast } from "react-hot-toast";
+import axiosInstance from "../pages/api/axios";
 import Input from "./Input";
+import Button from "./Button";
+import SocialAuthButton from "./SocialAuthButton";
 
 type Variant = "LOGIN" | "REGISTER";
-
-const LoginPage: React.FC = () => {
+const AuthForm = () => {
+  const session = useSession();
+  const router = useRouter();
   const [variant, setVariant] = useState<Variant>("LOGIN");
   const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    if (session?.status === "authenticated") {
+      router.push("/");
+    }
+  }, [session?.status, router]);
+
+  const toggleVariant = useCallback(() => {
+    if (variant === "LOGIN") {
+      setVariant("REGISTER");
+    } else {
+      setVariant("LOGIN");
+    }
+  }, [variant]);
 
   const {
     register,
@@ -24,67 +42,83 @@ const LoginPage: React.FC = () => {
     },
   });
 
-  const toggleVariant = useCallback(() => {
-    setVariant((prevVariant) =>
-      prevVariant === "LOGIN" ? "REGISTER" : "LOGIN"
-    );
-  }, []);
-
-  const onSubmit: SubmitHandler<FieldValues> = async (data) => {
+  const onSubmit: SubmitHandler<FieldValues> = (data) => {
     setIsLoading(true);
+
     if (variant === "REGISTER") {
-      try {
-        const response = await fetch("/api/signup", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(data),
-        });
-        if (response.ok) {
-          const { token } = await response.json();
-          localStorage.setItem("token", token);
-        } else {
-          const errorData = await response.json();
-          console.error("Signup error:", errorData.error);
-        }
-      } catch (error) {
-        console.error("Error during signup:", error);
-      }
-
-      setIsLoading(false);
+      console.log("kcuhas dlkfasdfk");
+      axiosInstance
+        .post("users/create/", data)
+        .then(() => axiosInstance.post("users/account/", data))
+        .then(() =>
+          signIn("credentials", {
+            ...data,
+            redirect: false,
+          })
+        )
+        .then((callback) => {
+          if (callback?.error) {
+            console.log(callback);
+            toast.error("Invalid credentials!");
+          } else if (callback?.ok && !callback?.error) {
+            toast.success("Your credentials");
+            router.push("/");
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+          toast.error("The email address is already in use");
+        })
+        .finally(() => setIsLoading(false));
     }
-    if (variant === "LOGIN") {
-      try {
-        const response = await fetch("/api/login", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(data),
-        });
-        if (response.ok) {
-          const { token } = await response.json();
-          localStorage.setItem("token", token);
-        } else {
-          const errorData = await response.json();
-          console.error("Login error:", errorData.error);
-        }
-      } catch (error) {
-        console.error("Error during login:", error);
-      }
 
-      setIsLoading(false);
+    if (variant === "LOGIN") {
+      signIn("credentials", {
+        ...data,
+        redirect: false,
+      })
+        .then((callback) => {
+          console.log(callback);
+          if (callback?.error) {
+            console.log(callback.error);
+            toast.error("Invalid credentials!");
+          } else if (callback?.ok && !callback?.error) {
+            toast.success("Your credentials");
+            router.push("/");
+          }
+        })
+        .finally(() => setIsLoading(false));
     }
   };
-  
-  const handleSocialAuth = async (provider: string) => {
-    signIn(provider);
+
+  const socialAction = (action: string) => {
+    setIsLoading(true);
+
+    signIn(action, { redirect: false })
+      .then((callback) => {
+        if (callback?.error) {
+          toast.error("Invalid credentials!");
+        }
+
+        if (callback?.ok) {
+          router.push("/");
+        }
+      })
+      .finally(() => setIsLoading(false));
   };
 
   return (
     <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-      <div className="bg-white px-4 py-8 shadow sm:rounded-lg sm:px-10">
+      <div
+        className="
+        bg-white
+          px-4
+          py-8
+          shadow
+          sm:rounded-lg
+          sm:px-10
+        "
+      >
         <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
           <Input
             disabled={isLoading}
@@ -123,7 +157,14 @@ const LoginPage: React.FC = () => {
 
         <div className="mt-6">
           <div className="relative">
-            <div className="absolute inset-0 flex items-center">
+            <div
+              className="
+                absolute 
+                inset-0 
+                flex 
+                items-center
+              "
+            >
               <div className="w-full border-t border-gray-300" />
             </div>
             <div className="relative flex justify-center text-sm">
@@ -136,19 +177,29 @@ const LoginPage: React.FC = () => {
           <div className="mt-6 flex gap-2">
             <SocialAuthButton
               icon={BsFacebook}
-              onClick={() => handleSocialAuth("facebook")}
+              onClick={() => socialAction("facebook")}
             />
             <SocialAuthButton
               icon={BsGoogle}
-              onClick={() => handleSocialAuth("google")}
+              onClick={() => socialAction("google")}
             />
             <SocialAuthButton
               icon={BsInstagram}
-              onClick={() => handleSocialAuth("instagram")}
+              onClick={() => socialAction("instagram")}
             />
           </div>
         </div>
-        <div className="flex gap-2 justify-center text-sm mt-6 px-2 text-gray-500">
+        <div
+          className="
+            flex 
+            gap-2 
+            justify-center 
+            text-sm 
+            mt-6 
+            px-2 
+            text-gray-500
+          "
+        >
           <div>
             {variant === "LOGIN"
               ? "New to AceOlympiads?"
@@ -163,4 +214,4 @@ const LoginPage: React.FC = () => {
   );
 };
 
-export default LoginPage;
+export default AuthForm;

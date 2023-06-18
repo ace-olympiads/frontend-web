@@ -1,0 +1,26 @@
+.comment-profile-image img{
+    border-radius: 50%;
+    height: 50px;
+    width: 50px;
+    margin-top: 30px;
+    
+}
+.comments-title{
+    font-size: 33px;
+    color: black;
+}
+.comment-wrapper{
+    display: flex;
+    flex-direction: row;
+    column-gap: 2vw;
+    color: black;
+}
+.comment-inputs{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+.comment-inputs textarea{
+    margin: 10px 0;
+    
+}

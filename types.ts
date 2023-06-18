@@ -1,6 +1,18 @@
-import { User } from "next-auth";
+export interface CommentProps {
+  commenter: string,
+  email: string,
+  content: string,
+  published_at: string,
+}
+export interface CommentParam {
+  id: number
+}
 
-export interface AuthenticatedUser extends User {
-  accessToken?: string,
-  refreshToken?: string,
+export interface PostCommentProps {
+  commenter: string | null | undefined;
+  email: string | null | undefined;
+  content: string;
+  status: boolean;
+  question: number;
+
 }

@@ -1,10 +1,5 @@
-.navigation-menu {
-  background: radial-gradient(
-    72.17% 30436.86% at 32.49% 100%,
-    #d46a43 0%,
-    #e91e63 50.48%,
-    #d46a43 95.76%
-  );
+.navigation-menu{
+  background: radial-gradient(72.17% 30436.86% at 32.49% 100%, #D46A43 0%, #E91E63 50.48%, #D46A43 95.76%);
   backdrop-filter: blur(37px);
   display: flex;
   padding: 10px 30px;
@@ -12,31 +7,42 @@
   border-radius: 0px;
 }
 
-.navigation-container {
+.navigation-container{
   display: flex;
   column-gap: 1.5rem;
 }
 
-.main-title {
+.main-title{
   font-size: 1.2rem;
 }
-.signup {
-  background: #1e1e1e;
-  backdrop-filter: blur(40px);
-  width: 124px;
-  font-weight: 600;
-  height: 34px;
-  font-size: 16px;
-  border-radius: 145px;
+.signup{
+  
+background: #1E1E1E;
+backdrop-filter: blur(40px);
+/* Note: backdrop-filter has minimal browser support */
+width: 124px;
+font-weight: 600;
+height: 34px;
+font-size: 16px;
+border-radius: 145px;
 }
-.login {
+.login{
   width: 125px;
-  height: 34px;
-  font-weight: 800;
-  font-size: 16px;
-  color: #d9584a;
-  text-decoration: transparent;
-  background: #f9efe7;
-  backdrop-filter: blur(40px);
-  border-radius: 145px;
+height: 34px;
+font-weight: 800;
+font-size: 16px;
+
+color: #D9584A;
+text-decoration: transparent;
+  background: #F9EFE7;
+backdrop-filter: blur(40px);
+/* Note: backdrop-filter has minimal browser support */
+
+border-radius: 145px;
+}
+.greet{
+  display: flex;
+  align-items: center;
+  font-size: 20px;
+  justify-content: center;
 }
