@@ -67,7 +67,7 @@ const UploadForm: React.FC = () => {
     e.preventDefault();
     if (uploadType === "question") {
       try {
-        await axios.post("http://127.0.0.1:8000/questions/add/", {
+        await axios.post("http://127.0.0.1:8000/question/add/", {
           ...questionData,
           author: 2,
         });

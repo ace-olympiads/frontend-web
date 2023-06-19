@@ -3,22 +3,21 @@ import axios from 'axios';
 
 interface SearchResult {
   id: number;
-  question: string;
-  answer: string;
+  title: string;
+  solution: string;
 }
 
 const searchHandler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { query } = req.query;
 
   try {
-    // Make a request to your Django backend's search API endpoint
-    const response = await axios.get<{ results: SearchResult[] }>('http://localhost:8000/questions/search/', {
+    const response = await axios.get< SearchResult[] >('http://localhost:8000/question/search/', {
       params: { query },
     });
 
-    const searchResults: SearchResult[] = response.data.results;
+    const searchResults: SearchResult[] = response.data;
 
-    res.status(200).json({ results: searchResults });
+    res.status(200).json(searchResults);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'An error occurred during the search.' });

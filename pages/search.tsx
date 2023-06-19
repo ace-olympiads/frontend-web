@@ -13,17 +13,18 @@ interface SearchResult {
 export default function Search() {
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
-  const router = useRouter(); // Access the router
+  const router = useRouter();
 
   const handleInputChange = async (e: ChangeEvent<HTMLInputElement>) => {
     const query = e.target.value;
     setSearchQuery(query);
     
     try {
-      const response = await axios.get<{ results: SearchResult[] }>('/api/search', {
+      const response = await axios.get<SearchResult[]>('/api/search', {
         params: { query },
       });
-      setSearchResults(response.data.results);
+      console.log(response.data)
+      setSearchResults(response.data);
     } catch (error) {
       console.error(error);
     }
@@ -35,7 +36,7 @@ export default function Search() {
   };
 
   const handleClickQuestion = (questionId: number) => {
-    router.push(`/question/${questionId}`); // Redirect to the specific question page
+    router.push(`/question/${questionId}`);
   };
 
   return (
