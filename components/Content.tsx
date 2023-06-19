@@ -5,15 +5,34 @@ import useDrag from "../hooks/useDrag";
 import styles from "../styles/Content.module.css";
 import Question from "./Question";
 import Concept from "./Concept";
+import axios from "axios";
 
 type propstypes = { type: string };
 type scrollVisibilityApiType = React.ContextType<typeof VisibilityContext>;
+type ContentProp = {
+    id: number;
+    title: string;
+    content: string;
+};
 
 const Content = ({ type }: propstypes) => {
-  const arr = [
-    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21,
-    22,
-  ];
+  const [object, setObjects] = useState<ContentProp[]>([]);
+
+  useEffect(() => {
+    if (type === 'question') {
+      axios
+        .get('/api/allQuestions')
+        .then((response) => setObjects(response.data))
+        .catch((error) => console.error(error));
+    }
+    if (type === 'concept') {
+      axios
+        .get('/api/concepts')
+        .then((response) => setObjects(response.data))
+        .catch((error) => console.error(error));
+    }
+  }, [type]);
+
   const { dragStart, dragStop, dragMove } = useDrag();
 
   const handleDrag = ({ scrollContainer }: scrollVisibilityApiType) => (ev: React.MouseEvent) =>
@@ -47,14 +66,14 @@ const Content = ({ type }: propstypes) => {
               onMouseUp={()=>dragStop}
               onMouseMove={handleDrag}
             >
-              {arr.map((e) => (
+              {object.map((e) => (
                 <>
-                  {type === "question" && <Question />}
-                  {type === "concept" && <Concept />}
-                  {type === "Recently Learnt" && <Concept />}
-                  {type === "Recently Solved" && <Question />}
-                  {type === "Suggested FAQs" && <Question />}
-                  {type === "Similar concepts" && <Concept />}
+                  {type === "question" && <Question key={e.id} question={e}/>}
+                  {type === "concept" && <Concept  key={e.id} concept={e}/>}
+                  {type === "Recently Learnt" && <Concept  key={e.id} concept={e}/>}
+                  {type === "Recently Solved" && <Question key={e.id} question={e}/>}
+                  {type === "Suggested FAQs" && <Question key={e.id} question={e}/>}
+                  {type === "Similar concepts" && <Concept  key={e.id} concept={e}/>}
                 </>
               ))}
             </ScrollMenu>

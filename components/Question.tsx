@@ -9,12 +9,12 @@ type QuestionProps = {
   };
 };
 
-const Question = () => {
+const Question = ({ question }: QuestionProps) => {
   return (
     <div>
       <div className={styles['question-card']}>
-        <div className={styles['question-title']}>Question</div>
-        <div className={styles['question-content']}>HEHE</div>
+        <div className={styles['question-title']}>{question.title}</div>
+        <div className={styles['question-content']}>{question.content}</div>
       </div>
     </div>
   );
