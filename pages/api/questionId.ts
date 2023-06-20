@@ -1,20 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import axios from 'axios';
+import { Question } from '../../types';
 
-interface Question {
-  id: number;
-  question_text: string;
-  video_solution_url: string | null;
-  text_solution: string | null;
-  text_solution_latex: string | null;
-  category: string;
-  concept: {
-    id: number;
-  } | null;
-  author: {
-    id: number;
-  };
-}
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { id } = req.query;

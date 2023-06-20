@@ -6,28 +6,23 @@ import styles from "../styles/Content.module.css";
 import Question from "./Question";
 import Concept from "./Concept";
 import axios from "axios";
-
+import { ContentProp } from "../types";
 type propstypes = { type: string };
 type scrollVisibilityApiType = React.ContextType<typeof VisibilityContext>;
-type ContentProp = {
-    id: number;
-    title: string;
-    content: string;
-};
 
 const Content = ({ type }: propstypes) => {
   const [object, setObjects] = useState<ContentProp[]>([]);
 
   useEffect(() => {
-    if (type === 'question') {
+    if (type === "question") {
       axios
-        .get('/api/allQuestions')
+        .get("/api/allQuestions")
         .then((response) => setObjects(response.data))
         .catch((error) => console.error(error));
     }
-    if (type === 'concept') {
+    if (type === "concept") {
       axios
-        .get('/api/concepts')
+        .get("/api/concepts")
         .then((response) => setObjects(response.data))
         .catch((error) => console.error(error));
     }
@@ -35,18 +30,24 @@ const Content = ({ type }: propstypes) => {
 
   const { dragStart, dragStop, dragMove } = useDrag();
 
-  const handleDrag = ({ scrollContainer }: scrollVisibilityApiType) => (ev: React.MouseEvent) =>
-    dragMove(ev, (posDiff) => {
-      if (scrollContainer.current) {
-        scrollContainer.current.scrollLeft += posDiff;
-      }
-    });
+  const handleDrag =
+    ({ scrollContainer }: scrollVisibilityApiType) =>
+    (ev: React.MouseEvent) =>
+      dragMove(ev, (posDiff) => {
+        if (scrollContainer.current) {
+          scrollContainer.current.scrollLeft += posDiff;
+        }
+      });
 
   return (
     <>
       <div className={styles.carousel}>
-        {type === "question" && <div className={styles["carousel-title"]}>Questions</div>}
-        {type === "concept" && <div className={styles["carousel-title"]}>Concepts</div>}
+        {type === "question" && (
+          <div className={styles["carousel-title"]}>Questions</div>
+        )}
+        {type === "concept" && (
+          <div className={styles["carousel-title"]}>Concepts</div>
+        )}
         {type === "Recently Learnt" && (
           <div className={styles["carousel-title"]}>Recently Learnt</div>
         )}
@@ -62,18 +63,26 @@ const Content = ({ type }: propstypes) => {
         <div onMouseLeave={dragStop}>
           <div className={styles["carousel-mapping-container"]}>
             <ScrollMenu
-              onMouseDown={()=>dragStart}
-              onMouseUp={()=>dragStop}
+              onMouseDown={() => dragStart}
+              onMouseUp={() => dragStop}
               onMouseMove={handleDrag}
             >
               {object.map((e) => (
                 <>
-                  {type === "question" && <Question key={e.id} question={e}/>}
-                  {type === "concept" && <Concept  key={e.id} concept={e}/>}
-                  {type === "Recently Learnt" && <Concept  key={e.id} concept={e}/>}
-                  {type === "Recently Solved" && <Question key={e.id} question={e}/>}
-                  {type === "Suggested FAQs" && <Question key={e.id} question={e}/>}
-                  {type === "Similar concepts" && <Concept  key={e.id} concept={e}/>}
+                  {type === "question" && <Question key={e.id} question={e} />}
+                  {type === "concept" && <Concept key={e.id} concept={e} />}
+                  {type === "Recently Learnt" && (
+                    <Concept key={e.id} concept={e} />
+                  )}
+                  {type === "Recently Solved" && (
+                    <Question key={e.id} question={e} />
+                  )}
+                  {type === "Suggested FAQs" && (
+                    <Question key={e.id} question={e} />
+                  )}
+                  {type === "Similar concepts" && (
+                    <Concept key={e.id} concept={e} />
+                  )}
                 </>
               ))}
             </ScrollMenu>

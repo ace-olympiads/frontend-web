@@ -1,38 +1,26 @@
-import React, { useState, ChangeEvent, FormEvent, useEffect } from "react";
+import React, {
+  useState,
+  ChangeEvent,
+  FormEvent,
+  useEffect,
+  KeyboardEventHandler,
+} from "react";
 import styles from "../styles/Upload.module.css";
 import { useSession } from "next-auth/react";
 import axios from "axios";
-
-interface QuestionData {
-  question_text: string;
-  video_solution_url: string;
-  text_solution: string;
-  text_solution_latex: string;
-  category: string;
-  concept: number | null;
-}
-
-interface ConceptData {
-  id: number;
-  title: string;
-  description: string;
-}
-
-interface VideoData {
-  concept: number | null;
-  title: string;
-  youtube_url: string;
-  thumbnail_url: string;
-}
-
+import { Item, ConceptData, QuestionData, VideoData } from "../types";
 const UploadForm: React.FC = () => {
   const session = useSession();
   const [uploadType, setUploadType] = useState("");
+  const [concepts, setConcepts] = useState<ConceptData[]>([]);
+  const [inputValue, setInputValue] = useState<string>("");
+  const [items, setItems] = useState<Item[]>([]);
   const [questionData, setQuestionData] = useState<QuestionData>({
     question_text: "",
     video_solution_url: "",
     text_solution: "",
     text_solution_latex: "",
+    tags: items,
     category: "",
     concept: null,
   });
@@ -47,12 +35,42 @@ const UploadForm: React.FC = () => {
     youtube_url: "",
     thumbnail_url: "",
   });
-  const [concepts, setConcepts] = useState<ConceptData[]>([]);
 
+  const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setInputValue(event.target.value);
+  };
+
+  const handleInputEnter = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      console.log("object");
+      const newItem: Item = { name: inputValue.trim() };
+
+      if (!items.some((item) => item.name === newItem.name)) {
+        setItems((prevItems) => [...prevItems, newItem]);
+
+        setInputValue("");
+      }
+    }
+  };
+
+  const removeItem = (index: number) => {
+    const updatedItems = [...items];
+    updatedItems.splice(index, 1);
+    setItems(updatedItems);
+  };
   useEffect(() => {
     fetchConcepts();
   }, []);
-
+  useEffect(() => {
+    console.log(questionData);
+  }, [questionData]);
+  useEffect(() => {
+    setQuestionData((prevData) => ({
+      ...prevData,
+      tags: items,
+    }));
+  }, [items]);
   const fetchConcepts = async () => {
     try {
       const response = await axios.get("http://127.0.0.1:8000/concepts/");
@@ -74,6 +92,7 @@ const UploadForm: React.FC = () => {
         setQuestionData({
           question_text: "",
           video_solution_url: "",
+          tags: [],
           text_solution: "",
           text_solution_latex: "",
           category: "",
@@ -211,7 +230,9 @@ const UploadForm: React.FC = () => {
                   onChange={handleChange}
                   className={styles.select}
                 >
-                  <option value="" selected>Select Category</option>
+                  <option value="" selected>
+                    Select Category
+                  </option>
                   <option value="G">General User</option>
                   <option value="P">Premium User</option>
                 </select>
@@ -226,7 +247,9 @@ const UploadForm: React.FC = () => {
                   onChange={handleChange}
                   className={styles.select}
                 >
-                  <option key={0} value="" selected>Select Concept</option>
+                  <option key={0} value="" selected>
+                    Select Concept
+                  </option>
                   {concepts.map((concept) => (
                     <option key={concept.id} value={concept.id}>
                       {concept.title}
@@ -234,6 +257,23 @@ const UploadForm: React.FC = () => {
                   ))}
                 </select>
               </label>
+            </div>
+            <div>
+              <label>Tags</label>
+              <input
+                type="text"
+                value={inputValue}
+                onChange={handleInputChange}
+                onKeyDown={(e) => handleInputEnter(e)}
+              />
+              <div className={styles["tag-element"]}>
+                {items?.map((item, index) => (
+                  <div className={styles["tag-individual-element"]} key={index}>
+                    {item.name}
+                    <button onClick={() => removeItem(index)}>x</button>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         )}
@@ -277,7 +317,9 @@ const UploadForm: React.FC = () => {
                   onChange={handleChange}
                   className={styles.select}
                 >
-                  <option value="" selected>Select Concept</option>
+                  <option value="" selected>
+                    Select Concept
+                  </option>
                   {concepts.map((concept) => (
                     <option key={concept.id} value={concept.id}>
                       {concept.title}

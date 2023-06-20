@@ -5,26 +5,28 @@ import Comments from "../../components/Comments";
 import styles from "../../styles/QuestionId.module.css";
 import axiosInstance from "../api/axios";
 import { extractEmbedIdFromYouTubeLink } from "../../utils/youtubeId";
+
 import Concept from "../../components/Concept";
-interface Question {
-  id: Number;
-  question_text: string;
-  video_solution_url: string;
-  text_solution: string;
-  text_solution_latex: string;
-  created_at: string;
-  updated_at: string;
-  category: string;
-  concept: Number;
-  author: Number;
+import { Question, QuestionPageProps } from "../../types";
+import { useRouter } from "next/router";
+export async function getServerSideProps(context: { query: { id: string } }) {
+  const { id } = context.query;
+
+  return {
+    props: {
+      id,
+    },
+  };
 }
 
-const page = ({ params }) => {
+const page: React.FC<QuestionPageProps> = ({ id }) => {
   const [question, setQuestion] = useState<Question>();
-  console.log(params);
+  const router = useRouter();
+  useEffect(() => {
+    console.log(question);
+  }, [question]);
   const arr = [0, 1, 2, 3, 4, 5, 6, 7, 8, 5, 4];
-  const id = params.id;
-
+  console.log(id);
   useEffect(() => {
     const fetchData = async () => {
       const response = await axiosInstance.get(`question/${id}`);
@@ -50,7 +52,23 @@ const page = ({ params }) => {
             `${question?.video_solution_url}`
           )}`}
         />
-
+        <div className={styles["tags-container"]}>
+          {question?.tags?.map((tag) => {
+            return (
+              <span
+                className={styles["tag-line"]}
+                onClick={() => {
+                  router.push({
+                    pathname: `/tag/${tag.id}`,
+                    query: { data: "tags", id: tag.id, name: tag.name },
+                  });
+                }}
+              >
+                #{tag?.name}
+              </span>
+            );
+          })}
+        </div>
         <SolutionBox solution={`${question?.text_solution}`} />
         <Comments id={id} />
         <div className={styles["container-question-concept"]}>
@@ -79,7 +97,13 @@ const page = ({ params }) => {
               {arr.map((e) => {
                 return (
                   <div className={styles["concept-boxes"]}>
-                    <Concept />
+                    <Concept
+                      concept={{
+                        id: 0,
+                        title: "",
+                        content: "",
+                      }}
+                    />
                   </div>
                 );
               })}

@@ -20,7 +20,7 @@ const Navbar = () => {
             </div>
             <div className={styles["profile-image"]}>
               <Image
-                src={session?.data?.user?.picture}
+                src={session?.data?.user?.image}
                 alt=""
                 width={40}
                 height={40}

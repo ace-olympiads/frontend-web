@@ -1,0 +1,17 @@
+.title {
+    color: red;
+    font-size: 35px;
+    margin: 30px;
+}
+
+.title span {
+    color: blue;
+    text-decoration: underline;
+}
+
+.question-container {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    margin: 60px;
+
+}

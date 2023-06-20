@@ -59,6 +59,31 @@
   color: red;
   margin-top: 5px;
 }
-.base{
+
+.base {
   display: none;
+}
+
+.tag-element {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+  gap: 10px 20px;
+  column-gap: 10px;
+  margin: 20px 0;
+  max-width: 300px;
+  height: auto;
+}
+
+.tag-individual-element {
+  width: auto;
+  height: 50px;
+  background-color: red;
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  column-gap: 10px;
+  padding: 0 20px;
+  border-radius: 20px;
+  justify-content: space-between;
+
 }

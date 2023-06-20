@@ -23,9 +23,9 @@ export default NextAuth({
           username: credentials.email,
           password: credentials.password,
           grant_type: "password",
-          client_id: "I6uLQiTzpcprqF6wgWreD8soCOnpRvCFp0uhjfy2",
+          client_id: "cr1RpiASapgNGtE8bq22vd1k5SfSGyKuVQa9OHv0",
           client_secret:
-            "Ww6sHbXob9M4EL3WTTetAD6MzbRQex1F2XLKLAFuN4NJYu5foxBhsBT9GzoPrZMUozlnvlyzrrtJmHuBYFW7J5B9tsNBhmknJK7UK1iWwI16GJgyMpiUQBcWUd7Hkx3E",
+            "QXiaQYoUf8QfRPAq9bewbYqqJIG7vVXITAzEqXmAvbmwNZ9Ucxp7dYGsSckX0G9rfFmLNBmYIn3JK9OOSnoGwOJt8xVZCD6a7fY0KfIgUC8CGzaJkMzx1BEajrpIYdCu",
         };
 
         try {
@@ -89,9 +89,9 @@ export default NextAuth({
             token: account?.access_token,
             backend: "google-oauth2",
             grant_type: "convert_token",
-            client_id: "I6uLQiTzpcprqF6wgWreD8soCOnpRvCFp0uhjfy2",
+            client_id: "cr1RpiASapgNGtE8bq22vd1k5SfSGyKuVQa9OHv0",
             client_secret:
-              "Ww6sHbXob9M4EL3WTTetAD6MzbRQex1F2XLKLAFuN4NJYu5foxBhsBT9GzoPrZMUozlnvlyzrrtJmHuBYFW7J5B9tsNBhmknJK7UK1iWwI16GJgyMpiUQBcWUd7Hkx3E",
+              "QXiaQYoUf8QfRPAq9bewbYqqJIG7vVXITAzEqXmAvbmwNZ9Ucxp7dYGsSckX0G9rfFmLNBmYIn3JK9OOSnoGwOJt8xVZCD6a7fY0KfIgUC8CGzaJkMzx1BEajrpIYdCu",
           };
           console.log("item 3");
 
@@ -117,9 +117,9 @@ export default NextAuth({
             token: account?.access_token,
             backend: "google-oauth2",
             grant_type: "convert_token",
-            client_id: "I6uLQiTzpcprqF6wgWreD8soCOnpRvCFp0uhjfy2",
+            client_id: "cr1RpiASapgNGtE8bq22vd1k5SfSGyKuVQa9OHv0",
             client_secret:
-              "Ww6sHbXob9M4EL3WTTetAD6MzbRQex1F2XLKLAFuN4NJYu5foxBhsBT9GzoPrZMUozlnvlyzrrtJmHuBYFW7J5B9tsNBhmknJK7UK1iWwI16GJgyMpiUQBcWUd7Hkx3E",
+              "QXiaQYoUf8QfRPAq9bewbYqqJIG7vVXITAzEqXmAvbmwNZ9Ucxp7dYGsSckX0G9rfFmLNBmYIn3JK9OOSnoGwOJt8xVZCD6a7fY0KfIgUC8CGzaJkMzx1BEajrpIYdCu",
           };
           const convertToken = await axiosInstance.post(
             "/auth/convert-token/",

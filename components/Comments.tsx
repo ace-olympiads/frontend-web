@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { useSession } from "next-auth/react";
-import userImg from "../../assets/user.png";
+import userImg from "../public/assets/userImg.png";
 import Comment from "./Comment";
 import { CommentParam, CommentProps, PostCommentProps } from "../types";
 import axiosInstance from "../pages/api/axios";
