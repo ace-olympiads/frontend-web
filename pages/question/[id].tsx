@@ -14,7 +14,7 @@ import {
   User,
 } from "../../types";
 import { useRouter } from "next/router";
-export async function getServerSideProps(context) {
+export async function getServerSideProps(context: any) {
   const { id } = context.query;
   const session = await getSession(context);
   const mail = session?.user?.email;
