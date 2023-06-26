@@ -25,7 +25,7 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async (
   };
 };
 
-const page = ({ id, query }: PageProps) => {
+const QueryPage = ({ id, query }: PageProps) => {
   console.log(query);
   const [object, setObjects] = useState<ContentProp[]>([]);
   const [videos, setVideos] = useState<Video[]>();
@@ -87,4 +87,4 @@ const page = ({ id, query }: PageProps) => {
   );
 };
 
-export default page;
+export default QueryPage;

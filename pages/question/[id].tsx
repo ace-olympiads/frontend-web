@@ -40,7 +40,7 @@ export async function getServerSideProps(context) {
   };
 }
 
-const page: React.FC<QuestionPageProps> = ({
+const QuestionPage: React.FC<QuestionPageProps> = ({
   id,
   question,
   concepts,
@@ -129,4 +129,4 @@ const page: React.FC<QuestionPageProps> = ({
   );
 };
 
-export default page;
+export default QuestionPage;
