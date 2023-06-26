@@ -69,6 +69,7 @@ const QuestionPage: React.FC<QuestionPageProps> = ({
           {question?.tags?.map((tag) => {
             return (
               <span
+                key={tag?.id}
                 className={styles["tag-line"]}
                 onClick={() => {
                   router.push({
@@ -92,7 +93,7 @@ const QuestionPage: React.FC<QuestionPageProps> = ({
             <div className={styles["scrolling-effect"]}>
               {arr.map((e) => {
                 return (
-                  <div className={styles["question-boxes"]}>
+                  <div key={e} className={styles["question-boxes"]}>
                     Lorem ipsum dolor sit amet consectetur adipisicing elit.
                     Minima voluptatibus ea sunt laboriosam odio. Quod pariatur
                     ut error earum minima.
@@ -109,7 +110,7 @@ const QuestionPage: React.FC<QuestionPageProps> = ({
             <div className={styles["scrolling-effect"]}>
               {concepts?.map((e) => {
                 return (
-                  <div className={styles["concept-boxes"]}>
+                  <div key={e.id} className={styles["concept-boxes"]}>
                     <Concept
                       concept={{
                         id: e.id,

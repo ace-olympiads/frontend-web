@@ -26,7 +26,7 @@ const Comments: React.FC<CommentParam> = ({ id, user }) => {
       }
     };
     fetchComments();
-  }, [refetch]);
+  }, [refetch, id]);
   const postComment = async (content: string) => {
     if (content != "") {
       const data: PostCommentProps = {
