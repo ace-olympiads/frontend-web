@@ -5,7 +5,6 @@ import { ContentProp, Video } from "../../types";
 import Question from "../../components/Question";
 import { useRouter } from "next/router";
 import styles from "../../styles/query.module.css";
-import { extractEmbedIdFromYouTubeLink } from "../../utils/youtubeId";
 import { useSession } from "next-auth/react";
 interface PageProps {
   query: string;
@@ -32,23 +31,23 @@ const QueryPage = ({ id, query }: PageProps) => {
   const session = useSession();
   const router = useRouter();
   console.log(router);
-  const fetchParticularData = async () => {
-    if (query === "tag") {
-      const response = await axiosInstance.get(`/question/${query}/${id}`);
-      console.log(response.data);
-      setObjects(response.data);
-    } else if (query === "concept") {
-      const response = await axiosInstance.get(`/concepts/${id}`, {
-        data: {
-          email: session?.data?.user?.email,
-        },
-      });
-      const videoList = response.data.videos;
-      console.log(videoList);
-      setVideos(videoList);
-    }
-  };
   useEffect(() => {
+    const fetchParticularData = async () => {
+      if (query === "tag") {
+        const response = await axiosInstance.get(`/question/${query}/${id}`);
+        console.log(response.data);
+        setObjects(response.data);
+      } else if (query === "concept") {
+        const response = await axiosInstance.get(`/concepts/${id}`, {
+          data: {
+            email: session?.data?.user?.email,
+          },
+        });
+        const videoList = response.data.videos;
+        console.log(videoList);
+        setVideos(videoList);
+      }
+    };
     fetchParticularData();
   }, []);
 
