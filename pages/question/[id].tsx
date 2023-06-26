@@ -5,36 +5,49 @@ import Comments from "../../components/Comments";
 import styles from "../../styles/QuestionId.module.css";
 import axiosInstance from "../api/axios";
 import { extractEmbedIdFromYouTubeLink } from "../../utils/youtubeId";
-
+import { GetSessionParams, getSession } from "next-auth/react";
 import Concept from "../../components/Concept";
-import { Question, QuestionPageProps } from "../../types";
+import {
+  QuestionType,
+  QuestionPageProps,
+  ConceptType,
+  User,
+} from "../../types";
 import { useRouter } from "next/router";
-export async function getServerSideProps(context: { query: { id: string } }) {
+export async function getServerSideProps(context) {
   const { id } = context.query;
+  const session = await getSession(context);
+  const mail = session?.user?.email;
 
+  const getDetails = await axiosInstance.get(`/users/account/?email=${mail}`);
+  const user: User = getDetails.data;
+
+  const questionFetch = await axiosInstance.get(`question/${id}`, {
+    data: {
+      email: mail,
+    },
+  });
+  const conceptsFetch = await axiosInstance.get(`concepts/`);
+  const question: QuestionType = questionFetch.data;
+  const concepts: ConceptType[] = conceptsFetch.data;
   return {
     props: {
       id,
+      user,
+      question,
+      concepts,
     },
   };
 }
 
-const page: React.FC<QuestionPageProps> = ({ id }) => {
-  const [question, setQuestion] = useState<Question>();
+const page: React.FC<QuestionPageProps> = ({
+  id,
+  question,
+  concepts,
+  user,
+}) => {
   const router = useRouter();
-  useEffect(() => {
-    console.log(question);
-  }, [question]);
-  const arr = [0, 1, 2, 3, 4, 5, 6, 7, 8, 5, 4];
-  console.log(id);
-  useEffect(() => {
-    const fetchData = async () => {
-      const response = await axiosInstance.get(`question/${id}`);
-      setQuestion(response.data);
-    };
-    fetchData();
-  }, []);
-
+  const arr = [1, 2, 32, 3, 23, 23, 12, 31, 23, 12, 312];
   return (
     <div
       className={styles["specific-question-container"]}
@@ -70,7 +83,7 @@ const page: React.FC<QuestionPageProps> = ({ id }) => {
           })}
         </div>
         <SolutionBox solution={`${question?.text_solution}`} />
-        <Comments id={id} />
+        <Comments id={id} user={user} />
         <div className={styles["container-question-concept"]}>
           <div className={styles["similar-container"]}>
             <div className={styles["similar-question-title"]}>
@@ -94,14 +107,15 @@ const page: React.FC<QuestionPageProps> = ({ id }) => {
               Learn Concepts
             </div>
             <div className={styles["scrolling-effect"]}>
-              {arr.map((e) => {
+              {concepts?.map((e) => {
                 return (
                   <div className={styles["concept-boxes"]}>
                     <Concept
                       concept={{
-                        id: 0,
-                        title: "",
-                        content: "",
+                        id: e.id,
+                        title: e.title,
+                        description: e.description,
+                        videos: e.videos,
                       }}
                     />
                   </div>

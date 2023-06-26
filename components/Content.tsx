@@ -6,24 +6,37 @@ import styles from "../styles/Content.module.css";
 import Question from "./Question";
 import Concept from "./Concept";
 import axios from "axios";
-import { ContentProp } from "../types";
-type propstypes = { type: string };
+import { QuestionType, ConceptType, User } from "../types";
+import { GetSessionParams, getSession } from "next-auth/react";
+import axiosInstance from "../pages/api/axios";
+
+type propstypes = { type: string; user?: User };
 type scrollVisibilityApiType = React.ContextType<typeof VisibilityContext>;
 
-const Content = ({ type }: propstypes) => {
-  const [object, setObjects] = useState<ContentProp[]>([]);
-
+const Content = ({ type, user }: propstypes) => {
+  console.log(user);
+  const [concepts, setConcepts] = useState<ConceptType[]>();
+  const [questions, setQuestions] = useState<QuestionType[]>();
   useEffect(() => {
+    if (user?.email) {
+      console.log("inside");
+      if (type === "Recently Learnt") {
+        setQuestions(user.last_viewed_questions);
+      }
+      if (type === "Recently Solved") {
+        setConcepts(user.last_viewed_concept_videos);
+      }
+    }
     if (type === "question") {
       axios
         .get("/api/allQuestions")
-        .then((response) => setObjects(response.data))
+        .then((response) => setQuestions(response.data))
         .catch((error) => console.error(error));
     }
     if (type === "concept") {
       axios
         .get("/api/concepts")
-        .then((response) => setObjects(response.data))
+        .then((response) => setConcepts(response.data))
         .catch((error) => console.error(error));
     }
   }, [type]);
@@ -67,24 +80,26 @@ const Content = ({ type }: propstypes) => {
               onMouseUp={() => dragStop}
               onMouseMove={handleDrag}
             >
-              {object.map((e) => (
-                <>
-                  {type === "question" && <Question key={e.id} question={e} />}
-                  {type === "concept" && <Concept key={e.id} concept={e} />}
-                  {type === "Recently Learnt" && (
-                    <Concept key={e.id} concept={e} />
-                  )}
-                  {type === "Recently Solved" && (
-                    <Question key={e.id} question={e} />
-                  )}
-                  {type === "Suggested FAQs" && (
-                    <Question key={e.id} question={e} />
-                  )}
-                  {type === "Similar concepts" && (
-                    <Concept key={e.id} concept={e} />
-                  )}
-                </>
-              ))}
+              {questions && !concepts ? (
+                questions.map((e) => (
+                  <>
+                    {type === "question" && <Question question={e} />}
+                    {type === "Suggested FAQs" && <Question question={e} />}
+                    {type === "Recently Solved" && <Question question={e} />}
+                    {type === "Recently Learnt" && <Question question={e} />}
+                  </>
+                ))
+              ) : concepts ? (
+                concepts.map((e) => (
+                  <>
+                    {type === "concept" && <Concept concept={e} />}
+                    {type === "Recently Learnt" && <Concept concept={e} />}
+                    {type === "Similar concepts" && <Concept concept={e} />}
+                  </>
+                ))
+              ) : (
+                <></>
+              )}
             </ScrollMenu>
           </div>
         </div>

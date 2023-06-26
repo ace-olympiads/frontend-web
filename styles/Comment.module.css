@@ -1,15 +1,21 @@
-.comment-box{
-    border: 2px solid red;
+.comment-box {
+    border-radius: 20px;
+    border: 1px solid #DF324D;
+    background: #F8E5D6;
+    color: black;
     min-height: 10vh;
-    color: black;
+    margin: 10px;
+    padding: 30px;
 }
-.commenter-details{
-    height: 5vh;
-    display: flex;
-    color: black;
 
-    justify-content: space-between;
-    font-size: 1.3rem;
-    border-bottom: 2px solid red;
-    padding: 6px;
+.commenter-details {
+    display: flex;
+    flex-direction: row;
+    column-gap: 2vw;
+
+
+}
+
+.commenter-details img {
+    border-radius: 50%;
 }

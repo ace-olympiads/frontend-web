@@ -1,15 +1,16 @@
 export interface CommentProps {
-  commenter: string,
+  commenter: User,
   email: string,
   content: string,
   published_at: string,
 }
 export interface CommentParam {
-  id: string | string[] | undefined
+  id: string | string[] | undefined;
+  user: User;
 }
 
 export interface PostCommentProps {
-  commenter: string | null | undefined;
+  commenter: number;
   email: string | null | undefined;
   content: string;
   status: boolean;
@@ -21,7 +22,7 @@ export interface Tag {
   name: string;
 
 }
-export interface Question {
+export interface QuestionType {
   id: Number;
   question_text: string;
   video_solution_url: string;
@@ -36,13 +37,12 @@ export interface Question {
 }
 export interface QuestionPageProps {
   id: string;
+  question: QuestionType;
+  concepts: ConceptType[];
+  user: User
 }
 export type ConceptProps = {
-  concept: {
-    id: number;
-    title: string;
-    content: string;
-  };
+  concept: ConceptType
 };
 
 
@@ -55,7 +55,25 @@ export interface QuestionData {
   category: string;
   concept: number | null;
 }
-
+export interface User {
+  id: number;
+  role: 'A' | 'M' | 'P' | 'G';
+  email: string;
+  username: string;
+  contact_no?: string;
+  image?: string | null;
+  is_superuser?: boolean;
+  created_at?: string;
+  updated_at?: string;
+  type?: string;
+  provider?: string;
+  provider_account_id?: string;
+  expires_at?: number | null;
+  id_token?: string;
+  session_state?: string;
+  last_viewed_questions?: [];
+  last_viewed_concept_videos?: [];
+}
 export interface ConceptData {
   id: number;
   title: string;
@@ -77,3 +95,21 @@ export type ContentProp = {
   question_text: string;
   video_solution_url: string;
 };
+
+export interface ConceptType {
+  id: number;
+  title: string;
+  description: string;
+  videos: Video[]
+}
+export interface Video {
+  id: number;
+  concept: number;
+  title: string;
+  youtube_url: string;
+  thumbnail_url: string;
+  author: number;
+}
+export interface QuestionProps {
+  question: QuestionType
+}

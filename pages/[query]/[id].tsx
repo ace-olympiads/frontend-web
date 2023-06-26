@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { GetServerSideProps } from "next";
 import axiosInstance from "../api/axios";
-import { ContentProp } from "../../types";
+import { ContentProp, Video } from "../../types";
 import Question from "../../components/Question";
 import { useRouter } from "next/router";
 import styles from "../../styles/query.module.css";
 import { extractEmbedIdFromYouTubeLink } from "../../utils/youtubeId";
+import { useSession } from "next-auth/react";
 interface PageProps {
   query: string;
   id: string;
@@ -25,13 +26,27 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async (
 };
 
 const page = ({ id, query }: PageProps) => {
+  console.log(query);
   const [object, setObjects] = useState<ContentProp[]>([]);
+  const [videos, setVideos] = useState<Video[]>();
+  const session = useSession();
   const router = useRouter();
-
+  console.log(router);
   const fetchParticularData = async () => {
-    const response = await axiosInstance.get(`/question/${query}/${id}`);
-    console.log(response.data);
-    setObjects(response.data);
+    if (query === "tag") {
+      const response = await axiosInstance.get(`/question/${query}/${id}`);
+      console.log(response.data);
+      setObjects(response.data);
+    } else if (query === "concept") {
+      const response = await axiosInstance.get(`/concepts/${id}`, {
+        data: {
+          email: session?.data?.user?.email,
+        },
+      });
+      const videoList = response.data.videos;
+      console.log(videoList);
+      setVideos(videoList);
+    }
   };
   useEffect(() => {
     fetchParticularData();
@@ -39,13 +54,33 @@ const page = ({ id, query }: PageProps) => {
 
   return (
     <div>
-      <div className={styles["title"]}>
-        Here are all the questions having the tag{" "}
-        <span>#{router.query.query}</span>
-      </div>
+      {query === "tag" && (
+        <div className={styles["title"]}>
+          Here are all the questions having the tag{" "}
+          <span>#{router.query.name}</span>
+        </div>
+      )}
+      {query === "concept" && (
+        <div className={styles["title"]}>
+          Here are all the questions related to the concept{" "}
+          <span>{router.query.name}</span>
+        </div>
+      )}
       <div className={styles["question-container"]}>
         {object?.map((e) => {
           return <Question key={e.id} question={e} />;
+        })}
+        {videos?.map((e) => {
+          return (
+            <Question
+              key={e.id}
+              question={{
+                id: e.id,
+                video_solution_url: e.youtube_url,
+                question_text: e.title,
+              }}
+            />
+          );
         })}
       </div>
     </div>

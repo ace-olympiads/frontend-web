@@ -8,8 +8,9 @@ import React, {
 import styles from "../styles/Upload.module.css";
 import { useSession } from "next-auth/react";
 import axios from "axios";
-import { Item, ConceptData, QuestionData, VideoData } from "../types";
-const UploadForm: React.FC = () => {
+
+import { Item, ConceptData, QuestionData, VideoData, User } from "../types";
+const UploadForm: React.FC<{ user: User }> = ({ user }) => {
   const session = useSession();
   const [uploadType, setUploadType] = useState("");
   const [concepts, setConcepts] = useState<ConceptData[]>([]);
@@ -73,7 +74,9 @@ const UploadForm: React.FC = () => {
   }, [items]);
   const fetchConcepts = async () => {
     try {
-      const response = await axios.get("http://127.0.0.1:8000/concepts/");
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/concepts/`
+      );
       console.log(response.data);
       setConcepts(response.data);
     } catch (error) {
@@ -85,10 +88,13 @@ const UploadForm: React.FC = () => {
     e.preventDefault();
     if (uploadType === "question") {
       try {
-        await axios.post("http://127.0.0.1:8000/question/add/", {
-          ...questionData,
-          author: 2,
-        });
+        await axios.post(
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}question/add/`,
+          {
+            ...questionData,
+            author: user?.id,
+          }
+        );
         setQuestionData({
           question_text: "",
           video_solution_url: "",
@@ -98,12 +104,16 @@ const UploadForm: React.FC = () => {
           category: "",
           concept: null,
         });
+        setItems([]);
       } catch (error) {
         console.error(error);
       }
     } else if (uploadType === "concept") {
       try {
-        await axios.post("http://127.0.0.1:8000/concepts/", conceptData);
+        await axios.post(
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/concepts/`,
+          conceptData
+        );
         setConceptData({
           id: -1,
           title: "",
@@ -116,8 +126,8 @@ const UploadForm: React.FC = () => {
     } else if (uploadType === "video") {
       try {
         const response = await axios.post(
-          `http://127.0.0.1:8000/concepts/${videoData.concept}/videos/`,
-          { ...videoData, author: 2 }
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}concepts/${videoData.concept}/videos/`,
+          { ...videoData, author: user?.id }
         );
         setVideoData({
           concept: null,
@@ -146,6 +156,7 @@ const UploadForm: React.FC = () => {
         [name]: value,
       }));
     } else if (uploadType === "video") {
+      console.log(videoData);
       setVideoData((prevData) => ({
         ...prevData,
         [name]: value,
@@ -313,7 +324,7 @@ const UploadForm: React.FC = () => {
                 Concept:
                 <select
                   name="concept"
-                  value={videoData.concept || 1}
+                  value={videoData.concept ?? ""}
                   onChange={handleChange}
                   className={styles.select}
                 >

@@ -1,23 +1,55 @@
 import { useRouter } from "next/navigation";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Welcome from "../components/Welcome";
 import Content from "../components/Content";
-import { useSession, signOut } from "next-auth/react";
+import {
+  useSession,
+  signOut,
+  getSession,
+  GetSessionParams,
+} from "next-auth/react";
+import axiosInstance from "./api/axios";
+import { User } from "../types";
+interface HomePageProps {
+  user: User; // Replace UserType with the actual type of the user object
+}
+export async function getServerSideProps(
+  context: GetSessionParams | undefined
+) {
+  const session = await getSession(context);
 
-const HomePage = () => {
+  try {
+    const mail = session?.user?.email;
+    const getDetails = await axiosInstance.get(`/users/account/?email=${mail}`);
+    const user: User = getDetails.data;
+
+    return {
+      props: {
+        user,
+      },
+    };
+  } catch (error) {
+    console.log(error);
+  }
+
+  return {
+    props: {},
+  };
+}
+const HomePage: React.FC<HomePageProps> = ({ user }) => {
   const session = useSession();
-  console.log(session);
   const router = useRouter();
+
   return (
     <div>
-      {JSON.stringify(session)}
       <button onClick={() => signOut()}>Sign out</button>
       <Welcome />
-      {session?.status === "authenticated" ? (
+      {user?.last_viewed_questions ? (
         <>
-          <Content type="Recently Solved" />
-          <Content type="Recently Learnt" />
-          <Content type="Suggested FAQs" />
+          {/* <Content type="Recently Solved" user={user} /> */}
+          <Content type="Recently Learnt" user={user} />
+          <Content type="question" />
+          <Content type="concept" />
         </>
       ) : (
         <>

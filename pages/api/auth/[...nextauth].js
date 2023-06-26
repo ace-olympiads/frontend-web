@@ -23,20 +23,18 @@ export default NextAuth({
           username: credentials.email,
           password: credentials.password,
           grant_type: "password",
-          client_id: "cr1RpiASapgNGtE8bq22vd1k5SfSGyKuVQa9OHv0",
-          client_secret:
-            "QXiaQYoUf8QfRPAq9bewbYqqJIG7vVXITAzEqXmAvbmwNZ9Ucxp7dYGsSckX0G9rfFmLNBmYIn3JK9OOSnoGwOJt8xVZCD6a7fY0KfIgUC8CGzaJkMzx1BEajrpIYdCu",
+          client_id: `${process.env.NEXT_PUBLIC_CLIENT_ID}`,
+          client_secret: `${process.env.NEXT_PUBLIC_CLIENT_SECRET}`,
         };
 
         try {
           const resUser = await axiosInstance.post("auth/token/", payload);
           console.log("ajeeeb hai!!!!!!!");
           if (resUser.data) {
-            const userDets = await axiosInstance.get("users/account/", {
-              data: {
-                email: payload.username,
-              },
-            });
+            console.log(credentials);
+            const userDets = await axiosInstance.get(
+              `/users/account/?email=${credentials.email}`
+            );
             console.log(resUser.data);
             const FinalUserDetails = {
               ...resUser.data,
@@ -64,9 +62,6 @@ export default NextAuth({
     }),
   ],
   debug: process.env.NODE_ENV === "development",
-  session: {
-    strategy: "jwt",
-  },
   secret: process.env.NEXTAUTH_SECRET,
   callbacks: {
     async signIn({ account, profile, user }) {
@@ -89,9 +84,8 @@ export default NextAuth({
             token: account?.access_token,
             backend: "google-oauth2",
             grant_type: "convert_token",
-            client_id: "cr1RpiASapgNGtE8bq22vd1k5SfSGyKuVQa9OHv0",
-            client_secret:
-              "QXiaQYoUf8QfRPAq9bewbYqqJIG7vVXITAzEqXmAvbmwNZ9Ucxp7dYGsSckX0G9rfFmLNBmYIn3JK9OOSnoGwOJt8xVZCD6a7fY0KfIgUC8CGzaJkMzx1BEajrpIYdCu",
+            client_id: `${process.env.NEXT_PUBLIC_CLIENT_ID}`,
+            client_secret: `${process.env.NEXT_PUBLIC_CLIENT_SECRET}`,
           };
           console.log("item 3");
 
@@ -108,24 +102,21 @@ export default NextAuth({
           return FinalUserDetails;
         } catch (error) {
           console.log(error);
-          const getDetails = await axiosInstance.get("/users/account/", {
-            data: {
-              email: profile.email,
-            },
-          });
+          const getDetails = await axiosInstance.get(
+            `/users/account/?email=${profile.email}`
+          );
           const sendingData = {
             token: account?.access_token,
             backend: "google-oauth2",
             grant_type: "convert_token",
-            client_id: "cr1RpiASapgNGtE8bq22vd1k5SfSGyKuVQa9OHv0",
-            client_secret:
-              "QXiaQYoUf8QfRPAq9bewbYqqJIG7vVXITAzEqXmAvbmwNZ9Ucxp7dYGsSckX0G9rfFmLNBmYIn3JK9OOSnoGwOJt8xVZCD6a7fY0KfIgUC8CGzaJkMzx1BEajrpIYdCu",
+            client_id: `${process.env.NEXT_PUBLIC_CLIENT_ID}`,
+            client_secret: `${process.env.NEXT_PUBLIC_CLIENT_SECRET}`,
           };
           const convertToken = await axiosInstance.post(
             "/auth/convert-token/",
             sendingData
           );
-          console.log(getDetails.data);
+
           return getDetails.data;
         }
       } else {

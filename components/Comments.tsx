@@ -8,13 +8,12 @@ import axiosInstance from "../pages/api/axios";
 import Button from "./Button";
 import styles from "../styles/Comments.module.css";
 
-const Comments: React.FC<CommentParam> = ({ id }) => {
+const Comments: React.FC<CommentParam> = ({ id, user }) => {
   const [comments, setComments] = useState<CommentProps[]>();
   const [content, setContent] = useState<string>("");
   const { data: session } = useSession();
   const [refetch, setRefetch] = useState<Boolean>(false);
   console.log(session);
-
   useEffect(() => {
     const fetchComments = async () => {
       console.log(id);
@@ -31,7 +30,7 @@ const Comments: React.FC<CommentParam> = ({ id }) => {
   const postComment = async (content: string) => {
     if (content != "") {
       const data: PostCommentProps = {
-        commenter: session?.user?.name,
+        commenter: user?.id,
         email: session?.user?.email,
         content: content,
         status: true,
@@ -49,8 +48,8 @@ const Comments: React.FC<CommentParam> = ({ id }) => {
     }
   };
   const commentComponents = comments
-    ?.reverse()
-    .map((comment, index) => (
+    ?.map((comment, index) => comments[comments.length - 1 - index])
+    ?.map((comment, index) => (
       <Comment
         key={index}
         commenter={comment.commenter}
@@ -61,23 +60,28 @@ const Comments: React.FC<CommentParam> = ({ id }) => {
     ));
 
   return (
-    <div>
-      <h1 className={styles["comments-title"]}>Commments</h1>
+    <div className={styles["comm-wrapper"]}>
+      <h1 className={styles["comments-title"]}>Comments</h1>
       <div className={styles["comment-form"]}>
         {session ? (
           <div className={styles["comment-wrapper"]}>
             <div className={styles["comment-profile-image"]}>
-              <Image src={userImg} alt="userImg" />
+              <Image
+                src={user?.image ? user.image : userImg}
+                width={100}
+                height={100}
+                alt="userImg"
+              />
             </div>
             <div className={styles["comment-inputs"]}>
               Let Others' know what you think
-              <textarea
-                onChange={(e) => setContent(e.target.value)}
-                value={content}
-                rows={2}
-                cols={50}
-              />
-              <Button onClick={() => postComment(content)}>Post</Button>
+              <div className={styles["comment-flex"]}>
+                <textarea
+                  onChange={(e) => setContent(e.target.value)}
+                  value={content}
+                />
+                <Button onClick={() => postComment(content)}>Post</Button>
+              </div>
             </div>
           </div>
         ) : (
@@ -97,7 +101,7 @@ const Comments: React.FC<CommentParam> = ({ id }) => {
             </div>
           </div>
         )}
-        {commentComponents}
+        <div className={styles["comment-components"]}>{commentComponents}</div>
       </div>
     </div>
   );
