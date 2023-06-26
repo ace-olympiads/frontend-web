@@ -26,14 +26,14 @@ export interface QuestionType {
   id: Number;
   question_text: string;
   video_solution_url: string;
-  text_solution: string;
-  text_solution_latex: string;
-  created_at: string;
-  updated_at: string;
-  tags: Tag[];
-  category: string;
-  concept: Number;
-  author: Number;
+  text_solution?: string;
+  text_solution_latex?: string;
+  created_at?: string;
+  updated_at?: string;
+  tags?: Tag[];
+  category?: string;
+  concept?: Number;
+  author?: Number;
 }
 export interface QuestionPageProps {
   id: string;
