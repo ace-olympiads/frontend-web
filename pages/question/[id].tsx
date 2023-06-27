@@ -83,7 +83,7 @@ const QuestionPage: React.FC<QuestionPageProps> = ({
             );
           })}
         </div>
-        <SolutionBox solution={`${question?.text_solution}`} />
+        <SolutionBox solution={`${question?.text_solution}`} latex = {`${question?.text_solution_latex}`}/>
         <Comments id={id} user={user} />
         <div className={styles["container-question-concept"]}>
           <div className={styles["similar-container"]}>

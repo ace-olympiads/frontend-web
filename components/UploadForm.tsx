@@ -8,8 +8,10 @@ import React, {
 import styles from "../styles/Upload.module.css";
 import { useSession } from "next-auth/react";
 import axios from "axios";
-
+import "katex/dist/katex.min.css";
+import { BlockMath } from "react-katex";
 import { Item, ConceptData, QuestionData, VideoData, User } from "../types";
+
 const UploadForm: React.FC<{ user: User }> = ({ user }) => {
   const session = useSession();
   const [uploadType, setUploadType] = useState("");
@@ -231,7 +233,11 @@ const UploadForm: React.FC<{ user: User }> = ({ user }) => {
                   className={styles.textarea}
                 ></textarea>
               </label>
+              <div className={styles.latex}>
+                <BlockMath math={questionData.text_solution_latex} />
+              </div>
             </div>
+
             <div>
               <label>
                 Category:

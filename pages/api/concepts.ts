@@ -4,7 +4,7 @@ import { ConceptData, ConceptType } from '../../types';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
-    const response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/concepts/`);
+    const response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}concepts/`);
 
 
     res.status(200).json(response.data);
