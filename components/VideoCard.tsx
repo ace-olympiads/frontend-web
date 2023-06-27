@@ -1,23 +1,22 @@
-import React, { useEffect, useState } from "react";
-import styles from "../styles/Question.module.css";
-import { extractEmbedIdFromYouTubeLink } from "../utils/youtubeId";
-import Image from "next/image";
 import { useRouter } from "next/router";
+import React, { useEffect, useState } from "react";
+import { extractEmbedIdFromYouTubeLink } from "../utils/youtubeId";
+import { Video } from "../types";
+import styles from "../styles/Question.module.css";
 import defaultImg from "../public/assets/userImg.png";
-import { QuestionProps } from "../types";
+import Image from "next/image";
 
-const Question = ({ question }: QuestionProps) => {
-  console.log(question);
+const VideoCard: React.FC<{ video: Video }> = ({ video }) => {
   const [thumbnailUrl, setThumbnail] = useState<string>("");
   const router = useRouter();
   useEffect(() => {
     setThumbnail(
       `https://img.youtube.com/vi/${extractEmbedIdFromYouTubeLink(
-        `${question?.video_solution_url}`
+        `${video?.youtube_url}`
       )}/0.jpg`
     );
     console.log(thumbnailUrl);
-  }, [question]);
+  }, [video]);
   console.log(thumbnailUrl);
   return (
     <div>
@@ -29,19 +28,15 @@ const Question = ({ question }: QuestionProps) => {
         )}
         <div
           onClick={() => {
-            router.push(`/question/${question.id}`);
+            router.push(`/concept/${video.concept}/video/${video.id}`);
           }}
         >
-          <div className={styles["question-title"]}>
-            Question {`${question?.id}`}
-          </div>
-          <div className={styles["question-content"]}>
-            {question?.question_text}
-          </div>
+          <div className={styles["question-title"]}>Video {`${video?.id}`}</div>
+          <div className={styles["question-content"]}>{video?.title}</div>
         </div>
       </div>
     </div>
   );
 };
 
-export default Question;
+export default VideoCard;

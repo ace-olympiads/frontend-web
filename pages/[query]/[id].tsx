@@ -6,7 +6,7 @@ import Question from "../../components/Question";
 import { useRouter } from "next/router";
 import styles from "../../styles/query.module.css";
 import { useSession } from "next-auth/react";
-
+import VideoCard from "../../components/VideoCard";
 interface PageProps {
   query: string;
   id: string;
@@ -60,25 +60,15 @@ const QueryPage = ({ id, query }: PageProps) => {
       )}
       {query === "concept" && (
         <div className={styles["title"]}>
-          Here are all the questions related to the concept{" "}
-          <span>{router.query.name}</span>
+          Here are all the concept videos for <span>{router.query.name}</span>
         </div>
       )}
       <div className={styles["question-container"]}>
         {object?.map((e) => {
           return <Question key={e.id} question={e} />;
         })}
-        {videos?.map((e) => {
-          return (
-            <Question
-              key={e.id}
-              question={{
-                id: e.id,
-                video_solution_url: e.youtube_url,
-                question_text: e.title,
-              }}
-            />
-          );
+        {videos?.map((video) => {
+          return <VideoCard key={video.id} video={video} />;
         })}
       </div>
     </div>

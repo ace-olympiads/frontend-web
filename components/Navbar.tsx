@@ -70,7 +70,10 @@ const Navbar = () => {
             </button>
           </>
         )}
-        <div className={styles["search"]}>
+        <div
+          onClick={() => router.push("/search")}
+          className={styles["search"]}
+        >
           <Image src={search} alt="" />
         </div>
         <Link href="/">

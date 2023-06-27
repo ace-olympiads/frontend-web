@@ -1,8 +1,8 @@
-import { useState, ChangeEvent } from 'react';
-import axios from 'axios';
-import { useRouter } from 'next/router';
+import { useState, ChangeEvent } from "react";
+import axios from "axios";
+import { useRouter } from "next/router";
 
-import styles from '../styles/Search.module.css';
+import styles from "../styles/Search.module.css";
 
 interface SearchResult {
   id: number;
@@ -11,19 +11,22 @@ interface SearchResult {
 }
 
 export default function Search() {
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
   const router = useRouter();
 
   const handleInputChange = async (e: ChangeEvent<HTMLInputElement>) => {
     const query = e.target.value;
     setSearchQuery(query);
-    
+
     try {
-      const response = await axios.get<SearchResult[]>('/api/search', {
-        params: { query },
-      });
-      console.log(response.data)
+      const response = await axios.get<SearchResult[]>(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}question/search/`,
+        {
+          params: { query },
+        }
+      );
+      console.log(response.data);
       setSearchResults(response.data);
     } catch (error) {
       console.error(error);
@@ -31,7 +34,7 @@ export default function Search() {
   };
 
   const highlightText = (text: string, query: string) => {
-    const regex = new RegExp(query, 'gi');
+    const regex = new RegExp(query, "gi");
     return text.replace(regex, (match) => `<mark>${match}</mark>`);
   };
 
@@ -54,9 +57,21 @@ export default function Search() {
           </li>
         ) : (
           searchResults.map((result) => (
-            <li key={result.id} className={styles['result-item']} onClick={() => handleClickQuestion(result.id)}>
-              <h3 dangerouslySetInnerHTML={{ __html: highlightText(result.title, searchQuery) }} />
-              <p dangerouslySetInnerHTML={{ __html: highlightText(result.solution, searchQuery) }} />
+            <li
+              key={result.id}
+              className={styles["result-item"]}
+              onClick={() => handleClickQuestion(result.id)}
+            >
+              <h3
+                dangerouslySetInnerHTML={{
+                  __html: highlightText(result.title, searchQuery),
+                }}
+              />
+              <p
+                dangerouslySetInnerHTML={{
+                  __html: highlightText(result.solution, searchQuery),
+                }}
+              />
             </li>
           ))
         )}
