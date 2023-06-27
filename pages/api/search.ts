@@ -11,7 +11,7 @@ const searchHandler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { query } = req.query;
 
   try {
-    const response = await axios.get< SearchResult[] >('http://localhost:8000/question/search/', {
+    const response = await axios.get< SearchResult[] >('${process.env.NEXT_PUBLIC_BACKEND_URL}question/search/', {
       params: { query },
     });
 
