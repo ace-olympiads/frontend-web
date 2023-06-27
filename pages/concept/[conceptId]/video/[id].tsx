@@ -8,31 +8,25 @@ import YoutubeEmbed from "../../../../components/YoutubeEmbed";
 import { extractEmbedIdFromYouTubeLink } from "../../../../utils/youtubeId";
 import Concept from "../../../../components/Concept";
 type VideoPageProps = {
-  user: User;
   video: Video;
   concepts: ConceptType[];
 };
 export async function getServerSideProps(context: any) {
   console.log(context.query);
   const { conceptId, id } = context.query;
-  if (!conceptId || !id) {
-  }
+
   const session = await getSession(context);
-  const mail = session?.user?.email;
   try {
-    const getDetails = await axiosInstance.get(`/users/account/?email=${mail}`);
     const getVideos = await axiosInstance.get(
       `/concepts/${conceptId}/videos/${id}`
     );
     const conceptsFetch = await axiosInstance.get(`concepts/`);
 
     const concepts: ConceptType[] = conceptsFetch.data;
-    const user: User = getDetails.data;
     const video: Video = getVideos.data;
 
     return {
       props: {
-        user,
         video,
         concepts,
       },
@@ -40,7 +34,7 @@ export async function getServerSideProps(context: any) {
   } catch (error) {}
 }
 
-const Video: React.FC<VideoPageProps> = ({ user, video, concepts }) => {
+const Video: React.FC<VideoPageProps> = ({ video, concepts }) => {
   const arr = [1, 23, 21, 3, 12, 31, 2123, 123, 12, 31, 23, 12];
   return (
     <div style={{ width: "80vw", margin: "8vh 10vw" }}>
