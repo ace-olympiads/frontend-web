@@ -119,6 +119,60 @@ export default NextAuth({
 
           return getDetails.data;
         }
+      } else if (account.provider === "facebook") {
+        try {
+          const payload = {
+            username: user.name,
+            email: user.email,
+            image: user.image,
+            provider: account.provider,
+          };
+          console.log("pata chalega");
+          console.log(payload);
+          console.log("item 2");
+          const makeNewUser = await axiosInstance.post(
+            "/users/account/",
+            payload
+          );
+          const sendingData = {
+            token: account?.access_token,
+            backend: "facebook",
+            grant_type: "convert_token",
+            client_id: `${process.env.NEXT_PUBLIC_CLIENT_ID}`,
+            client_secret: `${process.env.NEXT_PUBLIC_CLIENT_SECRET}`,
+          };
+          console.log("item 3");
+
+          const convertToken = await axiosInstance.post(
+            "/auth/convert-token/",
+            sendingData
+          );
+          console.log("item 4");
+
+          const FinalUserDetails = {
+            ...makeNewUser.data,
+            ...convertToken.data,
+          };
+          return FinalUserDetails;
+        } catch (error) {
+          console.log(error);
+          const getDetails = await axiosInstance.get(
+            `/users/account/?email=${profile.email}`
+          );
+          // const sendingData = {
+          //   token: account?.access_token,
+          //   backend: "facebook",
+          //   grant_type: "convert_token",
+          //   client_id: `${process.env.NEXT_PUBLIC_CLIENT_ID}`,
+          //   client_secret: `${process.env.NEXT_PUBLIC_CLIENT_SECRET}`,
+          // };
+          // const convertToken = await axiosInstance.post(
+          //   "/auth/convert-token/",
+          //   sendingData
+          // );
+
+          return getDetails.data;
+        }
       } else {
         console.log("object not found");
         return {

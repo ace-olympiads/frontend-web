@@ -74,7 +74,7 @@ const Comments: React.FC<CommentParam> = ({ id, user }) => {
               />
             </div>
             <div className={styles["comment-inputs"]}>
-              Let Others' know what you think
+              Let Others know what you think
               <div className={styles["comment-flex"]}>
                 <textarea
                   onChange={(e) => setContent(e.target.value)}

@@ -6,6 +6,7 @@ import Question from "../../components/Question";
 import { useRouter } from "next/router";
 import styles from "../../styles/query.module.css";
 import { useSession } from "next-auth/react";
+
 interface PageProps {
   query: string;
   id: string;
@@ -25,12 +26,10 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async (
 };
 
 const QueryPage = ({ id, query }: PageProps) => {
-  console.log(query);
   const [object, setObjects] = useState<ContentProp[]>([]);
   const [videos, setVideos] = useState<Video[]>();
   const session = useSession();
   const router = useRouter();
-  console.log(router);
   useEffect(() => {
     const fetchParticularData = async () => {
       if (query === "tag") {
