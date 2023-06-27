@@ -37,14 +37,7 @@ export async function getServerSideProps(context: any) {
         concepts,
       },
     };
-  } catch (error) {
-    return {
-      redirect: {
-        destination: "/",
-        permanent: false,
-      },
-    };
-  }
+  } catch (error) {}
 }
 
 const Video: React.FC<VideoPageProps> = ({ user, video, concepts }) => {
