@@ -7,6 +7,7 @@ import styles from "../../../../styles/QuestionId.module.css";
 import YoutubeEmbed from "../../../../components/YoutubeEmbed";
 import { extractEmbedIdFromYouTubeLink } from "../../../../utils/youtubeId";
 import Concept from "../../../../components/Concept";
+import BackButton from "../../../../components/BackButton";
 type VideoPageProps = {
   video: Video;
   concepts: ConceptType[];
@@ -38,6 +39,8 @@ const Video: React.FC<VideoPageProps> = ({ video, concepts }) => {
   const arr = [1, 23, 21, 3, 12, 31, 2123, 123, 12, 31, 23, 12];
   return (
     <div style={{ width: "80vw", margin: "8vh 10vw" }}>
+      <BackButton />
+
       <div className={styles["question-text"]}>
         <div className={styles["question-heading"]}>
           Concept video {`${video?.id}`}

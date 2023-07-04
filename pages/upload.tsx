@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { User } from "../types";
 import axiosInstance from "./api/axios";
+import BackButton from "../components/BackButton";
 
 export async function getServerSideProps(
   context: GetSessionParams | undefined
@@ -38,7 +39,13 @@ const UploadPage: React.FC<{ user: User }> = ({ user }) => {
       router.push("/");
     }
   }, [session?.status, router]);
-  return <UploadForm user={user} />;
+
+  return (
+    <>
+      <BackButton />
+      <UploadForm user={user} />;
+    </>
+  );
 };
 
 export default UploadPage;

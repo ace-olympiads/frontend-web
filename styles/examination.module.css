@@ -1,0 +1,12 @@
+.examination-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    margin: 10vh 10vw;
+
+}
+
+.examination-container>ul {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

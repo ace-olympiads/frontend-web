@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { GetServerSideProps } from "next";
 import axiosInstance from "../api/axios";
-import { ContentProp, Video } from "../../types";
+import { ContentProp, Exam, Video } from "../../types";
 import Question from "../../components/Question";
 import { useRouter } from "next/router";
 import styles from "../../styles/query.module.css";
 import { useSession } from "next-auth/react";
 import VideoCard from "../../components/VideoCard";
+import BackButton from "../../components/BackButton";
 interface PageProps {
   query: string;
   id: string;
@@ -24,16 +25,18 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async (
     },
   };
 };
-
+//
 const QueryPage = ({ id, query }: PageProps) => {
   const [object, setObjects] = useState<ContentProp[]>([]);
   const [videos, setVideos] = useState<Video[]>();
+  const [examQues, setExamQues] = useState<Exam>();
   const session = useSession();
   const router = useRouter();
   useEffect(() => {
     const fetchParticularData = async () => {
       if (query === "tag") {
         const response = await axiosInstance.get(`/question/${query}/${id}`);
+        console.log("tag waala response");
         console.log(response.data);
         setObjects(response.data);
       } else if (query === "concept") {
@@ -45,6 +48,11 @@ const QueryPage = ({ id, query }: PageProps) => {
         const videoList = response.data.videos;
         console.log(videoList);
         setVideos(videoList);
+      } else if (query === "exam") {
+        const response = await axiosInstance.get(`/question/examination/${id}`);
+        console.log(response.data);
+        console.log("exam ki response");
+        setObjects(response.data);
       }
     };
     fetchParticularData();
@@ -52,6 +60,7 @@ const QueryPage = ({ id, query }: PageProps) => {
 
   return (
     <div>
+      <BackButton />
       {query === "tag" && (
         <div className={styles["title"]}>
           Here are all the questions having the tag{" "}

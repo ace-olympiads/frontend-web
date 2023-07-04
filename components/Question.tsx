@@ -21,7 +21,12 @@ const Question = ({ question }: QuestionProps) => {
   console.log(thumbnailUrl);
   return (
     <div>
-      <div className={styles["question-card"]}>
+      <div
+        onClick={() => {
+          router.push(`/question/${question.id}`);
+        }}
+        className={styles["question-card"]}
+      >
         {thumbnailUrl ? (
           <Image src={thumbnailUrl} alt="Thumbnail" width={300} height={200} />
         ) : (

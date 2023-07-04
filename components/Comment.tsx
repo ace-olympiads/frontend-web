@@ -29,7 +29,7 @@ const Comment: React.FC<CommentProps> = (props) => {
           {date.toLocaleDateString()} {date.toLocaleTimeString()}
         </p>
       </div>
-      <div className="comment-content">{content}</div>
+      <div className={styles["comment-content"]}>{content}</div>
     </div>
   );
 };

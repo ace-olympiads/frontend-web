@@ -7,13 +7,17 @@
   width: 300px;
   border-radius: 20px;
   min-height: 300px;
+  max-height: 300px;
   padding: 10px;
+  overflow-y: hidden;
+  cursor: pointer;
 }
 
 .question-title {
   color: #e91e63;
   font-weight: 500;
 }
+
 .question-content {
   color: black;
 }

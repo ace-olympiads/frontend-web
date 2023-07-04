@@ -31,6 +31,7 @@ export interface QuestionType {
   created_at?: string;
   updated_at?: string;
   tags?: Tag[];
+  examinations?: Exam[];
   category?: string;
   concept?: Number;
   author?: Number;
@@ -112,4 +113,14 @@ export interface Video {
 }
 export interface QuestionProps {
   question: QuestionType
+}
+
+export interface Exam {
+  id?: number
+  name: string
+}
+
+export interface SpecificExam {
+  examination: Exam
+  questions: QuestionType[]
 }

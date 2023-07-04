@@ -3,6 +3,7 @@ import axios from "axios";
 import { useRouter } from "next/router";
 
 import styles from "../styles/Search.module.css";
+import BackButton from "../components/BackButton";
 
 interface SearchResult {
   id: number;
@@ -44,6 +45,8 @@ export default function Search() {
 
   return (
     <div className={styles.container}>
+      <BackButton />
+
       <input
         type="text"
         value={searchQuery}
