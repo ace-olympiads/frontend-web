@@ -1,29 +1,28 @@
-import React, {
-  useState,
-  ChangeEvent,
-  FormEvent,
-  useEffect,
-  KeyboardEventHandler,
-} from "react";
+import React, { useState, ChangeEvent, FormEvent, useEffect } from "react";
 import styles from "../styles/Upload.module.css";
-import { useSession } from "next-auth/react";
 import axios from "axios";
 import "katex/dist/katex.min.css";
 import { BlockMath } from "react-katex";
 import { Item, ConceptData, QuestionData, VideoData, User } from "../types";
 
 const UploadForm: React.FC<{ user: User }> = ({ user }) => {
-  const session = useSession();
   const [uploadType, setUploadType] = useState("");
   const [concepts, setConcepts] = useState<ConceptData[]>([]);
-  const [inputValue, setInputValue] = useState<string>("");
-  const [items, setItems] = useState<Item[]>([]);
+  const [tags, setTags] = useState<Item[]>([]);
+  const [selectedTags, setSelectedTags] = useState<Item[]>([]);
+  const [newTagInputVisible, setNewTagInputVisible] = useState(false);
+  const [newTagInputValue, setNewTagInputValue] = useState("");
+  const [examinations, setExaminations] = useState<Item[]>([]);
+  const [selectedExaminations, setSelectedExaminations] = useState<Item[]>([]);
+  const [newExaminationInputVisible, setNewExaminationInputVisible] = useState(false);
+  const [newExaminationInputValue, setNewExaminationInputValue] = useState("");
   const [questionData, setQuestionData] = useState<QuestionData>({
     question_text: "",
     video_solution_url: "",
     text_solution: "",
     text_solution_latex: "",
-    tags: items,
+    tags: selectedTags,
+    examinations: selectedExaminations,
     category: "",
     concept: null,
   });
@@ -39,47 +38,93 @@ const UploadForm: React.FC<{ user: User }> = ({ user }) => {
     thumbnail_url: "",
   });
 
-  const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setInputValue(event.target.value);
+  const selectTag = (tag: Item) => {
+    setSelectedTags((prevTags) => {
+      const isSelected = prevTags.some((t) => t.name === tag.name);
+      if (isSelected) {
+        return prevTags.filter((t) => t.name !== tag.name);
+      } else {
+        return [tag, ...prevTags];
+      }
+    });
+  };
+  const toggleNewTagInput = () => {
+    setNewTagInputVisible(!newTagInputVisible);
+    setNewTagInputValue("");
+  };
+  const addNewTag = () => {
+    const trimmedValue = newTagInputValue.trim();
+    if (trimmedValue !== "" && !tags.some((tag) => tag.name === trimmedValue)) {
+      const newTag = { name: trimmedValue };
+      setTags([...tags, newTag]);
+      selectTag(newTag);
+    }
+    toggleNewTagInput();
   };
 
-  const handleInputEnter = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") {
-      e.preventDefault();
-      console.log("object");
-      const newItem: Item = { name: inputValue.trim() };
-
-      if (!items.some((item) => item.name === newItem.name)) {
-        setItems((prevItems) => [...prevItems, newItem]);
-
-        setInputValue("");
-      }
+  const fetchTags = async () => {
+    try {
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}question/tags/`
+      );
+      setTags(response.data);
+    } catch (error) {
+      console.error(error);
     }
   };
+  const selectExamination = (examination: Item) => {
+    setSelectedExaminations((prevExaminations) => {
+      const isSelected = prevExaminations.some((t) => t.name === examination.name);
+      if (isSelected) {
+        return prevExaminations.filter((e) => e.name !== examination.name);
+      } else {
+        return [examination, ...prevExaminations];
+      }
+    });
+  };
+  const toggleNewExaminationInput = () => {
+    setNewExaminationInputVisible(!newExaminationInputVisible);
+    setNewExaminationInputValue("");
+  };
+  const addNewExamination = () => {
+    const trimmedValue = newExaminationInputValue.trim();
+    if (trimmedValue !== "" && !examinations.some((examination) => examination.name === trimmedValue)) {
+      const newExamination = { name: trimmedValue };
+      setExaminations([...examinations, newExamination]);
+      selectExamination(newExamination);
+    }
+    toggleNewExaminationInput();
+  };
 
-  const removeItem = (index: number) => {
-    const updatedItems = [...items];
-    updatedItems.splice(index, 1);
-    setItems(updatedItems);
+  const fetchExaminations = async () => {
+    try {
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}question/examinations/`
+      );
+      setExaminations(response.data);
+    } catch (error) {
+      console.error(error);
+    }
   };
   useEffect(() => {
     fetchConcepts();
+    fetchTags();
+    fetchExaminations();
   }, []);
-  useEffect(() => {
-    console.log(questionData);
-  }, [questionData]);
   useEffect(() => {
     setQuestionData((prevData) => ({
       ...prevData,
-      tags: items,
+      tags: selectedTags,
+      examinations: selectedExaminations,
     }));
-  }, [items]);
+    console.log(selectedExaminations)
+    console.log(selectedTags)
+  }, [selectedTags, selectedExaminations]);
   const fetchConcepts = async () => {
     try {
       const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/concepts/`
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}concepts/`
       );
-      console.log(response.data);
       setConcepts(response.data);
     } catch (error) {
       console.error(error);
@@ -101,19 +146,21 @@ const UploadForm: React.FC<{ user: User }> = ({ user }) => {
           question_text: "",
           video_solution_url: "",
           tags: [],
+          examinations: [],
           text_solution: "",
           text_solution_latex: "",
           category: "",
           concept: null,
         });
-        setItems([]);
+        setSelectedTags([]);
+        setSelectedExaminations([]);
       } catch (error) {
         console.error(error);
       }
     } else if (uploadType === "concept") {
       try {
         await axios.post(
-          `${process.env.NEXT_PUBLIC_BACKEND_URL}/concepts/`,
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}concepts/`,
           conceptData
         );
         setConceptData({
@@ -158,7 +205,6 @@ const UploadForm: React.FC<{ user: User }> = ({ user }) => {
         [name]: value,
       }));
     } else if (uploadType === "video") {
-      console.log(videoData);
       setVideoData((prevData) => ({
         ...prevData,
         [name]: value,
@@ -260,13 +306,11 @@ const UploadForm: React.FC<{ user: User }> = ({ user }) => {
                 Concept:
                 <select
                   name="concept"
-                  value={questionData.concept || 1}
+                  value={questionData.concept || ""}
                   onChange={handleChange}
                   className={styles.select}
                 >
-                  <option key={0} value="" selected>
-                    Select Concept
-                  </option>
+                  <option value="">Select Concept</option>
                   {concepts.map((concept) => (
                     <option key={concept.id} value={concept.id}>
                       {concept.title}
@@ -277,19 +321,80 @@ const UploadForm: React.FC<{ user: User }> = ({ user }) => {
             </div>
             <div>
               <label>Tags</label>
-              <input
-                type="text"
-                value={inputValue}
-                onChange={handleInputChange}
-                onKeyDown={(e) => handleInputEnter(e)}
-              />
-              <div className={styles["tag-element"]}>
-                {items?.map((item, index) => (
-                  <div className={styles["tag-individual-element"]} key={index}>
-                    {item.name}
-                    <button onClick={() => removeItem(index)}>x</button>
+              <div className={styles["item-element"]}>
+                {tags?.map((tag) => (
+                  <div
+                    className={`${styles["item-individual-element"]} ${
+                      selectedTags.some((t) => t.name === tag.name)
+                        ? styles["selected-item"]
+                        : ""
+                    }`}
+                    key={tag.name}
+                    onClick={() => selectTag(tag)}
+                  >
+                    {tag.name}
                   </div>
                 ))}
+                {newTagInputVisible ? (
+                  <input
+                    type="text"
+                    value={newTagInputValue}
+                    onChange={(e) => setNewTagInputValue(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        addNewTag();
+                      }
+                    }}
+                    className={styles["new-item-input"]}
+                    autoFocus
+                  />
+                ) : (
+                  <div
+                    className={styles["add-new-item-button"]}
+                    onClick={toggleNewTagInput}
+                  >
+                    +
+                  </div>
+                )}
+              </div>
+            </div>
+            <div>
+              <label>Examinations</label>
+              <div className={styles["item-element"]}>
+                {examinations?.map((examination) => (
+                  <div
+                    className={`${styles["item-individual-element"]} ${
+                      selectedExaminations.some((e) => e.name === examination.name)
+                        ? styles["selected-item"]
+                        : ""
+                    }`}
+                    key={examination.name}
+                    onClick={() => selectExamination(examination)}
+                  >
+                    {examination.name}
+                  </div>
+                ))}
+                {newExaminationInputVisible ? (
+                  <input
+                    type="text"
+                    value={newExaminationInputValue}
+                    onChange={(e) => setNewExaminationInputValue(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        addNewExamination();
+                      }
+                    }}
+                    className={styles["new-item-input"]}
+                    autoFocus
+                  />
+                ) : (
+                  <div
+                    className={styles["add-new-item-button"]}
+                    onClick={toggleNewExaminationInput}
+                  >
+                    +
+                  </div>
+                )}
               </div>
             </div>
           </div>

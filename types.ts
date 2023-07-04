@@ -53,6 +53,7 @@ export interface QuestionData {
   text_solution: string;
   text_solution_latex: string;
   tags: Item[];
+  examinations: Item[];
   category: string;
   concept: number | null;
 }

@@ -9,6 +9,7 @@ interface SearchResult {
   id: number;
   title: string;
   solution: string;
+  latex: string;
 }
 
 export default function Search() {
@@ -73,6 +74,11 @@ export default function Search() {
               <p
                 dangerouslySetInnerHTML={{
                   __html: highlightText(result.solution, searchQuery),
+                }}
+              />
+              <p
+                dangerouslySetInnerHTML={{
+                  __html: highlightText(result.latex, searchQuery),
                 }}
               />
             </li>
