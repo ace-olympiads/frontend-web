@@ -15,6 +15,8 @@ import {
 } from "../../types";
 import { useRouter } from "next/router";
 import BackButton from "../../components/BackButton";
+import "katex/dist/katex.min.css";
+import { BlockMath } from "react-katex";
 export async function getServerSideProps(context: any) {
   const { id } = context.query;
   const session = await getSession(context);
@@ -62,6 +64,7 @@ const QuestionPage: React.FC<QuestionPageProps> = ({
               Question {`${question?.id}`}
             </div>
             {question?.question_text}
+            <BlockMath math={question?.question_text_latex||""} />
           </div>
           <YoutubeEmbed
             embedId={`${extractEmbedIdFromYouTubeLink(

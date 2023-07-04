@@ -8,8 +8,9 @@ import BackButton from "../components/BackButton";
 interface SearchResult {
   id: number;
   title: string;
+  question_latex?: string;
   solution: string;
-  latex: string;
+  solution_latex: string;
 }
 
 export default function Search() {
@@ -71,6 +72,11 @@ export default function Search() {
                   __html: highlightText(result.title, searchQuery),
                 }}
               />
+               <h3
+                dangerouslySetInnerHTML={{
+                  __html: highlightText(result.question_latex || "", searchQuery),
+                }}
+              />
               <p
                 dangerouslySetInnerHTML={{
                   __html: highlightText(result.solution, searchQuery),
@@ -78,7 +84,7 @@ export default function Search() {
               />
               <p
                 dangerouslySetInnerHTML={{
-                  __html: highlightText(result.latex, searchQuery),
+                  __html: highlightText(result.solution_latex, searchQuery),
                 }}
               />
             </li>

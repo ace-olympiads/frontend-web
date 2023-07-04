@@ -25,6 +25,7 @@ export interface Tag {
 export interface QuestionType {
   id: Number;
   question_text: string;
+  question_text_latex?: string;
   video_solution_url: string;
   text_solution?: string;
   text_solution_latex?: string;
@@ -49,6 +50,7 @@ export type ConceptProps = {
 
 export interface QuestionData {
   question_text: string;
+  question_text_latex: string;
   video_solution_url: string;
   text_solution: string;
   text_solution_latex: string;

@@ -18,6 +18,7 @@ const UploadForm: React.FC<{ user: User }> = ({ user }) => {
   const [newExaminationInputValue, setNewExaminationInputValue] = useState("");
   const [questionData, setQuestionData] = useState<QuestionData>({
     question_text: "",
+    question_text_latex: "",
     video_solution_url: "",
     text_solution: "",
     text_solution_latex: "",
@@ -144,6 +145,7 @@ const UploadForm: React.FC<{ user: User }> = ({ user }) => {
         );
         setQuestionData({
           question_text: "",
+          question_text_latex: "",
           video_solution_url: "",
           tags: [],
           examinations: [],
@@ -245,6 +247,20 @@ const UploadForm: React.FC<{ user: User }> = ({ user }) => {
                   className={styles.input}
                 />
               </label>
+            </div>
+            <div>
+              <label>
+                Question Text Latex:
+                <textarea
+                  name="question_text_latex"
+                  value={questionData.question_text_latex}
+                  onChange={handleChange}
+                  className={styles.textarea}
+                ></textarea>
+              </label>
+              <div className={styles.latex}>
+                <BlockMath math={questionData.question_text_latex} />
+              </div>
             </div>
             <div>
               <label>
