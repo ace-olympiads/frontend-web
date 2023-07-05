@@ -14,7 +14,6 @@ type propstypes = { type: string; user?: User };
 type scrollVisibilityApiType = React.ContextType<typeof VisibilityContext>;
 
 const Content = ({ type, user }: propstypes) => {
-  console.log(user);
   const [concepts, setConcepts] = useState<ConceptType[]>();
   const [questions, setQuestions] = useState<QuestionType[]>();
   useEffect(() => {

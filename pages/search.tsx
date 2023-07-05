@@ -38,7 +38,7 @@ export default function Search() {
 
   const highlightText = (text: string, query: string) => {
     const regex = new RegExp(query, "gi");
-    return text.replace(regex, (match) => `<mark>${match}</mark>`);
+    return text?.replace(regex, (match) => `<mark>${match}</mark>`);
   };
 
   const handleClickQuestion = (questionId: number) => {
@@ -72,9 +72,12 @@ export default function Search() {
                   __html: highlightText(result.title, searchQuery),
                 }}
               />
-               <h3
+              <h3
                 dangerouslySetInnerHTML={{
-                  __html: highlightText(result.question_latex || "", searchQuery),
+                  __html: highlightText(
+                    result.question_latex || "",
+                    searchQuery
+                  ),
                 }}
               />
               <p
