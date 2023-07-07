@@ -5,8 +5,12 @@
 .katex-display>.katex>.katex-html {
   text-align: left;
 }
+.katex-display>.katex>.katex-html>.base .mord {
+  display: inline-block;
+}
 .katex-display>.katex{
   white-space: pre-wrap !important;
+  overflow-wrap: break-word;
 }
 :root {
   --foreground-rgb: 0, 0, 0;

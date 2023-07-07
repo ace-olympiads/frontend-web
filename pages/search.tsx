@@ -41,6 +41,14 @@ export default function Search() {
     return text?.replace(regex, (match) => `<mark>${match}</mark>`);
   };
 
+  const truncateText = (text: string, maxWords: number) => {
+    const words = text.split(" ");
+    if (words.length <= maxWords) {
+      return text;
+    }
+    return words.slice(0, maxWords).join(" ") + "...";
+  };
+
   const handleClickQuestion = (questionId: number) => {
     router.push(`/question/${questionId}`);
   };
@@ -75,19 +83,25 @@ export default function Search() {
               <h3
                 dangerouslySetInnerHTML={{
                   __html: highlightText(
-                    result.question_latex || "",
+                    truncateText(result.question_latex || "", 10),
                     searchQuery
                   ),
                 }}
               />
               <p
                 dangerouslySetInnerHTML={{
-                  __html: highlightText(result.solution, searchQuery),
+                  __html: highlightText(
+                    truncateText(result.solution, 20),
+                    searchQuery
+                  ),
                 }}
               />
               <p
                 dangerouslySetInnerHTML={{
-                  __html: highlightText(result.solution_latex, searchQuery),
+                  __html: highlightText(
+                    truncateText(result.solution_latex, 15),
+                    searchQuery
+                  ),
                 }}
               />
             </li>
