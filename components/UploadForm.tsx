@@ -213,7 +213,19 @@ const UploadForm: React.FC<{ user: User }> = ({ user }) => {
       }));
     }
   };
-
+  function preprocessLatex(latex: string) {
+    const replacedNewlines = latex.replace(/\n/g, "$\\\\$");
+    const parts = replacedNewlines.split("$");
+  
+    const processedParts = parts.map((part, index) => {
+      if (index % 2 === 0) {
+        return `\\text{${part}}`;
+      } else {
+        return part;
+      }
+    });
+    return processedParts.join("");
+  }
   return (
     <div className={styles.container}>
       <h1>Upload Form</h1>
@@ -259,7 +271,7 @@ const UploadForm: React.FC<{ user: User }> = ({ user }) => {
                 ></textarea>
               </label>
               <div className={styles.latex}>
-                <BlockMath math={questionData.question_text_latex} />
+                <BlockMath math={preprocessLatex(questionData.question_text_latex)} />
               </div>
             </div>
             <div>
@@ -296,7 +308,7 @@ const UploadForm: React.FC<{ user: User }> = ({ user }) => {
                 ></textarea>
               </label>
               <div className={styles.latex}>
-                <BlockMath math={questionData.text_solution_latex} />
+                <BlockMath math={preprocessLatex(questionData.text_solution_latex)} />
               </div>
             </div>
 
