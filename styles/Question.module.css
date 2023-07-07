@@ -1,6 +1,5 @@
 .question-card {
-  margin: 35px;
-  margin-right: 0;
+  margin: 1em;
   background: #f8e5d6;
   backdrop-filter: blur(152.5px);
   border: 2px solid #e91e63;
@@ -12,7 +11,9 @@
   overflow-y: hidden;
   cursor: pointer;
 }
-
+.question-card img{
+  border-radius: 20px;
+}
 .question-title {
   color: #e91e63;
   font-weight: 500;

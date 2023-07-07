@@ -36,6 +36,7 @@
     border-radius: 4px;
     background-color: #f9f9f9;
     color: black;
+    cursor: pointer;
   }
   
   .result-item h3 {

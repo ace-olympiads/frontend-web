@@ -1,38 +1,8 @@
-/* .navigation-menu {
-  background: radial-gradient(72.17% 30436.86% at 32.49% 100%, #D46A43 0%, #E91E63 50.48%, #D46A43 95.76%);
-  height: 60px;
-  width: 100%;
-  display: flex;
-  align-items: center;
-  position: relative;
-  padding: 0.5rem 0rem;
-  color: black;
-  box-shadow: 0 2px 2px 2px rgba(9, 9, 9, 0.23);
-}
-
-.navigation-container {
-  display: flex;
-  column-gap: 1.5rem;
-}
-
-.main-title {
-  font-size: 1.2rem;
-}
-
-
-
-
-.greet {
-  display: flex;
-  align-items: center;
-  font-size: 20px;
-  justify-content: center;
-} */
-
 .navigation {
   height: auto;
   width: 100%;
   display: flex;
+  flex-wrap: wrap; /* Allow flex items to wrap */
   align-items: center;
   padding: 0.5rem 0rem;
   backdrop-filter: blur(37px);
@@ -49,9 +19,8 @@
 }
 
 .navigation-menu {
-  display: block;
+  display: flex;
   margin-left: auto;
-
 }
 
 .login {
@@ -59,17 +28,14 @@
   height: 34px;
   font-weight: 800;
   font-size: 16px;
-
   color: #D9584A;
   text-decoration: transparent;
   background: #F9EFE7;
   backdrop-filter: blur(40px);
-
   border-radius: 145px;
 }
 
 .signup {
-
   background: #1E1E1E;
   backdrop-filter: blur(40px);
   width: 124px;
@@ -107,13 +73,8 @@
   right: 0;
   top: 20px;
   transform: translateY(-50%);
-
   display: none;
 }
-
-
-
-
 
 @media screen and (max-width: 768px) {
   .hamburger {
@@ -122,6 +83,7 @@
 
   .navigation {
     flex-direction: column;
+    align-items: flex-start; /* Align items to the left */
   }
 
   .navigation-menu {
@@ -129,18 +91,18 @@
   }
 
   .navigation-menu-expanded {
-
+    display: flex; /* Show expanded menu */
     flex-direction: column;
     width: 100%;
-    height: calc(100vh - 77px);
+    height: auto;
     border-top: 1px solid black;
     overflow: hidden;
     z-index: 10000000000;
   }
 
-
   .navigation-menu-expanded ul {
     display: block;
+    padding: 0;
   }
 
   .navigation-menu-expanded li {
@@ -156,7 +118,6 @@
     align-items: center;
     margin: 2vh 0;
     row-gap: 1vh;
-
   }
 
   .navigation-menu-expanded li a {
@@ -164,7 +125,4 @@
     width: 100%;
     padding: 1.5rem 0;
   }
-
-  .navigation-menu-expanded {}
-
 }
