@@ -32,7 +32,7 @@ const examination: React.FC<{ examinations: Exam[] }> = ({ examinations }) => {
 
       <div className={styles["examination-container"]}>
         {examinations?.map((exam) => {
-          return <ExamButton props={exam} />;
+          return <ExamButton props={exam} key={exam.id} />;
         })}
       </div>
     </div>

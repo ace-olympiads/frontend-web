@@ -38,7 +38,7 @@ export default function Search() {
 
   const highlightText = (text: string, query: string) => {
     const regex = new RegExp(query, "gi");
-    return text.replace(regex, (match) => `<mark>${match}</mark>`);
+    return text?.replace(regex, (match) => `<mark>${match}</mark>`);
   };
 
   const truncateText = (text: string, maxWords: number) => {

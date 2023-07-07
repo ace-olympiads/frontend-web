@@ -1,4 +1,4 @@
-import { useSession } from "next-auth/react";
+import { GetSessionParams, getSession, useSession } from "next-auth/react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { signOut } from "next-auth/react";
@@ -9,11 +9,14 @@ import userImg from "../public/assets/userImg.png";
 import { User } from "../types";
 import Link from "next/link";
 import { useState, useEffect, useLayoutEffect } from "react";
+import axiosInstance from "../pages/api/axios";
+
 const Navbar = () => {
   const session = useSession();
   const router = useRouter();
   const [currUser, setCurrUser] = useState<User>();
   const [isNavExpanded, setIsNavExpanded] = useState(false);
+
   useLayoutEffect(() => {
     function updateSize() {
       window.addEventListener("resize", () => setIsNavExpanded(false));
@@ -22,75 +25,10 @@ const Navbar = () => {
     return () => window.removeEventListener("resize", updateSize);
   }, []);
   return (
-    // <div className={styles["navigation-menu"]}>
-    //   <div className={styles["main-title"]}></div>
-    //   <button type="button" onClick={() => router.back()}>
-    //     Click here to go back
-    //   </button>
-    //   <div className={styles["navigation-container"]}>
-    //     {session?.status === "authenticated" ? (
-    //       <>
-    //         <div className={styles["greet"]}>
-    //           Hello{" "}
-    //           {session?.data?.user?.name
-    //             ? session?.data?.user?.name
-    //             : currUser?.username}{" "}
-    //           !
-    //         </div>
-    //         <div className={styles["profile-image"]}>
-    //           {session?.data?.user?.image ? (
-    //             <Image
-    //               src={session?.data?.user?.image}
-    //               alt=""
-    //               width={40}
-    //               height={40}
-    //             />
-    //           ) : (
-    //             <Image src={userImg} alt="" width={40} height={40} />
-    //           )}
-    //         </div>
-    //         <button
-    //           onClick={() => {
-    //             signOut();
-    //             localStorage.removeItem("user");
-    //           }}
-    //           className={styles["login"]}
-    //         >
-    //           Sign Out
-    //         </button>
-    //       </>
-    //     ) : (
-    //       <>
-    //         <button
-    //           onClick={() => router.push("/auth")}
-    //           className={styles["signup"]}
-    //         >
-    //           Signup
-    //         </button>
-    //         <button
-    //           onClick={() => router.push("/auth")}
-    //           className={styles["login"]}
-    //         >
-    //           Login
-    //         </button>
-    //       </>
-    //     )}
-
-    //     <Link href="/">
-    //       <button onClick={() => router.push("/")} className={styles["home"]}>
-    //         <Image src={home} alt="" />
-    //       </button>
-    //     </Link>
-    //     <Link href="/examination">
-    //       <button>Examinations</button>
-    //     </Link>
-    //   </div>
-    // </div>
-
     <nav className={styles["navigation"]}>
-      <a href="/" className={styles["brand-name"]}>
+      <Link href="/" className={styles["brand-name"]}>
         ACEOLYMPIADS
-      </a>
+      </Link>
       <button
         className={styles["hamburger"]}
         onClick={() => {
@@ -125,7 +63,7 @@ const Navbar = () => {
             </Link>
           </li>
           <li>
-            {session.data?.user?.name ? (
+            {session.data?.user ? (
               <></>
             ) : (
               <>
@@ -174,7 +112,12 @@ const Navbar = () => {
                     <Image src={userImg} alt="" width={40} height={40} />
                   )}
                 </div>
-                <p>Currently logged in as {session.data.user.name}</p>
+                <p>
+                  Currently logged in as{" "}
+                  {session.data.user.name
+                    ? session.data.user.name
+                    : session.data.user.email}
+                </p>
                 <button
                   onClick={() => {
                     signOut();
