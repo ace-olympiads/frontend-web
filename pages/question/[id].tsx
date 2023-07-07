@@ -5,7 +5,7 @@ import Comments from "../../components/Comments";
 import styles from "../../styles/QuestionId.module.css";
 import axiosInstance from "../api/axios";
 import { extractEmbedIdFromYouTubeLink } from "../../utils/youtubeId";
-import { GetSessionParams, getSession } from "next-auth/react";
+import { getSession } from "next-auth/react";
 import Concept from "../../components/Concept";
 import {
   QuestionType,
@@ -51,6 +51,19 @@ const QuestionPage: React.FC<QuestionPageProps> = ({
 }) => {
   const router = useRouter();
   const arr = [1, 2, 32, 3, 23, 23, 12, 31, 23, 12, 312];
+  function preprocessLatex(latex: string) {
+    const replacedNewlines = latex.replace(/\n/g, "$\\\\$");
+    const parts = replacedNewlines.split("$");
+  
+    const processedParts = parts.map((part, index) => {
+      if (index % 2 === 0) {
+        return `\\text{${part}}`;
+      } else {
+        return part;
+      }
+    });
+    return processedParts.join("");
+  } 
   return (
     <>
       <BackButton />
@@ -59,12 +72,12 @@ const QuestionPage: React.FC<QuestionPageProps> = ({
         style={{ padding: "10vh 8vw" }}
       >
         <div className={styles["question-container"]}>
-          <div className={styles["question-text"]}>
+          <div className={styles["question-text"]} style={{ textAlign: 'left' }}>
             <div className={styles["question-heading"]}>
               Question {`${question?.id}`}
             </div>
             {question?.question_text}
-            <BlockMath math={question?.question_text_latex||""} />
+            <BlockMath math={preprocessLatex(question?.question_text_latex||"")} />
           </div>
           <YoutubeEmbed
             embedId={`${extractEmbedIdFromYouTubeLink(

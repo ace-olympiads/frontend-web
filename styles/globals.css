@@ -2,6 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
+.katex-display>.katex>.katex-html {
+  text-align: left;
+}
+.katex-display>.katex{
+  white-space: pre-wrap !important;
+}
 :root {
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 214, 219, 220;

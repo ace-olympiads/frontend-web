@@ -10,6 +10,19 @@ type SolutionProps = {
 
 const SolutionBox = ({ solution, latex }: SolutionProps) => {
   const [fullSolution, setFullSolution] = useState(false);
+  function preprocessLatex(latex: string) {
+    const replacedNewlines = latex.replace(/\n/g, "$\\\\$");
+    const parts = replacedNewlines.split("$");
+  
+    const processedParts = parts.map((part, index) => {
+      if (index % 2 === 0) {
+        return `\\text{${part}}`;
+      } else {
+        return part;
+      }
+    });
+    return processedParts.join("");
+  }
   return (
     <div>
       <div className={styles['solution-title']}>Text Solution</div>
@@ -17,7 +30,7 @@ const SolutionBox = ({ solution, latex }: SolutionProps) => {
         {fullSolution ? (
           <div>
             <div>{solution}</div>
-            <BlockMath math={latex} />
+            <BlockMath math={preprocessLatex(latex)} />
           </div>
         ) : (
           <>
