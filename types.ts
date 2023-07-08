@@ -6,11 +6,11 @@ export interface CommentProps {
 }
 export interface CommentParam {
   id: string | string[] | undefined;
-  user: User;
+  user?: User;
 }
 
 export interface PostCommentProps {
-  commenter: number;
+  commenter: number | undefined;
   email: string | null | undefined;
   content: string;
   status: boolean;
@@ -41,7 +41,7 @@ export interface QuestionPageProps {
   id: string;
   question: QuestionType;
   concepts: ConceptType[];
-  user: User
+  user?: User
 }
 export type ConceptProps = {
   concept: ConceptType

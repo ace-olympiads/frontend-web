@@ -20,27 +20,41 @@ import { BlockMath } from "react-katex";
 export async function getServerSideProps(context: any) {
   const { id } = context.query;
   const session = await getSession(context);
-  const mail = session?.user?.email;
+  if (session) {
+    const mail = session?.user?.email;
 
-  const getDetails = await axiosInstance.get(`/users/account/?email=${mail}`);
-  const user: User = getDetails.data;
+    const getDetails = await axiosInstance.get(`/users/account/?email=${mail}`);
+    const user: User = getDetails.data;
 
-  const questionFetch = await axiosInstance.get(`question/${id}`, {
-    data: {
-      email: mail,
-    },
-  });
-  const conceptsFetch = await axiosInstance.get(`concepts/`);
-  const question: QuestionType = questionFetch.data;
-  const concepts: ConceptType[] = conceptsFetch.data;
-  return {
-    props: {
-      id,
-      user,
-      question,
-      concepts,
-    },
-  };
+    const questionFetch = await axiosInstance.get(`question/${id}`, {
+      data: {
+        email: mail,
+      },
+    });
+    const conceptsFetch = await axiosInstance.get(`concepts/`);
+    const question: QuestionType = questionFetch.data;
+    const concepts: ConceptType[] = conceptsFetch.data;
+    return {
+      props: {
+        id,
+        user,
+        question,
+        concepts,
+      },
+    };
+  } else {
+    const questionFetch = await axiosInstance.get(`question/${id}`);
+    const conceptsFetch = await axiosInstance.get(`concepts/`);
+    const question: QuestionType = questionFetch.data;
+    const concepts: ConceptType[] = conceptsFetch.data;
+    return {
+      props: {
+        id,
+        question,
+        concepts,
+      },
+    };
+  }
 }
 
 const QuestionPage: React.FC<QuestionPageProps> = ({
@@ -54,7 +68,7 @@ const QuestionPage: React.FC<QuestionPageProps> = ({
   function preprocessLatex(latex: string) {
     const replacedNewlines = latex.replace(/\n/g, "$\\\\$");
     const parts = replacedNewlines.split("$");
-  
+
     const processedParts = parts.map((part, index) => {
       if (index % 2 === 0) {
         return `\\text{${part}}`;
@@ -63,7 +77,7 @@ const QuestionPage: React.FC<QuestionPageProps> = ({
       }
     });
     return processedParts.join("");
-  } 
+  }
   return (
     <>
       <BackButton />
@@ -72,12 +86,17 @@ const QuestionPage: React.FC<QuestionPageProps> = ({
         style={{ padding: "10vh 8vw" }}
       >
         <div className={styles["question-container"]}>
-          <div className={styles["question-text"]} style={{ textAlign: 'left' }}>
+          <div
+            className={styles["question-text"]}
+            style={{ textAlign: "left" }}
+          >
             <div className={styles["question-heading"]}>
               Question {`${question?.id}`}
             </div>
             {question?.question_text}
-            <BlockMath math={preprocessLatex(question?.question_text_latex||"")} />
+            <BlockMath
+              math={preprocessLatex(question?.question_text_latex || "")}
+            />
           </div>
           <YoutubeEmbed
             embedId={`${extractEmbedIdFromYouTubeLink(
@@ -129,7 +148,7 @@ const QuestionPage: React.FC<QuestionPageProps> = ({
             solution={`${question?.text_solution}`}
             latex={`${question?.text_solution_latex}`}
           />
-          <Comments id={id} user={user} />
+          {user ? <Comments id={id} user={user} /> : <Comments id={id} />}
 
           <div className={styles["container-question-concept"]}>
             <div className={styles["similar-container"]}>
