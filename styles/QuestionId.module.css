@@ -4,7 +4,6 @@
   color: black;
   padding: 25px;
   border: 4px solid #e91e63;
-
 }
 
 .utilities {
@@ -26,8 +25,7 @@
   font-weight: 700;
   font-size: 30px;
   line-height: 39px;
-
-  color: #E91E63;
+  color: #e91e63;
 }
 
 .tags-container {
@@ -37,10 +35,8 @@
 
 .container-question-concept {
   display: flex;
-
   column-gap: 3vw;
   margin-top: 8vh;
-
 }
 
 .similar-container {
@@ -82,21 +78,19 @@
   font-size: 54px;
   line-height: 80px;
   min-height: 12vh;
-  background: linear-gradient(90deg, #FF7426 25.34%, #E91E63 87.89%);
+  background: linear-gradient(90deg, #ff7426 25.34%, #e91e63 87.89%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
   padding: 0 30px;
-
 }
 
 .related-concept-title {
   font-family: 'Rounded Mplus 1c Bold';
   font-style: normal;
-  border-radius: 20px 20px 0 0;
-
+  border-radius: 15px 15px 0 0;
   font-weight: 700;
-  background: linear-gradient(90deg, #ED8C46 4.81%, #DF2952 68.82%);
+  background: linear-gradient(90deg, #ed8c46 4.81%, #df2952 68.82%);
   backdrop-filter: blur(40px);
   font-size: 35px;
   text-align: center;
@@ -104,9 +98,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-
-  color: #FFFFFF;
-
+  color: #ffffff;
 }
 
 .question-boxes {
@@ -120,15 +112,11 @@
   font-weight: 300;
   font-size: 22px;
   line-height: 172.8%;
-  /* or 38px */
-
-
   color: #000000;
-
 }
 
 .concept-boxes div {
-  width: auto;
+  width: 100%;
 }
 
 .scrolling-effect .concept-boxes {
@@ -145,16 +133,57 @@
 }
 
 @media screen and (max-width: 768px) {
-  .container-question-concept {
-    align-items: center;
-    justify-content: center;
-    row-gap: 5vh;
-    flex-direction: column;
+  .question-text {
+    font-size: 0.5em;
+    padding: 15px;
   }
 
   .utilities {
-    display: flex;
     flex-direction: column;
+    align-items: center;
+  }
 
+  .tag-line {
+    margin-top: 10px;
+  }
+
+  .container-question-concept {
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    row-gap: 5vh;
+    margin-top: 8vh;
+  }
+
+  .similar-container {
+    margin-top: 5vh;
+    margin-bottom: 3vh;
+  }
+
+  .similar-question-title {
+    font-size: 32px;
+    line-height: 48px;
+    padding: 0 15px;
+  }
+
+  .concept-container {
+    margin-top: 5vh;
+    max-width: 100%;
+  }
+
+  .related-concept-title {
+    font-size: 28px;
+    line-height: 50px;
+    padding: 10px 15px;
+  }
+
+  .question-boxes {
+    font-size: 18px;
+    line-height: 140%;
+  }
+
+  .scrolling-effect {
+    height: auto;
+    max-height: 75vh;
   }
 }
