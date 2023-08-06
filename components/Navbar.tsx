@@ -1,137 +1,130 @@
-import { GetSessionParams, getSession, useSession } from "next-auth/react";
-import Image from "next/image";
-import { useRouter } from "next/navigation";
-import { signOut } from "next-auth/react";
-import search from "../public/assets/search.png";
-import home from "../public/assets/home.png";
+import React, { useEffect, useState } from "react";
 import styles from "../styles/Navbar.module.css";
-import userImg from "../public/assets/userImg.png";
-import { User } from "../types";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/router";
+import Image from "next/image";
+import { signOut } from "next-auth/react";
 import Link from "next/link";
-import { useState, useEffect, useLayoutEffect } from "react";
-import axiosInstance from "../pages/api/axios";
-
 const Navbar = () => {
-  const session = useSession();
-  const router = useRouter();
-  const [currUser, setCurrUser] = useState<User>();
-  const [isNavExpanded, setIsNavExpanded] = useState(false);
+  const [activeTab, setActiveTab] = useState<number | null>(null);
 
-  useLayoutEffect(() => {
-    function updateSize() {
-      window.addEventListener("resize", () => setIsNavExpanded(false));
-    }
-    updateSize();
-    return () => window.removeEventListener("resize", updateSize);
-  }, []);
+  const toggleDropdown = (tabIndex: number) => {
+    setActiveTab(activeTab === tabIndex ? null : tabIndex);
+  };
+  const router = useRouter();
+
   return (
-    <nav className={styles["navigation"]}>
-      <Link href="/" className={styles["brand-name"]}>
-        ACEOLYMPIADS
-      </Link>
-      <button
-        className={styles["hamburger"]}
-        onClick={() => {
-          setIsNavExpanded(!isNavExpanded);
-        }}
-      >
-        {/* icon from heroicons.com */}
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          className="h-5 w-5"
-          viewBox="0 0 20 20"
-          fill="white"
+    <nav className={styles.navbar}>
+      <div className={styles.logo}>ITI AGNIHOTRI</div>
+      <ul className={styles["nav-links"]}>
+        <li>
+          <Link href="/">Home</Link>
+        </li>
+        <li>
+          <Link href="/about">About</Link>
+        </li>
+        <li
+          className={`${styles.dropdownToggle} ${
+            activeTab === 0 ? styles.active : ""
+          }`}
+          onMouseEnter={() => toggleDropdown(0)}
+          onMouseLeave={() => toggleDropdown(0)}
         >
-          <path
-            fillRule="evenodd"
-            d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM9 15a1 1 0 011-1h6a1 1 0 110 2h-6a1 1 0 01-1-1z"
-            clipRule="evenodd"
-          />
-        </svg>
-      </button>
-      <div
-        className={
-          isNavExpanded
-            ? styles["navigation-menu-expanded"]
-            : styles["navigation-menu"]
-        }
-      >
-        <ul onClick={() => setIsNavExpanded(false)}>
-          <li>
-            <Link href="/examination">
-              <button>Examinations</button>
-            </Link>
-          </li>
-          <li>
-            {session.data?.user ? (
-              <></>
-            ) : (
-              <>
-                {" "}
-                <button
-                  onClick={() => router.push("/auth")}
-                  className={styles["signup"]}
-                >
-                  Signup
-                </button>
-                <button
-                  onClick={() => router.push("/auth")}
-                  className={styles["login"]}
-                >
-                  Login
-                </button>
-              </>
-            )}
-          </li>
-          <li>
-            <button
-              onClick={() => router.push("/search")}
-              className={styles["search"]}
-            >
-              <Image src={search} alt="" />
-            </button>
-          </li>
-          <li
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              columnGap: 20,
-            }}
+          <Link href="/services">Ace-Olympiads</Link>
+          <span
+            className={`${styles.dropdownIcon} ${
+              activeTab === 0 ? styles.active : ""
+            }`}
           >
-            {session.data?.user ? (
-              <>
-                <div className={styles["profile-image"]}>
-                  {session?.data?.user?.image ? (
-                    <Image
-                      src={session?.data?.user?.image}
-                      alt=""
-                      width={40}
-                      height={40}
-                    />
-                  ) : (
-                    <Image src={userImg} alt="" width={40} height={40} />
-                  )}
-                </div>
-                <p>
-                  Currently logged in as{" "}
-                  {session.data.user.name
-                    ? session.data.user.name
-                    : session.data.user.email}
-                </p>
-                <button
-                  onClick={() => {
-                    signOut();
-                  }}
-                  className={styles["login"]}
-                >
-                  Sign Out
-                </button>
-              </>
-            ) : (
-              <></>
-            )}
-          </li>
-        </ul>
+            ▼
+          </span>
+          {activeTab === 0 && (
+            <ul className={styles.dropdown}>
+              <li>
+                <Link href="/service1">NMTC</Link>
+              </li>
+              <li>
+                <Link href="/service2">IJSO</Link>
+              </li>
+            </ul>
+          )}
+        </li>
+
+        <li
+          className={`${styles.dropdownToggle} ${
+            activeTab === 1 ? styles.active : ""
+          }`}
+          onMouseEnter={() => toggleDropdown(1)}
+          onMouseLeave={() => toggleDropdown(1)}
+        >
+          <Link href="/products">Ace- JEE</Link>
+          <span
+            className={`${styles.dropdownIcon} ${
+              activeTab === 1 ? styles.active : ""
+            }`}
+          >
+            ▼
+          </span>
+          {activeTab === 1 && (
+            <ul className={styles.dropdown}>
+              <li>
+                <Link href={"/jee-mains"}>JEE Mains</Link>
+              </li>
+              <li>
+                <Link href="/product2">JEE Advanced</Link>
+              </li>
+            </ul>
+          )}
+        </li>
+        <li
+          className={`${styles.dropdownToggle} ${
+            activeTab === 2 ? styles.active : ""
+          }`}
+          onMouseEnter={() => toggleDropdown(2)}
+          onMouseLeave={() => toggleDropdown(2)}
+        >
+          <Link href="/portfolio">School-Pro</Link>
+          <span
+            className={`${styles.dropdownIcon} ${
+              activeTab === 2 ? styles.active : ""
+            }`}
+          >
+            ▼
+          </span>
+          {activeTab === 2 && (
+            <ul className={styles.dropdown}>
+              <li>
+                <Link href="/project1">7th</Link>
+              </li>
+              <li>
+                <Link href="/project2">8th</Link>
+              </li>
+              <li>
+                <Link href="/project3">9th</Link>
+              </li>
+              <li>
+                <Link href="/project3">10th</Link>
+              </li>
+            </ul>
+          )}
+        </li>
+        <li>
+          <Link href="/contact">Ace-NEET</Link>
+        </li>
+      </ul>
+      <div className={styles.authButtons}>
+        <button
+          onClick={() => router.push("/auth")}
+          className={styles.loginButton}
+        >
+          Login
+        </button>
+        <button
+          onClick={() => router.push("/auth")}
+          className={styles.signupButton}
+        >
+          Sign Up
+        </button>
       </div>
     </nav>
   );

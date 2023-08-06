@@ -1,6 +1,7 @@
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import Welcome from "../components/Welcome";
+import CarouselWrapper from "../components/Caraousel";
 import Content from "../components/Content";
 import {
   useSession,
@@ -9,10 +10,12 @@ import {
   GetSessionParams,
 } from "next-auth/react";
 import axiosInstance from "./api/axios";
-import { User } from "../types";
+import { ConceptProps, User } from "../types";
 interface HomePageProps {
-  user: User; // Replace UserType with the actual type of the user object
+  user: User;
+  concepts: ConceptProps[]; // Replace UserType with the actual type of the user object
 }
+
 export async function getServerSideProps(
   context: GetSessionParams | undefined
 ) {
@@ -22,10 +25,12 @@ export async function getServerSideProps(
     const mail = session?.user?.email;
     const getDetails = await axiosInstance.get(`/users/account/?email=${mail}`);
     const user: User = getDetails.data;
-
+    const response = await axiosInstance.get(`/concepts/`);
+    const concepts: ConceptProps[] = response.data;
     return {
       props: {
         user,
+        concepts,
       },
     };
   } catch (error) {
@@ -36,7 +41,7 @@ export async function getServerSideProps(
     props: {},
   };
 }
-const HomePage: React.FC<HomePageProps> = ({ user }) => {
+const HomePage: React.FC<HomePageProps> = ({ user, concepts }) => {
   const session = useSession();
   const router = useRouter();
 
@@ -44,6 +49,8 @@ const HomePage: React.FC<HomePageProps> = ({ user }) => {
     <div>
       <button onClick={() => signOut()}>Sign out</button>
       <Welcome />
+      <CarouselWrapper concepts={concepts} />
+
       {user?.last_viewed_questions ? (
         <>
           {/* <Content type="Recently Solved" user={user} /> */}

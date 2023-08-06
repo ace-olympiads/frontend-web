@@ -1,128 +1,162 @@
-.navigation {
-  height: auto;
-  width: 100%;
+.navbar {
   display: flex;
-  flex-wrap: wrap; /* Allow flex items to wrap */
+  justify-content: space-between;
   align-items: center;
-  padding: 0.5rem 0rem;
+  padding: 20px;
+  background: linear-gradient(#D46A43, #E91E63, #D46A43);
   backdrop-filter: blur(37px);
-  background: linear-gradient(90deg, #ed8c46 3.49%, #df2952 67.5%);
-  position: relative;
   color: white;
+  transition: background-color 0.3s ease;
 }
 
-.brand-name {
-  text-decoration: none;
-  color: black;
-  font-size: 1.3rem;
-  margin-left: 1rem;
+.logo {
+  font-size: 1.5rem;
 }
 
-.navigation-menu {
+.nav-links {
+  list-style: none;
   display: flex;
-  margin-left: auto;
+  gap: 20px;
 }
 
-.login {
-  width: 125px;
-  height: 34px;
-  font-weight: 800;
-  font-size: 16px;
-  color: #D9584A;
-  text-decoration: transparent;
-  background: #F9EFE7;
-  backdrop-filter: blur(40px);
-  border-radius: 145px;
-}
-
-.signup {
-  background: #1E1E1E;
-  backdrop-filter: blur(40px);
-  width: 124px;
-  font-weight: 600;
-  height: 34px;
-  font-size: 16px;
-  border-radius: 145px;
-}
-
-.navigation-menu ul {
-  display: flex;
-  padding: 0;
-}
-
-.navigation-menu li {
-  list-style-type: none;
-  margin: 0 1rem;
-}
-
-.navigation-menu li a {
+.nav-links a {
   text-decoration: none;
-  display: block;
-  width: 100%;
+  color: white;
+  transition: color 0.3s ease;
 }
 
-.hamburger {
-  border: 0;
-  height: 40px;
-  width: 40px;
-  padding: 0.5rem;
-  border-radius: 50%;
-  cursor: pointer;
-  transition: background-color 0.2s ease-in-out;
-  position: absolute;
-  right: 0;
-  top: 20px;
-  transform: translateY(-50%);
+.dropdownToggle {
+  position: relative;
+}
+
+.dropdownIcon {
+  margin-left: 5px;
+  transition: transform 0.3s ease;
+}
+
+.dropdownIcon.active {
+  transform: rotate(180deg);
+}
+
+.dropdownToggle.active .dropdownIcon {
+  transform: rotateY(180deg) !important;
+}
+
+.dropdown {
   display: none;
+  position: absolute;
+  background-color: white;
+  color: black !important;
+  padding: 10px;
+  min-width: 130px;
+  width: 150px;
+  list-style: none;
+  animation: fadeInDown 0.5s ease;
 }
 
-@media screen and (max-width: 768px) {
-  .hamburger {
-    display: block;
-  }
+.nav-links li:hover .dropdown {
+  display: block;
+  color: black !important;
 
-  .navigation {
+}
+
+.dropdown li {
+  color: black !important;
+  margin: 5px 0;
+  transition: 0.3s ease;
+}
+
+.dropdown li a {
+  color: black !important;
+
+}
+
+.dropdown li:hover {
+  font-size: 20px;
+  color: black !important;
+
+  opacity: 0.8;
+}
+
+@media (max-width: 768px) {
+  .navbar {
     flex-direction: column;
-    align-items: flex-start; /* Align items to the left */
+    align-items: flex-start;
   }
 
-  .navigation-menu {
+  .nav-links {
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 10px;
+  }
+
+  .dropdown {
+    position: static;
     display: none;
+    background-color: inherit;
+    padding: 10px;
+    list-style: none;
   }
 
-  .navigation-menu-expanded {
-    display: flex; /* Show expanded menu */
-    flex-direction: column;
-    width: 100%;
-    height: auto;
-    border-top: 1px solid black;
-    overflow: hidden;
-    z-index: 10000000000;
-  }
-
-  .navigation-menu-expanded ul {
+  .nav-links li:hover .dropdown {
     display: block;
-    padding: 0;
+
   }
 
-  .navigation-menu-expanded li {
-    text-align: center;
-    margin: 2vh;
-    font-size: 22px;
+  .dropdown li a {
+    color: white !important;
+
+  }
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
   }
 
-  .navigation-menu-expanded li:last-child {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    margin: 2vh 0;
-    row-gap: 1vh;
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeOutUp {
+  from {
+    opacity: 1;
+    transform: translateY(0);
   }
 
-  .navigation-menu-expanded li a {
-    color: black;
-    width: 100%;
-    padding: 1.5rem 0;
+  to {
+    opacity: 0;
+    transform: translateY(-10px);
   }
+}
+
+/* Animation when dropdown closes */
+.dropdown.closing {
+  animation: fadeOutUp 0.3s ease;
+}
+
+
+.authButtons {
+  display: flex;
+  gap: 10px;
+}
+
+.loginButton,
+.signupButton {
+  padding: 8px 16px;
+  background-color: transparent;
+  border: 1px solid white;
+  color: white;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.loginButton:hover,
+.signupButton:hover {
+  background-color: white;
+  color: #333;
 }

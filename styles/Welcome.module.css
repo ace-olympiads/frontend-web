@@ -2,7 +2,7 @@
   font-family: "Poppins";
   font-style: normal;
   font-weight: 700;
-  font-size: 80px;
+  font-size: 70px;
   line-height: 109.5%;
   /* or 88px */
 }
@@ -11,7 +11,7 @@
   font-family: "Poppins";
   font-style: normal;
   font-weight: 700;
-  font-size: 80px;
+  font-size: 70px;
   line-height: 109.5%;
   /* or 88px */
   margin-right: 0.5rem;
@@ -28,19 +28,22 @@
 }
 
 .welcome-text {
-  padding: 100px 62px;
+  padding: 30px 62px;
 }
 
 .welcome-container {
-  height: 118vh;
+  height: 110vh;
+  width: 100%;
   background-image: url('../public/assets/welcomeImg.png');
-  background-size: contain;
-  background-position-y: bottom;
+  background-size: cover;
+  background-position-y: -120px;
   background-repeat: no-repeat;
 }
 
 .getting-started-btn {
-  background: linear-gradient(90deg, #ed8c46 3.49%, #df2952 67.5%);
+  background-color: white;
+
+  color: #ed8c46;
   border: 1px solid #000000;
   backdrop-filter: blur(40px);
   margin-top: 3rem;
