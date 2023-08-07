@@ -19,20 +19,32 @@ interface HomePageProps {
 export async function getServerSideProps(
   context: GetSessionParams | undefined
 ) {
-  const session = await getSession(context);
-
   try {
-    const mail = session?.user?.email;
-    const getDetails = await axiosInstance.get(`/users/account/?email=${mail}`);
-    const user: User = getDetails.data;
-    const response = await axiosInstance.get(`/concepts/`);
-    const concepts: ConceptProps[] = response.data;
-    return {
-      props: {
-        user,
-        concepts,
-      },
-    };
+    const session = await getSession(context);
+    if (session) {
+      const mail = session?.user?.email;
+      const getDetails = await axiosInstance.get(
+        `/users/account/?email=${mail}`
+      );
+      const user: User = getDetails.data;
+      const response = await axiosInstance.get(`/concepts/`);
+      const concepts: ConceptProps[] = response.data;
+      return {
+        props: {
+          user,
+          concepts,
+        },
+      };
+    } else {
+      const response = await axiosInstance.get(`/concepts/`);
+      const concepts: ConceptProps[] = response.data;
+
+      return {
+        props: {
+          concepts,
+        },
+      };
+    }
   } catch (error) {
     console.log(error);
   }
@@ -42,6 +54,7 @@ export async function getServerSideProps(
   };
 }
 const HomePage: React.FC<HomePageProps> = ({ user, concepts }) => {
+  console.log(concepts);
   const session = useSession();
   const router = useRouter();
 
@@ -49,6 +62,8 @@ const HomePage: React.FC<HomePageProps> = ({ user, concepts }) => {
     <div>
       <button onClick={() => signOut()}>Sign out</button>
       <Welcome />
+      <button onClick={() => router.push("/auth")}>login</button>
+
       <CarouselWrapper concepts={concepts} />
 
       {user?.last_viewed_questions ? (
@@ -64,7 +79,6 @@ const HomePage: React.FC<HomePageProps> = ({ user, concepts }) => {
           <Content type="concept" />
         </>
       )}
-      <button onClick={() => router.push("/auth")}>login</button>
     </div>
   );
 };

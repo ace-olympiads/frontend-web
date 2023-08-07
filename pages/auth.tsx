@@ -1,7 +1,7 @@
 import AuthForm from "../components/AuthForm";
 import BackButton from "../components/BackButton";
 
-const Login: React.FC = () => {
+const Auth: React.FC = () => {
   return (
     <div>
       <BackButton />
@@ -12,4 +12,4 @@ const Login: React.FC = () => {
   );
 };
 
-export default Login;
+export default Auth;

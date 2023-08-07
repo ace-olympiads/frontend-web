@@ -1,25 +1,25 @@
 import React, { useEffect, useState } from "react";
 import styles from "../styles/Navbar.module.css";
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { signOut } from "next-auth/react";
 import Link from "next/link";
 const Navbar = () => {
   const [activeTab, setActiveTab] = useState<number | null>(null);
-
+  const session = useSession();
   const toggleDropdown = (tabIndex: number) => {
     setActiveTab(activeTab === tabIndex ? null : tabIndex);
   };
   const router = useRouter();
-
+  console.log("session is", session);
   return (
     <nav className={styles.navbar}>
-      <div className={styles.logo}>ITI AGNIHOTRI</div>
+      <div className={styles.logo}>
+        {" "}
+        <Link href="/">ITI AGNIHOTRI</Link>
+      </div>
       <ul className={styles["nav-links"]}>
-        <li>
-          <Link href="/">Home</Link>
-        </li>
         <li>
           <Link href="/about">About</Link>
         </li>
@@ -113,18 +113,32 @@ const Navbar = () => {
         </li>
       </ul>
       <div className={styles.authButtons}>
-        <button
-          onClick={() => router.push("/auth")}
-          className={styles.loginButton}
-        >
-          Login
-        </button>
-        <button
-          onClick={() => router.push("/auth")}
-          className={styles.signupButton}
-        >
-          Sign Up
-        </button>
+        {session.data?.user ? (
+          <>
+            <div>
+              <Image
+                style={{ borderRadius: "50%", margin: "0 10px" }}
+                src={session.data.user.image}
+                width={42}
+                height={42}
+                alt=""
+              />
+            </div>
+            <button onClick={() => signOut()} className={styles.loginButton}>
+              Logout
+            </button>
+          </>
+        ) : (
+          <>
+            <button
+              onClick={() => router.push("/auth")}
+              className={styles.loginButton}
+            >
+              Login
+            </button>
+            <button className={styles.signupButton}>Sign Up</button>
+          </>
+        )}
       </div>
     </nav>
   );

@@ -5,8 +5,8 @@ import Image from "next/image";
 import { useRouter } from "next/router";
 import defaultImg from "../public/assets/userImg.png";
 import { QuestionProps } from "../types";
-import { table } from "console";
-
+import { motion, useAnimation } from "framer-motion";
+import { useInView } from "react-intersection-observer";
 import like from "../public/assets/like.png";
 import views from "../public/assets/views.png";
 import comment from "../public/assets/comment.png";
@@ -15,6 +15,10 @@ const Question = ({ question }: QuestionProps) => {
   console.log(question);
   const [thumbnailUrl, setThumbnail] = useState<string>("");
   const router = useRouter();
+  const boxVariant = {
+    visible: { opacity: 1, x: 0, transition: { duration: 0.5 } },
+    hidden: { opacity: 0, x: 100 },
+  };
   useEffect(() => {
     setThumbnail(
       `https://img.youtube.com/vi/${extractEmbedIdFromYouTubeLink(
@@ -24,9 +28,24 @@ const Question = ({ question }: QuestionProps) => {
     console.log(thumbnailUrl);
   }, [question]);
   console.log(thumbnailUrl);
+  const control = useAnimation();
+  const [ref, inView] = useInView();
+
+  useEffect(() => {
+    if (inView) {
+      control.start("visible");
+    } else {
+      control.start("hidden");
+    }
+  }, [control, inView]);
   return (
-    <div>
-      <div className={styles["question-card"]}>
+    <motion.div
+      ref={ref}
+      variants={boxVariant}
+      initial="hidden"
+      animate={control}
+    >
+      <motion.div className={styles["question-card"]}>
         {thumbnailUrl ? (
           <Image src={thumbnailUrl} alt="Thumbnail" width={300} height={200} />
         ) : (
@@ -78,8 +97,8 @@ const Question = ({ question }: QuestionProps) => {
         >
           View Answer
         </button>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 };
 

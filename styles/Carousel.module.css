@@ -1,9 +1,11 @@
 .carousel_wrapper {
-    width: 100vw;
+    width: 93vw;
     display: flex;
     flex-direction: row;
     align-items: center;
+    border: 2px solid red;
     justify-content: center;
+    text-align: center;
 }
 
 .carousel_wrapper>div {

@@ -37,7 +37,6 @@ const CarouselWrapper: React.FC<{ concepts: ConceptProps[] }> = ({
         draggable={false}
         */
         responsive={responsive}
-        ssr
         infinite={false}
         beforeChange={() => setIsMoving(true)}
         afterChange={() => setIsMoving(false)}
