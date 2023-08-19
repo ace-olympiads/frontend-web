@@ -1,30 +1,59 @@
-.concept-card{
-    margin: 2em 1em 2em 1em;
-    margin-right:0;
-    background: #F8E5D6;
-backdrop-filter: blur(152.5px);
-/* Note: backdrop-filter has minimal browser support */
-border: 2px solid #e91e63;
-width: 300px;
-border-radius: 20px;
-min-height: 300px;
-}
-.concept-img img{
-    height: 220px;
-}
-.concept-title{
-    color:black;
-    border-top: 2px solid #e91e63;
-    font-weight: 500;
-    text-align: center;
-    font-size: 25px;
+.wrapper {
+    width: 303.75px;
+    height: 306.8px;
+    flex-shrink: 0;
+    border-radius: 10px;
     display: flex;
-    border-radius:0px 0px 20px 20px;
-    justify-content: center;
+    flex-direction: column;
     align-items: center;
-    height: 80px;
+    justify-content: center;
+    background: #FFF;
+    margin: 100px 0;
+    position: relative;
+    transition: transform 0.3s ease-in-out;
+    box-shadow: 0px 2px 6px 0px rgba(0, 0, 0, 0.05);
 }
-.concept-content {
-    color: black;
-  }
-  
+
+.wrapper:hover {
+    transform: translateY(-10px);
+}
+
+.image {
+    width: 273.75px;
+    height: 150px;
+}
+
+.image1 {
+    display: flex;
+    width: 70px;
+    height: 70px;
+    padding: 15px;
+    align-items: center;
+    flex-shrink: 0;
+    border-radius: 70px;
+    background: #FFF;
+    box-shadow: 0px 13px 14px 0px rgba(129, 104, 145, 0.05);
+}
+
+.wrapper h1 {
+    color: #192335;
+    text-align: center;
+    font-family: Inter;
+    font-size: 19px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 24.8px;
+    margin: 5px 0;
+    /* 130.526% */
+}
+
+.wrapper h3 {
+    color: #192335;
+    text-align: center;
+    font-family: Inter;
+    font-size: 13px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 21px;
+    /* 161.538% */
+}

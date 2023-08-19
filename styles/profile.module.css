@@ -1,0 +1,10 @@
+.question {
+    width: 100%;
+    display: flex;
+}
+
+.head {
+    font-size: 35px;
+    margin: 30px 30px;
+    font-weight: 600;
+}

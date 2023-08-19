@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { signOut } from "next-auth/react";
 import Link from "next/link";
+import avatar from "../public/assets/avatar.svg";
 const Navbar = () => {
   const [activeTab, setActiveTab] = useState<number | null>(null);
   const session = useSession();
@@ -118,7 +119,9 @@ const Navbar = () => {
             <div>
               <Image
                 style={{ borderRadius: "50%", margin: "0 10px" }}
-                src={session.data.user.image}
+                src={
+                  session?.data?.user?.image ? session.data?.user.image : avatar
+                }
                 width={42}
                 height={42}
                 alt=""
@@ -136,7 +139,12 @@ const Navbar = () => {
             >
               Login
             </button>
-            <button className={styles.signupButton}>Sign Up</button>
+            <button
+              className={styles.signupButton}
+              onClick={() => router.push("/auth")}
+            >
+              Sign Up
+            </button>
           </>
         )}
       </div>

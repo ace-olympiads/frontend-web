@@ -1,6 +1,7 @@
 import React from "react";
 import styles from "../styles/Concept.module.css";
-import rando from "../public/assets/welcomeImg.png";
+import rando from "../public/assets/random.webp";
+import circle from "../public/assets/circle.jpg";
 import Image from "next/image";
 import { ConceptProps } from "../types";
 import { useRouter } from "next/router";
@@ -9,6 +10,7 @@ const Concept = ({ concept }: ConceptProps) => {
   const router = useRouter();
   return (
     <div
+      className={styles.wrapper}
       onClick={() => {
         router.push({
           pathname: `/concept/${concept?.id}`,
@@ -19,12 +21,15 @@ const Concept = ({ concept }: ConceptProps) => {
         });
       }}
     >
-      <div className={styles["concept-card"]}>
-        <div className={styles["concept-img"]}>
-          <Image src={rando} alt="" />
-        </div>
-        <div className={styles["concept-title"]}>{concept?.title}</div>
+      <div className={styles.image}>
+        <Image src={rando} />
       </div>
+
+      <div className={styles.image1}>
+        <Image src={circle} />
+      </div>
+      <h1>{concept.title}</h1>
+      <h3>{concept.videos.length} Videos</h3>
     </div>
   );
 };

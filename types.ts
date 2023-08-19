@@ -127,3 +127,12 @@ export interface SpecificExam {
   examination: Exam
   questions: QuestionType[]
 }
+
+export interface Testimonial {
+  id: Number
+  name: string
+  designation: string
+  content: string
+  created_at: string
+  image: string
+}

@@ -103,10 +103,6 @@
   line-height: 1.5;
 }
 
-.logo {
-  height: 1em;
-  margin-left: 0.5rem;
-}
 
 @media (max-width: 600px) {
   .grid {
@@ -128,5 +124,32 @@
 
   .logo img {
     filter: invert(1);
+  }
+}
+
+
+
+.logos {
+  overflow: hidden;
+  width: 100%;
+}
+
+.logos-slide {
+  display: flex;
+  flex-direction: row;
+  animation: scroll 15s linear infinite;
+  white-space: nowrap;
+  /* Keep the testimonials in a single line */
+}
+
+/* Define the animation to scroll the testimonials */
+@keyframes scroll {
+  0% {
+    transform: translateX(0);
+  }
+
+  100% {
+    transform: translateX(-100%);
+    /* Adjust based on your content width */
   }
 }

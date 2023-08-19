@@ -30,7 +30,6 @@
 }
 
 body {
-  color: rgb(var(--foreground-rgb));
-  background-color: #F9EADF;
+  color: black;
   height: auto;
 }

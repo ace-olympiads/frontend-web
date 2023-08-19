@@ -1,8 +1,13 @@
 import { useRouter } from "next/navigation";
-import React, { useEffect, useState } from "react";
+
+import React, { useEffect, useRef, useState } from "react";
 import Welcome from "../components/Welcome";
 import CarouselWrapper from "../components/Caraousel";
 import Content from "../components/Content";
+import Testimonials from "../components/Testimonial";
+
+import styles from "../styles/Home.module.css";
+
 import {
   useSession,
   signOut,
@@ -10,10 +15,13 @@ import {
   GetSessionParams,
 } from "next-auth/react";
 import axiosInstance from "./api/axios";
-import { ConceptProps, User } from "../types";
+
+import { ConceptProps, User, Testimonial } from "../types";
+
 interface HomePageProps {
   user: User;
   concepts: ConceptProps[]; // Replace UserType with the actual type of the user object
+  testimonials: Testimonial[];
 }
 
 export async function getServerSideProps(
@@ -21,27 +29,35 @@ export async function getServerSideProps(
 ) {
   try {
     const session = await getSession(context);
+    const response = await axiosInstance.get(`/concepts/`);
+    const testimonialsData = await axiosInstance.get(`/testimonials/`);
+    console.log(testimonialsData);
+    const testimonials: Testimonial[] = testimonialsData.data;
+    const concepts: ConceptProps[] = response.data;
     if (session) {
       const mail = session?.user?.email;
+
       const getDetails = await axiosInstance.get(
         `/users/account/?email=${mail}`
       );
       const user: User = getDetails.data;
-      const response = await axiosInstance.get(`/concepts/`);
-      const concepts: ConceptProps[] = response.data;
       return {
         props: {
           user,
           concepts,
+          testimonials,
         },
       };
     } else {
       const response = await axiosInstance.get(`/concepts/`);
       const concepts: ConceptProps[] = response.data;
+      const testimonialsData = await axiosInstance.get(`/testimonials/`);
+      const testimonials: Testimonial[] = testimonialsData.data;
 
       return {
         props: {
           concepts,
+          testimonials,
         },
       };
     }
@@ -53,31 +69,36 @@ export async function getServerSideProps(
     props: {},
   };
 }
-const HomePage: React.FC<HomePageProps> = ({ user, concepts }) => {
-  console.log(concepts);
+
+const HomePage: React.FC<HomePageProps> = ({
+  user,
+  concepts,
+  testimonials,
+}) => {
+  console.log(testimonials);
   const session = useSession();
   const router = useRouter();
 
   return (
     <div>
-      <button onClick={() => signOut()}>Sign out</button>
       <Welcome />
-      <button onClick={() => router.push("/auth")}>login</button>
-
+      <div className={styles["logos"]}>
+        <div className={styles["logos-slide"]}>
+          {testimonials.map((item, index) => (
+            <Testimonials item={item} key={index} />
+          ))}
+        </div>
+      </div>
+      {/*  */}
       <CarouselWrapper concepts={concepts} />
-
       {user?.last_viewed_questions ? (
         <>
           {/* <Content type="Recently Solved" user={user} /> */}
-          <Content type="Recently Learnt" user={user} />
-          <Content type="question" />
-          <Content type="concept" />
+          {/* <Content type="Recently Learnt" user={user} />
+          <Content type="question" /> <Content type="concept" /> */}
         </>
       ) : (
-        <>
-          <Content type="question" />
-          <Content type="concept" />
-        </>
+        <>{/* <Content type="question" /> <Content type="concept" /> */}</>
       )}
     </div>
   );

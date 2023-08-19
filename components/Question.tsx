@@ -9,7 +9,7 @@ import { motion, useAnimation } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import like from "../public/assets/like.png";
 import views from "../public/assets/views.png";
-import comment from "../public/assets/comment.png";
+import comment from "../public/assets/chat.png";
 
 const Question = ({ question }: QuestionProps) => {
   console.log(question);
@@ -47,24 +47,37 @@ const Question = ({ question }: QuestionProps) => {
     >
       <motion.div className={styles["question-card"]}>
         {thumbnailUrl ? (
-          <Image src={thumbnailUrl} alt="Thumbnail" width={300} height={200} />
+          <Image
+            className={styles["thumb-question"]}
+            src={thumbnailUrl}
+            alt="Thumbnail"
+            width={300}
+            height={200}
+          />
         ) : (
-          <Image src={defaultImg} alt="Thumbnail" width={300} height={200} />
+          <Image
+            className={styles["thumb-question"]}
+            src={defaultImg}
+            alt="Thumbnail"
+            width={300}
+            height={200}
+          />
         )}
         <div
+          className={styles["question-title-wrap"]}
           onClick={() => {
             router.push(`/question/${question.id}`);
           }}
         >
           <span className={styles["question-title"]}>Ques.</span>
           <span className={styles["question-content"]}>
-            {question?.question_text.length < 60
+            {question?.question_text.length < 80
               ? question.question_text
-              : `${question.question_text.substring(0, 60)}..`}
+              : `${question.question_text.substring(0, 80)}..`}
           </span>
         </div>
         <div className={styles.question_tags_container}>
-          {question?.tags?.map((tag) => {
+          {question?.tags?.slice(0, 3).map((tag) => {
             return (
               <div className={styles.question_tags_element} key={tag.id}>
                 {tag.name.length < 8

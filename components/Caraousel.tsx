@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
 import styles from "../styles/Carousel.module.css";
-import { ConceptProps, Exam } from "../types";
+import { ConceptProps, ConceptType, Exam } from "../types";
 import Concept from "./Concept";
 const CarouselWrapper: React.FC<{ concepts: ConceptProps[] }> = ({
   concepts,
@@ -14,8 +14,8 @@ const CarouselWrapper: React.FC<{ concepts: ConceptProps[] }> = ({
   const responsive = {
     desktop: {
       breakpoint: { max: 3000, min: 1024 },
-      items: 3,
-      slidesToSlide: 3,
+      items: 4,
+      slidesToSlide: 1,
     },
     tablet: {
       breakpoint: { max: 1024, min: 464 },
@@ -32,12 +32,8 @@ const CarouselWrapper: React.FC<{ concepts: ConceptProps[] }> = ({
   return (
     <div className={styles.carousel_wrapper}>
       <Carousel
-        /*
-        swipeable={false}
-        draggable={false}
-        */
         responsive={responsive}
-        infinite={false}
+        infinite={true}
         beforeChange={() => setIsMoving(true)}
         afterChange={() => setIsMoving(false)}
         containerClass="first-carousel-container container"

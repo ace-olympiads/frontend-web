@@ -1,0 +1,74 @@
+.wrapper {
+    background-image: url('../public/assets/profileBack.png');
+    height: 40vh;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 50px;
+
+}
+
+.details {
+    margin: 10px 0;
+}
+
+.details h2 {
+    color: white;
+    font-family: Inter;
+    font-size: 19px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 24.8px;
+    /* 130.526% */
+}
+
+.details h3 {
+    color: white;
+    font-family: Inter;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 28px;
+    /* 175% */
+}
+
+.content {
+    display: flex;
+    column-gap: 2vw;
+}
+
+.content div img {
+    height: 150px;
+    width: 150px;
+    border-radius: 50%;
+}
+
+.utils div div:first-child {
+    margin: 0;
+    display: flex;
+    padding: 0;
+    font-size: 25px;
+    color: white;
+    justify-content: center;
+    align-items: center;
+
+}
+
+.quote {
+    color: white;
+    font-size: 35px;
+    max-width: 35vw;
+    font-style: italic;
+}
+
+.utils div div:last-child {
+    font-size: 20px;
+    color: white;
+}
+
+.utils {
+    margin-top: 20px;
+    display: flex;
+    column-gap: 1vw;
+    height: 3vh;
+}
