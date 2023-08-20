@@ -93,7 +93,16 @@ export interface VideoData {
   thumbnail_url: string;
 }
 
+export interface Comment {
+  id: Number
+  question: QuestionType
+  commenter: User
+  email: string
+  content: string
+  published_at: string
+  status: true
 
+}
 export type ContentProp = {
   id: number;
   question_text: string;

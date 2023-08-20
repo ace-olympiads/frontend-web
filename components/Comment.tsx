@@ -3,7 +3,7 @@ import React from "react";
 import { CommentProps } from "../types";
 import styles from "../styles/Comment.module.css";
 import Image from "next/image";
-import userImg from "../public/assets/userImg.png";
+import userImg from "../public/assets/avatar.svg";
 const Comment: React.FC<CommentProps> = (props) => {
   const { commenter, email, content, published_at } = props;
   const date = new Date(published_at);

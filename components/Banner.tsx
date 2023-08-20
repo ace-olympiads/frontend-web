@@ -12,16 +12,22 @@ const Banner = () => {
   const [user, setUser] = useState<User>();
   useEffect(() => {
     const fetchUser = async () => {
-      const mail = session.data?.user?.email;
-      const getDetails = await axiosInstance.get(
-        `/users/account/?email=${mail}`
-      );
-      const user: User = getDetails.data;
-      setUser(user);
+      try {
+        if (session.status != "loading") {
+          const mail = session?.data?.user?.email;
+          const getDetails = await axiosInstance.get(
+            `/users/account/?email=${mail}`
+          );
+          const user: User = getDetails.data;
+          setUser(user);
+        }
+      } catch (error) {
+        console.log(error);
+      }
     };
     fetchUser();
-  }, [session]);
-  console.log(session);
+  }, [session.status]);
+
   return (
     <div>
       <div className={styles.wrapper}>
@@ -31,6 +37,8 @@ const Banner = () => {
               src={
                 session.data?.user?.image ? session.data.user.image : userImg
               }
+              width={150}
+              height={150}
             />
           </div>
           <div className={styles.details}>

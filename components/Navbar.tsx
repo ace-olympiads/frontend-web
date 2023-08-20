@@ -116,7 +116,12 @@ const Navbar = () => {
       <div className={styles.authButtons}>
         {session.data?.user ? (
           <>
-            <div>
+            <div
+              onClick={() => {
+                router.push("/profile");
+              }}
+              style={{ cursor: "pointer" }}
+            >
               <Image
                 style={{ borderRadius: "50%", margin: "0 10px" }}
                 src={

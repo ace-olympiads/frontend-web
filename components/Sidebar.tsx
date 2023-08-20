@@ -30,8 +30,18 @@ const Sidebar = () => {
             >
               Questions
             </MenuItem>
-            <MenuItem icon={<FaBook />}>Concepts</MenuItem>
-            <MenuItem icon={<FaComments />}>Comments</MenuItem>
+            <MenuItem
+              icon={<FaBook />}
+              onClick={() => router.push("/profile/VisConcepts")}
+            >
+              Concepts
+            </MenuItem>
+            <MenuItem
+              onClick={() => router.push("/profile/MyComments")}
+              icon={<FaComments />}
+            >
+              Comments
+            </MenuItem>
             <MenuItem icon={<FaThumbsUp />}>Liked Videos</MenuItem>
           </SubMenu>
         </Menu>

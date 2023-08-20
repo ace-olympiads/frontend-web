@@ -4,7 +4,6 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import Banner from "../../components/Banner";
 const Layout = ({ children }) => {
-  console.log("idhar land");
   return (
     <div
       style={{

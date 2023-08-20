@@ -1,12 +1,10 @@
-import React, { useEffect, useState } from "react";
-import Layout from "./Layout";
-import styles from "../../styles/profile.module.css";
 import { User } from "../../types";
 import { GetSessionParams, getSession, useSession } from "next-auth/react";
+import React, { useEffect, useState } from "react";
 import axiosInstance from "../api/axios";
-import Question from "../../components/Question";
+import Layout from "./Layout";
 
-const VisQuestions: React.FC = () => {
+const VisConcepts: React.FC = () => {
   const session = useSession();
 
   const [user, setUser] = useState<User>();
@@ -29,16 +27,7 @@ const VisQuestions: React.FC = () => {
   }, [session.status]);
   console.log(session);
   console.log(user?.last_viewed_concept_videos);
-  return (
-    <Layout>
-      <h1 className={styles.head}>Recently seen questions</h1>
-      <div className={styles.question}>
-        {user?.last_viewed_questions?.map((question) => {
-          return <Question question={question} />;
-        })}
-      </div>
-    </Layout>
-  );
+  return <Layout>this</Layout>;
 };
 
-export default VisQuestions;
+export default VisConcepts;

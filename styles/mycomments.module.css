@@ -1,0 +1,13 @@
+.question p:first-child {
+    color: #192335;
+    font-family: Inter;
+    font-size: 25px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 32.5px;
+    /* 130% */
+}
+
+.head {
+    margin: 30px 0;
+}
