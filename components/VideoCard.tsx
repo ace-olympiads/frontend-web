@@ -2,7 +2,7 @@ import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { extractEmbedIdFromYouTubeLink } from "../utils/youtubeId";
 import { Video } from "../types";
-import styles from "../styles/Question.module.css";
+import styles from "../styles/video.module.css";
 import defaultImg from "../public/assets/userImg.png";
 import Image from "next/image";
 
@@ -19,8 +19,14 @@ const VideoCard: React.FC<{ video: Video }> = ({ video }) => {
   }, [video]);
   console.log(thumbnailUrl);
   return (
-    <div>
-      <div className={styles["question-card"]}>
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
+      <div className={styles.video}>
         {thumbnailUrl ? (
           <Image src={thumbnailUrl} alt="Thumbnail" width={300} height={200} />
         ) : (
@@ -31,8 +37,8 @@ const VideoCard: React.FC<{ video: Video }> = ({ video }) => {
             router.push(`/concept/${video.concept}/video/${video.id}`);
           }}
         >
-          <div className={styles["question-title"]}>Video {`${video?.id}`}</div>
-          <div className={styles["question-content"]}>{video?.title}</div>
+          <div className={styles.title}>Video {`${video?.id}`}</div>
+          <div className={styles.content}>{video?.title}</div>
         </div>
       </div>
     </div>

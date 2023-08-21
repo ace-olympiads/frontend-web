@@ -2,6 +2,23 @@
   padding: 0 2rem;
 }
 
+.questionWrap {
+  overflow-x: hidden;
+  width: 85%;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  row-gap: 2vh;
+
+}
+
+.quesGrid {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin: 6vh 0;
+}
+
 .main {
   min-height: 100vh;
   padding: 4rem 0;
@@ -11,6 +28,27 @@
   justify-content: center;
   align-items: center;
 }
+
+.head {
+  color: #192335;
+  font-family: Inter;
+  font-size: 43px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 54.12px;
+  max-width: 800px;
+  /* 125.86% */
+  margin: 0 5vw;
+}
+
+.head span {
+  background: linear-gradient(90deg, #2F57EF 0%, #B966E7 33.33%, #B966E7 66.67%, #2F57EF 100%);
+  -webkit-background-clip: text;
+  font-size: 49px;
+  -webkit-text-fill-color: transparent;
+  transition: 1s;
+}
+
 
 .footer {
   display: flex;

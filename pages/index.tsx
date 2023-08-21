@@ -16,12 +16,14 @@ import {
 } from "next-auth/react";
 import axiosInstance from "./api/axios";
 
-import { ConceptProps, User, Testimonial } from "../types";
+import { ConceptProps, User, Testimonial, QuestionType } from "../types";
+import Question from "../components/Question";
 
 interface HomePageProps {
   user: User;
   concepts: ConceptProps[]; // Replace UserType with the actual type of the user object
   testimonials: Testimonial[];
+  questions: QuestionType[];
 }
 
 export async function getServerSideProps(
@@ -32,6 +34,8 @@ export async function getServerSideProps(
     const response = await axiosInstance.get(`/concepts/`);
     const testimonialsData = await axiosInstance.get(`/testimonials/`);
     console.log(testimonialsData);
+    const questionsData = await axiosInstance.get("/question/add");
+    const questions: QuestionType[] = questionsData.data;
     const testimonials: Testimonial[] = testimonialsData.data;
     const concepts: ConceptProps[] = response.data;
     if (session) {
@@ -46,6 +50,7 @@ export async function getServerSideProps(
           user,
           concepts,
           testimonials,
+          questions,
         },
       };
     } else {
@@ -53,11 +58,13 @@ export async function getServerSideProps(
       const concepts: ConceptProps[] = response.data;
       const testimonialsData = await axiosInstance.get(`/testimonials/`);
       const testimonials: Testimonial[] = testimonialsData.data;
-
+      const questionsData = await axiosInstance.get("/question/add");
+      const questions: QuestionType[] = questionsData.data;
       return {
         props: {
           concepts,
           testimonials,
+          questions,
         },
       };
     }
@@ -74,6 +81,7 @@ const HomePage: React.FC<HomePageProps> = ({
   user,
   concepts,
   testimonials,
+  questions,
 }) => {
   console.log(testimonials);
   const session = useSession();
@@ -90,16 +98,20 @@ const HomePage: React.FC<HomePageProps> = ({
         </div>
       </div>
       {/*  */}
+      <h1 className={styles.head}>
+        Explore our <span> Courses</span>
+      </h1>
       <CarouselWrapper concepts={concepts} />
-      {user?.last_viewed_questions ? (
-        <>
-          {/* <Content type="Recently Solved" user={user} /> */}
-          {/* <Content type="Recently Learnt" user={user} />
-          <Content type="question" /> <Content type="concept" /> */}
-        </>
-      ) : (
-        <>{/* <Content type="question" /> <Content type="concept" /> */}</>
-      )}
+      <h1 className={styles.head}>
+        Enhance knowledge with our <span>Amazing Solutions</span>
+      </h1>
+      <div className={styles.quesGrid}>
+        <div className={styles.questionWrap}>
+          {questions.slice(0, 6).map((question) => {
+            return <Question question={question} />;
+          })}
+        </div>
+      </div>
     </div>
   );
 };

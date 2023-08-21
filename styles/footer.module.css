@@ -1,0 +1,139 @@
+.footer {
+    background-image: url('../public/assets/foot.svg');
+    background-repeat: no-repeat;
+    background-size: cover;
+    padding: 10vh 4vw;
+
+}
+
+.footer_primary {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding-bottom: 80px;
+}
+
+.footer_title {
+    color: #070217;
+    text-align: center;
+    font-size: 48px;
+    font-family: 'Playfair Display';
+    font-style: normal;
+    font-weight: 700;
+    line-height: 56px;
+
+    /* Dark */
+
+    color: white;
+
+}
+
+.footer_body {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 22px;
+    /* or 138% */
+    padding-top: 20px;
+    text-align: center;
+
+    color: white;
+
+    opacity: 0.8;
+}
+
+.footer_nav {
+    padding-top: 40px;
+    display: flex;
+    flex-direction: row;
+    column-gap: 30px;
+}
+
+.footer_nav_links {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 22px;
+    /* identical to box height, or 138% */
+
+
+    color: white;
+
+}
+
+.footer_secondary {
+    padding-top: 40px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.footer_logo {
+    display: flex;
+}
+
+.footer_rights {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 14px;
+    /* identical to box height, or 88% */
+
+    text-align: center;
+
+    /* Dark */
+
+    color: white;
+}
+
+.footer_socials {
+
+    display: flex;
+    column-gap: 10px;
+}
+
+.footer_logo_title {
+    color: #070217;
+
+    font-size: 24px;
+    font-family: Playfair Display;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 100%;
+    letter-spacing: 0.72px;
+    /* identical to box height */
+
+
+    color: white;
+
+}
+
+.footer_socials_fb,
+.footer_socials_ln,
+.footer_socials_tw {
+
+    /* Dark */
+    height: 39px;
+    width: 39px;
+    color: white;
+    display: flex;
+    font-size: 29px;
+    align-items: center;
+    justify-content: center;
+}
+
+.footer_rights {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.footer_logo_title {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

@@ -13,7 +13,10 @@ const Layout = ({ children }) => {
       }}
     >
       <Sidebar />
-      <div className="content" style={{ width: "100%" }}>
+      <div
+        className="content"
+        style={{ width: "100%", height: "auto", minHeight: "100vh" }}
+      >
         <Banner />
         {children}
       </div>
