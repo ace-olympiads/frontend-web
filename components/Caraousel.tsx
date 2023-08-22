@@ -9,7 +9,7 @@ const CarouselWrapper: React.FC<{ concepts: ConceptProps[] }> = ({
   concepts,
 }) => {
   const [isMoving, setIsMoving] = useState(false);
-  +console.log(" concepts");
+  console.log(" concepts");
   console.log(concepts);
   const responsive = {
     desktop: {

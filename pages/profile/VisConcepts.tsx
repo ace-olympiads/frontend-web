@@ -28,7 +28,7 @@ const VisConcepts: React.FC = () => {
   console.log(session);
   console.log(user?.last_viewed_concept_videos);
   return (
-    <Layout>
+    <div>
       <h1>Recently watched Concept videos</h1>
       <div
         style={{
@@ -44,7 +44,7 @@ const VisConcepts: React.FC = () => {
           return <VideoCard video={video} />;
         })}
       </div>
-    </Layout>
+    </div>
   );
 };
 

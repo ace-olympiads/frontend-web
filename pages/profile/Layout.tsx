@@ -3,13 +3,13 @@ import Sidebar from "../../components/Sidebar";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import Banner from "../../components/Banner";
-const Layout = ({ children }) => {
+const Layout = ({ children }: { children: any }) => {
   return (
     <div
       style={{
         display: "flex",
         flexDirection: "row",
-        height: "88vh",
+        margin: "4vh 1vw",
       }}
     >
       <Sidebar />

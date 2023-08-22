@@ -2,7 +2,7 @@
     border-radius: 9px;
     background: #FFF;
     box-shadow: 15px 10px 34px 10px rgba(215, 216, 222, 0.41);
-
+    position: relative;
     color: black;
     min-height: 10vh;
     margin: 10px;
@@ -27,6 +27,20 @@
     border-radius: 50%;
     height: 40px;
     width: 40px;
+}
+
+.cross {
+    position: absolute;
+    right: 10px;
+    top: 20px;
+}
+
+.cross img {
+    transition: 0.3s;
+}
+
+.cross img:hover {
+    scale: 1.4;
 }
 
 @media screen and (max-width: 768px) {

@@ -1,4 +1,5 @@
 export interface CommentProps {
+  id: number
   commenter: User,
   email: string,
   content: string,
@@ -94,7 +95,7 @@ export interface VideoData {
 }
 
 export interface Comment {
-  id: Number
+  id: number
   question: QuestionType
   commenter: User
   email: string

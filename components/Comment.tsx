@@ -1,14 +1,33 @@
 import { useSession } from "next-auth/react";
-import React from "react";
+import React, { useContext } from "react";
+
 import { CommentProps } from "../types";
 import styles from "../styles/Comment.module.css";
 import Image from "next/image";
 import userImg from "../public/assets/avatar.svg";
+import cross from "../public/assets/cross.svg";
+import axiosInstance from "../pages/api/axios";
+import dataContext from "../context/datacontext";
 const Comment: React.FC<CommentProps> = (props) => {
-  const { commenter, email, content, published_at } = props;
+  const { id, commenter, email, content, published_at } = props;
   const date = new Date(published_at);
-
+  const { refetch, setRefetch } = useContext(dataContext);
   const { data: session } = useSession();
+  const handleDelete = async () => {
+    const confirmed = window.confirm(
+      "Are you sure you want to delete this item?"
+    );
+
+    if (confirmed) {
+      try {
+        const resp = await axiosInstance.delete(`/question/comments/${id}/`);
+        setRefetch((prev: boolean) => !prev);
+        console.log(resp);
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  };
   console.log(session);
   return (
     <div className={styles["comment-box"]}>
@@ -28,6 +47,9 @@ const Comment: React.FC<CommentProps> = (props) => {
         <p>
           {date.toLocaleDateString()} {date.toLocaleTimeString()}
         </p>
+      </div>
+      <div className={styles.cross} onClick={() => handleDelete()}>
+        <Image height={30} width={30} src={cross} alt="user image" />
       </div>
       <div className={styles["comment-content"]}>{content}</div>
     </div>

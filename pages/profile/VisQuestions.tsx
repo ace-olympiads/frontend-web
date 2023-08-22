@@ -20,6 +20,7 @@ const VisQuestions: React.FC = () => {
           );
           const user: User = getDetails.data;
           setUser(user);
+          console.log(user);
         }
       } catch (error) {
         console.log(error);
@@ -30,14 +31,18 @@ const VisQuestions: React.FC = () => {
   console.log(session);
   console.log(user?.last_viewed_concept_videos);
   return (
-    <Layout>
+    <div>
       <h1 className={styles.head}>Recently seen questions</h1>
       <div className={styles.question}>
-        {user?.last_viewed_questions?.map((question) => {
-          return <Question question={question} />;
-        })}
+        {user?.last_viewed_questions?.length != 0 ? (
+          user?.last_viewed_questions?.map((question) => {
+            return <Question question={question} />;
+          })
+        ) : (
+          <>No questions Viewed yet</>
+        )}
       </div>
-    </Layout>
+    </div>
   );
 };
 

@@ -5,7 +5,7 @@ import {
   SubMenu,
 } from "react-pro-sidebar";
 import Link from "next/link";
-import React from "react";
+import React, { useContext } from "react";
 import { useRouter } from "next/router";
 import {
   FaGem,
@@ -15,9 +15,11 @@ import {
   FaComments,
   FaThumbsUp,
 } from "react-icons/fa";
-
+import dataContext from "../context/datacontext";
 const Sidebar = () => {
+  const { sidebarOption, setSideBarOption } = useContext(dataContext);
   const router = useRouter();
+
   return (
     <div>
       <SidebarComp style={{ height: "100%" }}>
@@ -26,18 +28,18 @@ const Sidebar = () => {
           <SubMenu prefix="Recent" title="Components" icon={<FaHeart />}>
             <MenuItem
               icon={<FaQuestionCircle />}
-              onClick={() => router.push("/profile/VisQuestions")}
+              onClick={() => setSideBarOption("questions")}
             >
               Questions
             </MenuItem>
             <MenuItem
               icon={<FaBook />}
-              onClick={() => router.push("/profile/VisConcepts")}
+              onClick={() => setSideBarOption("concepts")}
             >
               Concepts
             </MenuItem>
             <MenuItem
-              onClick={() => router.push("/profile/MyComments")}
+              onClick={() => setSideBarOption("comments")}
               icon={<FaComments />}
             >
               Comments

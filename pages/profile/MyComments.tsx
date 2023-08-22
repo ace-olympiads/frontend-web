@@ -1,15 +1,17 @@
 import { User } from "next-auth";
 import { useSession } from "next-auth/react";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import axiosInstance from "../api/axios";
 import Comment from "../../components/Comment";
 import { Comment as comm } from "../../types";
 import styles from "../../styles/mycomments.module.css";
+import dataContext from "../../context/datacontext";
 import Layout from "./Layout";
 interface CommentGroups {
   [questionId: string]: comm[];
 }
 const MyComments = () => {
+  const { refetch, setRefetch } = useContext(dataContext);
   const [comments, setComments] = useState<comm[]>();
   const session = useSession();
   useEffect(() => {
@@ -28,7 +30,7 @@ const MyComments = () => {
       }
     };
     fetchComments();
-  }, [session.status]);
+  }, [session.status, refetch]);
   console.log(session);
 
   const groupCommentsByQuestion = () => {
@@ -51,7 +53,7 @@ const MyComments = () => {
   const commentGroups = groupCommentsByQuestion();
 
   return (
-    <Layout>
+    <div>
       <h1 className={styles.head}>Below are all your comments </h1>
       <div>
         {Object.keys(commentGroups).map((questionId) => {
@@ -67,6 +69,7 @@ const MyComments = () => {
               {questionComments.map((comment, index) => (
                 <Comment
                   key={index}
+                  id={comment.id}
                   commenter={comment.commenter}
                   email={comment.email}
                   content={comment.content}
@@ -77,7 +80,7 @@ const MyComments = () => {
           );
         })}
       </div>
-    </Layout>
+    </div>
   );
 };
 

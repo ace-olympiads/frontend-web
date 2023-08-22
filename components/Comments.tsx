@@ -51,6 +51,7 @@ const Comments: React.FC<CommentParam> = ({ id, user }) => {
     ?.map((comment, index) => comments[comments.length - 1 - index])
     ?.map((comment, index) => (
       <Comment
+        id={comment.id}
         key={index}
         commenter={comment.commenter}
         email={comment.email}
