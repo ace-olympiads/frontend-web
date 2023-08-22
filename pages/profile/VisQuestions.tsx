@@ -35,8 +35,8 @@ const VisQuestions: React.FC = () => {
       <h1 className={styles.head}>Recently seen questions</h1>
       <div className={styles.question}>
         {user?.last_viewed_questions?.length != 0 ? (
-          user?.last_viewed_questions?.map((question) => {
-            return <Question question={question} />;
+          user?.last_viewed_questions?.map((question, index) => {
+            return <Question key={index} question={question} />;
           })
         ) : (
           <>No questions Viewed yet</>

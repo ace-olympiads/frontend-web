@@ -1,7 +1,6 @@
 import { useRouter } from "next/navigation";
 import styles from "../styles/Welcome.module.css";
 import { motion } from "framer-motion";
-import { aceInAcademics } from "../public/assets/videos/aceInAcademics.mp4";
 const Welcome = () => {
   const router = useRouter();
   const handleStart = () => {

@@ -40,8 +40,8 @@ const VisConcepts: React.FC = () => {
           height: "60vh",
         }}
       >
-        {user?.last_viewed_concept_videos?.map((video) => {
-          return <VideoCard video={video} />;
+        {user?.last_viewed_concept_videos?.map((video, index) => {
+          return <VideoCard key={index} video={video} />;
         })}
       </div>
     </div>

@@ -22,11 +22,11 @@ const Concept = ({ concept }: ConceptProps) => {
       }}
     >
       <div className={styles.image}>
-        <Image src={rando} />
+        <Image src={rando} alt="user" />
       </div>
 
       <div className={styles.image1}>
-        <Image src={circle} />
+        <Image src={circle} alt="circle" />
       </div>
       <h1>{concept.title}</h1>
       <h3>{concept.videos.length} Videos</h3>

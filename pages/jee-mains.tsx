@@ -49,7 +49,7 @@ const JeeMains: React.FC<{ questions: QuestionData[] }> = ({ questions }) => {
     setCurrentItems(filteredQuestions.slice(itemOffset, endOffset));
     setPageCount(Math.ceil(filteredQuestions.length / itemsPerPage));
   }, [itemOffset, itemsPerPage, filteredQuestions]);
-  const handlePageClick = (event) => {
+  const handlePageClick = (event: { selected: number }) => {
     const newOffset = (event.selected * itemsPerPage) % questions.length;
     console.log(
       `User requested page number ${event.selected}, which is offset ${newOffset}`

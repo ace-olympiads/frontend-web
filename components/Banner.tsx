@@ -37,6 +37,7 @@ const Banner = () => {
               src={
                 session.data?.user?.image ? session.data.user.image : userImg
               }
+              alt="banner"
               width={150}
               height={150}
             />

@@ -107,8 +107,8 @@ const HomePage: React.FC<HomePageProps> = ({
       </h1>
       <div className={styles.quesGrid}>
         <div className={styles.questionWrap}>
-          {questions.slice(0, 6).map((question) => {
-            return <Question question={question} />;
+          {questions.slice(0, 6).map((question, index) => {
+            return <Question key={index} question={question} />;
           })}
         </div>
       </div>
