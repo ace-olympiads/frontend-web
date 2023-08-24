@@ -1,6 +1,6 @@
 .question-card {
   display: flex;
-  min-height: 493px;
+  min-height: 513px;
   padding: 12px;
   flex-direction: column;
   width: 355px;
@@ -43,13 +43,13 @@
 }
 
 .question_tags_container {
-  width: 20vw;
-  display: grid;
+  display: flex;
   column-gap: 1vw;
   margin: 15px 0;
   min-height: 40px;
   row-gap: 1vh;
-  grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+  width: 100%;
+
 
 }
 

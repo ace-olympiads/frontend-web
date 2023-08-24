@@ -6,6 +6,7 @@ import { useRouter } from "next/router";
 import defaultImg from "../public/assets/userImg.png";
 import { QuestionProps } from "../types";
 import { motion, useAnimation } from "framer-motion";
+import Link from "next/link";
 import { useInView } from "react-intersection-observer";
 import like from "../public/assets/like.png";
 import views from "../public/assets/views.png";
@@ -44,6 +45,7 @@ const Question = ({ question }: QuestionProps) => {
       variants={boxVariant}
       initial="hidden"
       animate={control}
+      style={{ display: "flex", justifyContent: "center" }}
     >
       <motion.div className={styles["question-card"]}>
         {thumbnailUrl ? (
@@ -63,19 +65,22 @@ const Question = ({ question }: QuestionProps) => {
             height={200}
           />
         )}
-        <div
-          className={styles["question-title-wrap"]}
-          onClick={() => {
-            router.push(`/question/${question.id}`);
-          }}
-        >
-          <span className={styles["question-title"]}>Ques.</span>
-          <span className={styles["question-content"]}>
-            {question?.question_text.length < 80
-              ? question.question_text
-              : `${question.question_text.substring(0, 80)}..`}
-          </span>
-        </div>
+        <Link href={`/question/${question.id}`}>
+          <div
+            className={styles["question-title-wrap"]}
+            // onClick={() => {
+            //   router.push(`/question/${question.id}`);
+            // }}
+          >
+            <span className={styles["question-title"]}>Ques.</span>
+            <span className={styles["question-content"]}>
+              {question?.question_text.length < 80
+                ? question.question_text
+                : `${question.question_text.substring(0, 80)}..`}
+            </span>
+          </div>
+        </Link>
+
         <div className={styles.question_tags_container}>
           {question?.tags?.slice(0, 3).map((tag) => {
             return (

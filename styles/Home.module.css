@@ -175,7 +175,7 @@
 .logos-slide {
   display: flex;
   flex-direction: row;
-  animation: scroll 15s linear infinite;
+  animation: scroll 50s linear infinite;
   white-space: nowrap;
   /* Keep the testimonials in a single line */
 }

@@ -4,6 +4,7 @@
     align-items: center;
     justify-content: center;
     text-align: center;
+    column-gap: 100px;
 }
 
 .carousel_wrapper>div {

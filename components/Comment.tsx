@@ -14,18 +14,12 @@ const Comment: React.FC<CommentProps> = (props) => {
   const { refetch, setRefetch } = useContext(dataContext);
   const { data: session } = useSession();
   const handleDelete = async () => {
-    const confirmed = window.confirm(
-      "Are you sure you want to delete this item?"
-    );
-
-    if (confirmed) {
-      try {
-        const resp = await axiosInstance.delete(`/question/comments/${id}/`);
-        setRefetch((prev: boolean) => !prev);
-        console.log(resp);
-      } catch (error) {
-        console.log(error);
-      }
+    try {
+      const resp = await axiosInstance.delete(`/question/comments/${id}/`);
+      setRefetch((prev: boolean) => !prev);
+      console.log(resp);
+    } catch (error) {
+      console.log(error);
     }
   };
   console.log(session);
