@@ -1,16 +1,42 @@
-.navbar {
+.upperNavbar {
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
   padding: 20px;
-  background: linear-gradient(#D46A43, #E91E63, #D46A43);
-  backdrop-filter: blur(37px);
-  color: white;
-  transition: background-color 0.3s ease;
+  background-color: white;
 }
 
-.logo {
-  font-size: 1.5rem;
+.searchBar {
+  display: flex;
+  align-items: center;
+  border-radius: 20px;
+  background-color: white;
+  border: 1px solid black;
+  padding: 5px;
+  width: 50%;
+}
+.logo{
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  background: linear-gradient(90deg, #2F57EF 0%, #B966E7 33.33%, #B966E7 66.67%, #2F57EF 100%);
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+  font-weight: 800;
+}
+.authButtons> button{
+  background: linear-gradient(90deg, #2F57EF 0%, #B966E7 33.33%, #B966E7 66.67%, #2F57EF 100%);
+  color: white;
+}
+
+.bottomNavbar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+  background-color: white;
+  color: black;
 }
 
 .nav-links {
@@ -21,12 +47,15 @@
 
 .nav-links a {
   text-decoration: none;
-  color: white;
+  color: black;
   transition: color 0.3s ease;
 }
 
 .dropdownToggle {
   position: relative;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
 }
 
 .dropdownIcon {
@@ -57,7 +86,6 @@
 .nav-links li:hover .dropdown {
   display: block;
   color: black !important;
-
 }
 
 .dropdown li {
@@ -68,16 +96,15 @@
 
 .dropdown li a {
   color: black !important;
-
 }
 
 .dropdown li:hover {
   font-size: 20px;
   color: black !important;
-
   opacity: 0.8;
 }
 
+/* Responsive Styles */
 @media (max-width: 768px) {
   .navbar {
     flex-direction: column;
@@ -88,6 +115,7 @@
     flex-direction: column;
     gap: 10px;
     margin-top: 10px;
+    background-color: white;
   }
 
   .dropdown {
@@ -100,21 +128,19 @@
 
   .nav-links li:hover .dropdown {
     display: block;
-
   }
 
   .dropdown li a {
-    color: white !important;
-
+    color: black !important;
   }
 }
 
+/* Keyframe Animations */
 @keyframes fadeInDown {
   from {
     opacity: 0;
     transform: translateY(-10px);
   }
-
   to {
     opacity: 1;
     transform: translateY(0);
@@ -126,7 +152,6 @@
     opacity: 1;
     transform: translateY(0);
   }
-
   to {
     opacity: 0;
     transform: translateY(-10px);
@@ -138,7 +163,7 @@
   animation: fadeOutUp 0.3s ease;
 }
 
-
+/* Authentication Buttons */
 .authButtons {
   display: flex;
   gap: 10px;
@@ -147,9 +172,6 @@
 .loginButton,
 .signupButton {
   padding: 8px 16px;
-  background-color: transparent;
-  border: 1px solid white;
-  color: white;
   border-radius: 4px;
   cursor: pointer;
   transition: background-color 0.3s ease, color 0.3s ease;

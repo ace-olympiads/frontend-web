@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import styles from "../styles/Navbar.module.css";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
@@ -6,6 +6,15 @@ import Image from "next/image";
 import { signOut } from "next-auth/react";
 import Link from "next/link";
 import avatar from "../public/assets/avatar.svg";
+import SearchBar from "./SearchBar";
+import { FiChevronDown } from "react-icons/fi";
+interface SearchResult {
+  id: number;
+  title: string;
+  question_latex?: string;
+  solution: string;
+  solution_latex: string;
+}
 const Navbar = () => {
   const [activeTab, setActiveTab] = useState<number | null>(null);
   const session = useSession();
@@ -14,12 +23,70 @@ const Navbar = () => {
   };
   const router = useRouter();
   console.log("session is", session);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
+  const handleSearchQueryChange = (newQuery: string) => {
+    setSearchQuery(newQuery);
+  };
+
+  const handleSearchResults = (results: SearchResult[]) => {
+    setSearchResults(results);
+  };
   return (
-    <nav className={styles.navbar}>
-      <div className={styles.logo}>
-        {" "}
-        <Link href="/">ITI AGNIHOTRI</Link>
+    <>
+      <div className={styles.upperNavbar}>
+        <div className={styles.logo}>
+          <Link href="/">ITI AGNIHOTRI</Link>
+        </div>
+        <SearchBar
+        searchQuery={searchQuery}
+        onSearchQueryChange={handleSearchQueryChange}
+        onSearchResults={handleSearchResults}
+      />
+        <div className={styles.authButtons}>
+          {session.data?.user ? (
+            <>
+              <div
+                onClick={() => {
+                  router.push("/profile");
+                }}
+                style={{ cursor: "pointer" }}
+              >
+                <Image
+                  style={{ borderRadius: "50%", margin: "0 10px" }}
+                  src={
+                    session?.data?.user?.image ? session.data?.user.image : avatar
+                  }
+                  width={42}
+                  height={42}
+                  alt=""
+                />
+              </div>
+              <button onClick={() => signOut()} className={styles.loginButton}>
+                Logout
+              </button>
+            </>
+          ) : (
+            <>
+              <button
+                onClick={() => router.push("/auth")}
+                className={styles.loginButton}
+              >
+                Login
+              </button>
+              <button
+                className={`${styles.signupButton} ${styles.upperSignupButton}`}
+                onClick={() => router.push("/auth")}
+              >
+                Sign Up
+              </button>
+            </>
+          )}
+        </div>
       </div>
+      <hr className={styles.borderLine} />
+
+      <nav className={styles.bottomNavbar}>
       <ul className={styles["nav-links"]}>
         <li>
           <Link href="/about">About</Link>
@@ -36,8 +103,7 @@ const Navbar = () => {
             className={`${styles.dropdownIcon} ${
               activeTab === 0 ? styles.active : ""
             }`}
-          >
-            ▼
+          ><FiChevronDown /> 
           </span>
           {activeTab === 0 && (
             <ul className={styles.dropdown}>
@@ -64,7 +130,7 @@ const Navbar = () => {
               activeTab === 1 ? styles.active : ""
             }`}
           >
-            ▼
+            <FiChevronDown /> 
           </span>
           {activeTab === 1 && (
             <ul className={styles.dropdown}>
@@ -90,7 +156,7 @@ const Navbar = () => {
               activeTab === 2 ? styles.active : ""
             }`}
           >
-            ▼
+            <FiChevronDown /> 
           </span>
           {activeTab === 2 && (
             <ul className={styles.dropdown}>
@@ -113,48 +179,10 @@ const Navbar = () => {
           <Link href="/contact">Ace-NEET</Link>
         </li>
       </ul>
-      <div className={styles.authButtons}>
-        {session.data?.user ? (
-          <>
-            <div
-              onClick={() => {
-                router.push("/profile");
-              }}
-              style={{ cursor: "pointer" }}
-            >
-              <Image
-                style={{ borderRadius: "50%", margin: "0 10px" }}
-                src={
-                  session?.data?.user?.image ? session.data?.user.image : avatar
-                }
-                width={42}
-                height={42}
-                alt=""
-              />
-            </div>
-            <button onClick={() => signOut()} className={styles.loginButton}>
-              Logout
-            </button>
-          </>
-        ) : (
-          <>
-            <button
-              onClick={() => router.push("/auth")}
-              className={styles.loginButton}
-            >
-              Login
-            </button>
-            <button
-              className={styles.signupButton}
-              onClick={() => router.push("/auth")}
-            >
-              Sign Up
-            </button>
-          </>
-        )}
-      </div>
-    </nav>
+      </nav>
+    </>
   );
 };
 
 export default Navbar;
+      

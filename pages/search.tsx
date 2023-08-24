@@ -4,6 +4,7 @@ import { useRouter } from "next/router";
 
 import styles from "../styles/Search.module.css";
 import BackButton from "../components/BackButton";
+import SearchBar from "../components/SearchBar";
 
 interface SearchResult {
   id: number;
@@ -17,24 +18,6 @@ export default function Search() {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
   const router = useRouter();
-
-  const handleInputChange = async (e: ChangeEvent<HTMLInputElement>) => {
-    const query = e.target.value;
-    setSearchQuery(query);
-
-    try {
-      const response = await axios.get<SearchResult[]>(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}question/search/`,
-        {
-          params: { query },
-        }
-      );
-      console.log(response.data);
-      setSearchResults(response.data);
-    } catch (error) {
-      console.error(error);
-    }
-  };
 
   const highlightText = (text: string, query: string) => {
     const regex = new RegExp(query, "gi");
@@ -52,16 +35,21 @@ export default function Search() {
   const handleClickQuestion = (questionId: number) => {
     router.push(`/question/${questionId}`);
   };
+  const handleSearchQueryChange = (newQuery: string) => {
+    setSearchQuery(newQuery);
+  };
 
+  const handleSearchResults = (results: SearchResult[]) => {
+    setSearchResults(results);
+  };
   return (
+    <>
+    <BackButton />
     <div className={styles.container}>
-      <BackButton />
-
-      <input
-        type="text"
-        value={searchQuery}
-        onChange={handleInputChange}
-        className={styles.input}
+      <SearchBar
+        searchQuery={searchQuery}
+        onSearchQueryChange={handleSearchQueryChange}
+        onSearchResults={handleSearchResults}
       />
       <ul className={styles.results}>
         {searchResults.length === 0 ? (
@@ -109,5 +97,6 @@ export default function Search() {
         )}
       </ul>
     </div>
+    </>
   );
 }
