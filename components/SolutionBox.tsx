@@ -10,10 +10,11 @@ type SolutionProps = {
 
 const SolutionBox = ({ solution, latex }: SolutionProps) => {
   const [fullSolution, setFullSolution] = useState(false);
+
   function preprocessLatex(latex: string) {
     const replacedNewlines = latex.replace(/\n/g, "$\\\\$");
     const parts = replacedNewlines.split("$");
-  
+
     const processedParts = parts.map((part, index) => {
       if (index % 2 === 0) {
         return `\\text{${part}}`;
@@ -23,20 +24,23 @@ const SolutionBox = ({ solution, latex }: SolutionProps) => {
     });
     return processedParts.join("");
   }
+
   return (
-    <div>
-      <div className={styles['solution-title']}>Text Solution</div>
-      <div className={styles['solution-box']}>
+    <div className={styles["solution-container"]}>
+      <div className={styles["solution-title"]}>Text Solution</div>
+      <div className={styles["solution-box"]}>
         {fullSolution ? (
           <div>
-            <div>{solution}</div>
+            <div className={styles["full-solution"]}>{solution}</div>
             <BlockMath math={preprocessLatex(latex)} />
           </div>
         ) : (
           <>
-            <div>{solution.substring(0, 600)}...</div>
+            <div className={styles["partial-solution"]}>
+              {solution.substring(0, 600)}...
+            </div>
             <span
-              className={styles['view-solution']}
+              className={styles["view-solution"]}
               onClick={() => {
                 setFullSolution((prev) => !prev);
               }}

@@ -64,7 +64,7 @@ const QuestionPage: React.FC<QuestionPageProps> = ({
   user,
 }) => {
   const router = useRouter();
-  const arr = [1, 2, 32, 3, 23, 23, 12, 31, 23, 12, 312];
+  const arr = [1, 2, 32, 3, 23, 23, 12, 31, 23, 12, 312, 13, 14, 15, 18];
   function preprocessLatex(latex: string) {
     const replacedNewlines = latex.replace(/\n/g, "$\\\\$");
     const parts = replacedNewlines.split("$");
@@ -79,120 +79,100 @@ const QuestionPage: React.FC<QuestionPageProps> = ({
     return processedParts.join("");
   }
   return (
-    <>
-      <BackButton />
-      <div
-        className={styles["specific-question-container"]}
-        style={{ padding: "10vh 8vw" }}
-      >
-        <div className={styles["question-container"]}>
-          <div
-            className={styles["question-text"]}
-            style={{ textAlign: "left" }}
-          >
-            <div className={styles["question-heading"]}>
-              Question {`${question?.id}`}
-            </div>
+    <div className={styles["main-container"]}>
+      <div className={styles["sidebar"]}>
+        <div className={styles["similar-questions-container"]}>
+          <div className={styles["similar-questions-title"]}>
+            Similar Questions
+          </div>
+          <div className={styles["scrolling-effect"]}>
+            {arr.map((e) => {
+              return (
+                <div key={e} className={styles["question-boxes"]}>
+                  Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                  Minima voluptatibus ea sunt laboriosam odio. Quod pariatur ut
+                  error earum minima.
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+      <div className={styles["content"]}>
+        <div className={styles["blue-bar"]}>
+          <BackButton />
+          <div className={styles["question-title"]}>
+            {question?.question_text.length > 20
+              ? `${question?.question_text.slice(0, 20)}...`
+              : question?.question_text}
+          </div>
+        </div>
+        <YoutubeEmbed
+          embedId={`${extractEmbedIdFromYouTubeLink(
+            `${question?.video_solution_url}`
+          )}`}
+        />{" "}
+        <div className={styles["utilities"]}>
+          <div className={styles["tags-container"]}>
+            Related Tags <br />
+            {question?.tags?.map((tag) => {
+              return (
+                <span
+                  key={tag?.id}
+                  className={styles["tag-line"]}
+                  onClick={() => {
+                    router.push({
+                      pathname: `/tag/${tag.id}`,
+                      query: { data: "tags", id: tag.id, name: tag.name },
+                    });
+                  }}
+                >
+                  #{tag?.name}
+                </span>
+              );
+            })}
+          </div>
+          <div className={styles["tags-container"]}>
+            Examinations Appeared
+            <br />
+            {question?.examinations?.map((exam) => {
+              return (
+                <span
+                  key={exam?.id}
+                  className={styles["tag-line"]}
+                  onClick={() => {
+                    router.push({
+                      pathname: `/exam/${exam.id}`,
+                      query: { data: "exam", id: exam.id, name: exam.name },
+                    });
+                  }}
+                >
+                  #{exam?.name}
+                </span>
+              );
+            })}
+          </div>
+        </div>
+        <div className={styles["question-text-container"]}>
+          <div className={styles["question-heading"]}>
+            Question {`${question?.id}`}
+          </div>
+          <div className={styles["question-text"]}>
             {question?.question_text}
             <BlockMath
               math={preprocessLatex(question?.question_text_latex || "")}
             />
           </div>
-          <YoutubeEmbed
-            embedId={`${extractEmbedIdFromYouTubeLink(
-              `${question?.video_solution_url}`
-            )}`}
-          />
-          <div className={styles["utilities"]}>
-            <div className={styles["tags-container"]}>
-              Related Tags <br />
-              {question?.tags?.map((tag) => {
-                return (
-                  <span
-                    key={tag?.id}
-                    className={styles["tag-line"]}
-                    onClick={() => {
-                      router.push({
-                        pathname: `/tag/${tag.id}`,
-                        query: { data: "tags", id: tag.id, name: tag.name },
-                      });
-                    }}
-                  >
-                    #{tag?.name}
-                  </span>
-                );
-              })}
-            </div>
-            <div className={styles["tags-container"]}>
-              Examinations Appeared
-              <br />
-              {question?.examinations?.map((exam) => {
-                return (
-                  <span
-                    key={exam?.id}
-                    className={styles["tag-line"]}
-                    onClick={() => {
-                      router.push({
-                        pathname: `/exam/${exam.id}`,
-                        query: { data: "exam", id: exam.id, name: exam.name },
-                      });
-                    }}
-                  >
-                    #{exam?.name}
-                  </span>
-                );
-              })}
-            </div>
-          </div>
-          <SolutionBox
-            solution={`${question?.text_solution}`}
-            latex={`${question?.text_solution_latex}`}
-          />
+        </div>
+        <SolutionBox
+          solution={`${question?.text_solution}`}
+          latex={`${question?.text_solution_latex}`}
+        />
+        <div className={styles["comments-section"]}>
           {user ? <Comments id={id} user={user} /> : <Comments id={id} />}
-
-          <div className={styles["container-question-concept"]}>
-            <div className={styles["similar-container"]}>
-              <div className={styles["similar-question-title"]}>
-                Similar Questions
-              </div>
-              <div className={styles["scrolling-effect"]}>
-                {arr.map((e) => {
-                  return (
-                    <div key={e} className={styles["question-boxes"]}>
-                      Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                      Minima voluptatibus ea sunt laboriosam odio. Quod pariatur
-                      ut error earum minima.
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-
-            <div className={styles["concept-container"]}>
-              <div className={styles["related-concept-title"]}>
-                Learn Concepts
-              </div>
-              <div className={styles["scrolling-effect"]}>
-                {concepts?.map((e) => {
-                  return (
-                    <div key={e.id} className={styles["concept-boxes"]}>
-                      <Concept
-                        concept={{
-                          id: e.id,
-                          title: e.title,
-                          description: e.description,
-                          videos: e.videos,
-                        }}
-                      />
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          </div>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

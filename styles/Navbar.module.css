@@ -67,8 +67,9 @@
   transform: rotate(180deg);
 }
 
-.dropdownToggle.active .dropdownIcon {
-  transform: rotateY(180deg) !important;
+.dropdownToggle.active .dropdownIcon,
+.dropdown:hover .dropdownIcon {
+  transform: rotateX(180deg) !important;
 }
 
 .dropdown {
@@ -81,13 +82,19 @@
   width: 150px;
   list-style: none;
   animation: fadeInDown 0.5s ease;
+  top: 100%; /* Added */
+  left: 0; /* Added */
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1); /* Added for shadow */
+}
+
+.nav-links li {
+  position: relative; /* Added */
 }
 
 .nav-links li:hover .dropdown {
   display: block;
   color: black !important;
 }
-
 .dropdown li {
   color: black !important;
   margin: 5px 0;
@@ -104,7 +111,6 @@
   opacity: 0.8;
 }
 
-/* Responsive Styles */
 @media (max-width: 768px) {
   .navbar {
     flex-direction: column;
@@ -135,7 +141,6 @@
   }
 }
 
-/* Keyframe Animations */
 @keyframes fadeInDown {
   from {
     opacity: 0;
@@ -158,12 +163,10 @@
   }
 }
 
-/* Animation when dropdown closes */
 .dropdown.closing {
   animation: fadeOutUp 0.3s ease;
 }
 
-/* Authentication Buttons */
 .authButtons {
   display: flex;
   gap: 10px;

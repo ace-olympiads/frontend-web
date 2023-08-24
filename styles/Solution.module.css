@@ -1,26 +1,35 @@
+.solution-container {
+  margin: 20px;
+  padding: 20px;
+  background-color: #ffffff;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+}
+
+.solution-title {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
 .solution-box {
-    background: #f9efe7;
-    backdrop-filter: blur(152.5px);
-    color: black;
-    padding: 20px ;
-    /* Note: backdrop-filter has minimal browser support */
-    border: 4px solid #e91e63;
-    border-radius: 0px 0 20px 20px;
-  }
-  .solution-title {
-    width: fit-content;
-    background: linear-gradient(90deg, #ed8c46 3.49%, #df2952 67.5%);
-    backdrop-filter: blur(40px);
-    font-size: 35px;
-    padding: 5px 25px;
-    margin-top: 10vh;
-    font-weight: 800;
-    /* Note: backdrop-filter has minimal browser support */
-  
-    border-radius: 20px 20px 0 0;
-  }
-  @media screen and (max-width: 768px) {
-    .solution-box{
-      font-size: 0.8em;
-    }
-  }
+  border: 1px solid #e0e0e0;
+  background-color: #f5f5f5;
+  padding: 15px;
+  overflow: hidden;
+}
+
+.full-solution {
+  margin-bottom: 15px;
+}
+
+.partial-solution {
+  margin-bottom: 15px;
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+.view-solution {
+  cursor: pointer;
+  color: #007bff;
+  font-weight: bold;
+}

@@ -33,7 +33,7 @@ const Navbar = () => {
     setSearchResults(results);
   };
   return (
-    <>
+    <div className="navbar">
       <div className={styles.upperNavbar}>
         <div className={styles.logo}>
           <Link href="/">ITI AGNIHOTRI</Link>
@@ -180,7 +180,7 @@ const Navbar = () => {
         </li>
       </ul>
       </nav>
-    </>
+    </div>
   );
 };
 

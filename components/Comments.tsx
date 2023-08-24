@@ -13,13 +13,11 @@ const Comments: React.FC<CommentParam> = ({ id, user }) => {
   const [content, setContent] = useState<string>("");
   const { data: session } = useSession();
   const [refetch, setRefetch] = useState<Boolean>(false);
-  console.log(session);
+
   useEffect(() => {
     const fetchComments = async () => {
-      console.log(id);
       try {
         const comments = await axiosInstance.get(`/question/comments/${id}/`);
-        console.log(comments.data);
         setComments(comments.data);
       } catch (error) {
         console.log(error);
@@ -27,8 +25,9 @@ const Comments: React.FC<CommentParam> = ({ id, user }) => {
     };
     fetchComments();
   }, [refetch, id]);
+
   const postComment = async (content: string) => {
-    if (content != "") {
+    if (content !== "") {
       const data: PostCommentProps = {
         commenter: user?.id,
         email: session?.user?.email,
@@ -36,20 +35,17 @@ const Comments: React.FC<CommentParam> = ({ id, user }) => {
         status: true,
         question: id,
       };
-      const postData = await axiosInstance.post("/question/comments/", {
-        ...data,
-      });
+      const postData = await axiosInstance.post("/question/comments/", { ...data });
       const response = postData.data;
-      console.log(response);
       setRefetch((prev) => !prev);
       setContent("");
     } else {
-      alert("Something went wrong");
+      alert("Please enter a comment.");
     }
   };
-  const commentComponents = comments
-    ?.map((comment, index) => comments[comments.length - 1 - index])
-    ?.map((comment, index) => (
+
+  const commentComponents =
+    comments?.map((comment, index) => comments[comments.length - 1 - index])?.map((comment, index) => (
       <Comment
         id={comment.id}
         key={index}
@@ -75,11 +71,12 @@ const Comments: React.FC<CommentParam> = ({ id, user }) => {
               />
             </div>
             <div className={styles["comment-inputs"]}>
-              Let Others know what you think
+              <div className={styles["comment-text"]}>Let others know what you think</div>
               <div className={styles["comment-flex"]}>
                 <textarea
                   onChange={(e) => setContent(e.target.value)}
                   value={content}
+                  placeholder="Write your comment here..."
                 />
                 <Button onClick={() => postComment(content)}>Post</Button>
               </div>
@@ -91,12 +88,14 @@ const Comments: React.FC<CommentParam> = ({ id, user }) => {
               <Image src={userImg} alt="userImg" />
             </div>
             <div className={styles["comment-inputs"]}>
-              You must be logged in to post a comment
+              <div className={styles["comment-text"]}>You must be logged in to post a comment</div>
               <textarea
                 disabled
                 onChange={(e) => setContent(e.target.value)}
                 rows={2}
                 cols={50}
+                placeholder="Login to post a comment"
+                className={styles["comment-textarea"]}
               />
               <Button disabled>Post</Button>
             </div>

@@ -7,6 +7,7 @@ const nextConfig = {
       "platform-lookaside.fbsbx.com",
       "w7.pngwing.com",
       "t4.ftcdn.net",
+      "lh3.google.com"
     ],
   },
 };

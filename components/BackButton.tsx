@@ -1,18 +1,17 @@
 import React from "react";
 import { useRouter } from "next/router";
-import Image from "next/image";
-import back from "../public/assets/back.png";
+import styles from "../styles/BackButton.module.css";
 const BackButton = () => {
   const router = useRouter();
   return (
     <div>
       <button
         title="Go back"
-        style={{ margin: "2vh 3vw" }}
         type="button"
         onClick={() => router.back()}
+        className={`${styles["back-button"]}`}
       >
-        <Image src={back} width={60} height={40} alt="Go Back" />
+        <div className={`${styles["back-icon"]}`}>&#8249;</div>
       </button>
     </div>
   );
