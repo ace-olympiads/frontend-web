@@ -108,8 +108,19 @@ const AuthForm = () => {
   };
 
   return (
-    <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
+    <div
+      style={{
+        height: "80vh",
+        display: "flex",
+        width: "30vw",
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
       <div
+        style={{
+          width: "100%",
+        }}
         className="
         bg-white
           px-4

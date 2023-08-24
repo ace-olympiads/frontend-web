@@ -3,10 +3,12 @@ import BackButton from "../components/BackButton";
 
 const Auth: React.FC = () => {
   return (
-    <div>
-      <BackButton />
-
-      <h1>Authentication</h1>
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "center",
+      }}
+    >
       <AuthForm />
     </div>
   );
