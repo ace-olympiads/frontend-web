@@ -6,6 +6,7 @@ const Auth: React.FC = () => {
     <div
       style={{
         display: "flex",
+        height: "90vh",
         justifyContent: "center",
       }}
     >

@@ -31,7 +31,7 @@ const JeeMains: React.FC<{ questions: QuestionData[] }> = ({ questions }) => {
   // We start with an empty list of items.
   const [currentItems, setCurrentItems] = useState<QuestionData[]>();
   const [pageCount, setPageCount] = useState(0);
-  const itemsPerPage = 6;
+  const itemsPerPage = 10;
   const [searchQuery, setSearchQuery] = useState<string>("");
   // ...
 
@@ -103,8 +103,8 @@ const JeeMains: React.FC<{ questions: QuestionData[] }> = ({ questions }) => {
             <ReactPaginate
               nextLabel=">"
               onPageChange={handlePageClick}
-              pageRangeDisplayed={3}
-              marginPagesDisplayed={2}
+              pageRangeDisplayed={5}
+              marginPagesDisplayed={4}
               pageCount={pageCount}
               previousLabel="<"
               pageClassName="page-item"

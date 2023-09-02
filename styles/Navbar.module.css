@@ -4,6 +4,8 @@
   justify-content: space-between;
   padding: 20px;
   background-color: white;
+  font-family: 'Latin';
+  font-size: 19px;
 }
 
 .searchBar {
@@ -14,19 +16,24 @@
   border: 1px solid black;
   padding: 5px;
   width: 50%;
+  font-size: 19px;
+
 }
-.logo{
+
+.logo {
   padding: 8px 16px;
   border-radius: 4px;
   cursor: pointer;
   transition: background-color 0.3s ease, color 0.3s ease;
-  background: linear-gradient(90deg, #2F57EF 0%, #B966E7 33.33%, #B966E7 66.67%, #2F57EF 100%);
-	-webkit-background-clip: text;
-	-webkit-text-fill-color: transparent;
+  background: linear-gradient(101deg, #2F57EF -36.02%, #B966E7 146.76%);
+
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
   font-weight: 800;
 }
-.authButtons> button{
-  background: linear-gradient(90deg, #2F57EF 0%, #B966E7 33.33%, #B966E7 66.67%, #2F57EF 100%);
+
+.authButtons>button {
+  background: linear-gradient(101deg, #2F57EF -36.02%, #B966E7 146.76%);
   color: white;
 }
 
@@ -37,6 +44,10 @@
   padding: 10px;
   background-color: white;
   color: black;
+  font-family: 'Latin';
+  font-size: 19px;
+
+
 }
 
 .nav-links {
@@ -82,19 +93,24 @@
   width: 150px;
   list-style: none;
   animation: fadeInDown 0.5s ease;
-  top: 100%; /* Added */
-  left: 0; /* Added */
-  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1); /* Added for shadow */
+  top: 100%;
+  /* Added */
+  left: 0;
+  /* Added */
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+  /* Added for shadow */
 }
 
 .nav-links li {
-  position: relative; /* Added */
+  position: relative;
+  /* Added */
 }
 
 .nav-links li:hover .dropdown {
   display: block;
   color: black !important;
 }
+
 .dropdown li {
   color: black !important;
   margin: 5px 0;
@@ -112,6 +128,16 @@
 }
 
 @media (max-width: 768px) {
+  .upperNavbar {
+    flex-direction: column;
+    row-gap: 2vh;
+  }
+
+  .searchBar {
+    width: 80vw;
+    color: black;
+  }
+
   .navbar {
     flex-direction: column;
     align-items: flex-start;
@@ -146,6 +172,7 @@
     opacity: 0;
     transform: translateY(-10px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -157,6 +184,7 @@
     opacity: 1;
     transform: translateY(0);
   }
+
   to {
     opacity: 0;
     transform: translateY(-10px);

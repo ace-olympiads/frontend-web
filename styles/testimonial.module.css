@@ -25,7 +25,7 @@
 
 .author_body h3 {
     color: #192335;
-    font-family: Inter;
+    font-family: 'latin';
     font-size: 19px;
     font-style: normal;
     font-weight: 700;
@@ -35,7 +35,7 @@
 
 .author_body h4 {
     color: #6B7385;
-    font-family: Inter;
+    font-family: 'latin';
     font-size: 15px;
     font-style: italic;
     font-weight: 400;
@@ -45,7 +45,7 @@
 
 .content {
     color: #6B7385;
-    font-family: Inter;
+    font-family: 'latin';
     font-size: 17px;
     font-style: normal;
     font-weight: 400;

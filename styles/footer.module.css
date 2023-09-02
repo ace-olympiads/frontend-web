@@ -137,3 +137,23 @@
     align-items: center;
     justify-content: center;
 }
+
+@media (max-width: 768px) {
+    .footer_nav {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        row-gap: 1vh;
+        flex-direction: column;
+
+    }
+
+    .footer_secondary {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        row-gap: 1vh;
+        flex-direction: column;
+    }
+
+}

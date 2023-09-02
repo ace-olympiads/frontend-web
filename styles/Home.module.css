@@ -4,9 +4,9 @@
 
 .questionWrap {
   overflow-x: hidden;
-  width: 85%;
+  width: 80%;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
   row-gap: 2vh;
 
 }
@@ -31,7 +31,7 @@
 
 .head {
   color: #192335;
-  font-family: Inter;
+  font-family: 'latin';
   font-size: 43px;
   font-style: normal;
   font-weight: 700;

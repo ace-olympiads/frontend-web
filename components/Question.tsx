@@ -13,7 +13,6 @@ import views from "../public/assets/views.png";
 import comment from "../public/assets/chat.png";
 
 const Question = ({ question }: QuestionProps) => {
-  console.log(question);
   const [thumbnailUrl, setThumbnail] = useState<string>("");
   const router = useRouter();
   const boxVariant = {
@@ -47,25 +46,26 @@ const Question = ({ question }: QuestionProps) => {
       animate={control}
       style={{ display: "flex", justifyContent: "center" }}
     >
-      <motion.div className={styles["question-card"]}>
-        {thumbnailUrl ? (
-          <Image
-            className={styles["thumb-question"]}
-            src={thumbnailUrl}
-            alt="Thumbnail"
-            width={300}
-            height={200}
-          />
-        ) : (
-          <Image
-            className={styles["thumb-question"]}
-            src={defaultImg}
-            alt="Thumbnail"
-            width={300}
-            height={200}
-          />
-        )}
-        <Link href={`/question/${question.id}`}>
+      <Link href={`/question/${question.id}`}>
+        <motion.div className={styles["question-card"]}>
+          {thumbnailUrl ? (
+            <Image
+              className={styles["thumb-question"]}
+              src={thumbnailUrl}
+              alt="Thumbnail"
+              width={100}
+              height={400}
+            />
+          ) : (
+            <Image
+              className={styles["thumb-question"]}
+              src={defaultImg}
+              alt="Thumbnail"
+              width={100}
+              height={100}
+            />
+          )}
+
           <div
             className={styles["question-title-wrap"]}
             // onClick={() => {
@@ -79,19 +79,20 @@ const Question = ({ question }: QuestionProps) => {
                 : `${question.question_text.substring(0, 80)}..`}
             </span>
           </div>
-        </Link>
 
-        <div className={styles.question_tags_container}>
-          {question?.tags?.slice(0, 3).map((tag) => {
-            return (
-              <div className={styles.question_tags_element} key={tag.id}>
-                {tag.name.length < 8
-                  ? tag.name
-                  : `${tag.name.substring(0, 7)}...`}
-              </div>
-            );
-          })}
-        </div>
+          <div className={styles.question_tags_container}>
+            {question?.tags?.slice(0, 3).map((tag) => {
+              return (
+                <div className={styles.question_tags_element} key={tag.id}>
+                  {tag.name.length < 8
+                    ? `#${tag.name}`
+                    : `#${tag.name.substring(0, 7)}...`}
+                </div>
+              );
+            })}
+          </div>
+          {/*
+
         <div className={styles.icons_wrapper}>
           <div>
             <Image src={like} alt="asdf" />
@@ -114,8 +115,9 @@ const Question = ({ question }: QuestionProps) => {
           className={styles.go_to_question}
         >
           View Answer
-        </button>
-      </motion.div>
+        </button> */}
+        </motion.div>
+      </Link>
     </motion.div>
   );
 };

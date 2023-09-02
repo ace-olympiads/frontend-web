@@ -113,6 +113,8 @@ const AuthForm = () => {
         height: "80vh",
         display: "flex",
         width: "30vw",
+        padding: "90px 0",
+        minWidth: "400px",
         justifyContent: "center",
         alignItems: "center",
       }}

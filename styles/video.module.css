@@ -12,7 +12,7 @@
 
 .title {
     color: #192335;
-    font-family: Inter;
+    font-family: 'latin';
     font-size: 25px;
     font-style: normal;
     font-weight: 700;
@@ -23,7 +23,7 @@
 
 .content {
     color: #6B7385;
-    font-family: Inter;
+    font-family: 'latin';
     font-size: 21px;
     font-style: normal;
     font-weight: 700;
