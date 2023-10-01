@@ -42,9 +42,11 @@ const Comment: React.FC<CommentProps> = (props) => {
           {date.toLocaleDateString()} {date.toLocaleTimeString()}
         </p>
       </div>
-      <div className={styles.cross} onClick={() => handleDelete()}>
-        <Image height={30} width={30} src={cross} alt="user image" />
-      </div>
+      {session?.user?.name === commenter.username && (
+        <div className={styles.cross} onClick={() => handleDelete()}>
+          <Image height={30} width={30} src={cross} alt="user image" />
+        </div>
+      )}
       <div className={styles["comment-content"]}>{content}</div>
     </div>
   );

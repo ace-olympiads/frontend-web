@@ -1,7 +1,6 @@
 import { useRouter } from "next/navigation";
 import styles from "../styles/Welcome.module.css";
 import { motion } from "framer-motion";
-import video from "../public/static/media/landing.mp4";
 const Welcome = () => {
   const router = useRouter();
   const handleStart = () => {
@@ -12,11 +11,11 @@ const Welcome = () => {
       <div className={styles.home_wrapper}>
         <div className={styles.video_background}>
           <video autoPlay loop muted className={styles.video}>
-            <source src={video} type="video/mp4" />
+            <source src="/static/media/land.mp4" type="video/mp4" />
             Your browser does not support the video tag.
           </video>
         </div>
-        <div className={styles.content}>
+        {/* <div className={styles.content}>
           <div className={styles.head}>
             <motion.h1
               initial={{ x: -1200 }}
@@ -56,7 +55,7 @@ const Welcome = () => {
               </motion.button>
             </div>
           </div>
-        </div>
+        </div> */}
       </div>
     </>
   );

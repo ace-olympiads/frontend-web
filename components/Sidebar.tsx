@@ -5,7 +5,7 @@ import {
   SubMenu,
 } from "react-pro-sidebar";
 import Link from "next/link";
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { useRouter } from "next/router";
 import {
   FaGem,

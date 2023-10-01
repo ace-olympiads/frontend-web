@@ -1,10 +1,11 @@
 /* SearchBar.module.css */
 
 .container {
-  position: relative; /* Add this to establish positioning context */
+  position: relative;
+  /* Add this to establish positioning context */
   display: flex;
   align-items: center;
-  width: 802.5px;
+  width: 50%;
   height: 45px;
   padding: 1px;
   border: 1px solid #ccc;

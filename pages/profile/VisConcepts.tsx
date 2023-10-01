@@ -37,7 +37,6 @@ const VisConcepts: React.FC = () => {
           gridTemplateColumns: "repeat(auto-fit, minmax(370px, 1fr))",
           overflowX: "hidden",
           margin: "5vh 0",
-          height: "60vh",
         }}
       >
         {user?.last_viewed_concept_videos?.map((video, index) => {

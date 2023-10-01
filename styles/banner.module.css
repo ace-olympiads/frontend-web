@@ -1,9 +1,9 @@
 .wrapper {
     background-image: url('../public/assets/profileBack.png');
-    height: 40vh;
     display: flex;
     align-items: center;
     justify-content: space-between;
+    background-size: cover;
     padding: 50px;
 
 }
@@ -54,7 +54,7 @@
 
 .quote {
     color: white;
-    font-size: 35px;
+    font-size: 2vw;
     max-width: 35vw;
     font-style: italic;
 }
@@ -69,4 +69,16 @@
     display: flex;
     column-gap: 1vw;
     height: 3vh;
+}
+
+@media (max-width: 768px) {
+
+    .wrapper {
+        flex-direction: column;
+    }
+
+    .quote {
+        margin: 50px 0;
+        font-size: 25px;
+    }
 }
