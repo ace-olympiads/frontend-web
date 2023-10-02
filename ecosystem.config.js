@@ -7,9 +7,9 @@ module.exports = {
 
   deploy: {
     production: {
-      key: "frontendKey.pem",
+      key: "aceacadFrontend.pem",
       user: "ubuntu",
-      host: "35.154.128.103",
+      host: "52.66.246.139",
       ref: "origin/main",
       repo: "git@github.com:ace-olympiads/frontend-web.git",
       path: "/home/ubuntu",
