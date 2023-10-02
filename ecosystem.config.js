@@ -11,7 +11,7 @@ module.exports = {
       user: "ubuntu",
       host: "52.66.246.139",
       ref: "origin/main",
-      repo: "git@github.com:ace-olympiads/frontend-web.git",
+      repo: "https://github.com/ace-olympiads/frontend-web.git",
       path: "/home/ubuntu",
       "pre-deploy-local": "",
       "post-deploy":
