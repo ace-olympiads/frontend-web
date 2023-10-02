@@ -14,7 +14,7 @@ import {
   getSession,
   GetSessionParams,
 } from "next-auth/react";
-import axiosInstance from "./api/axios";
+import axiosInstance from "../axios";
 
 import { ConceptProps, User, Testimonial, QuestionType } from "../types";
 import Question from "../components/Question";

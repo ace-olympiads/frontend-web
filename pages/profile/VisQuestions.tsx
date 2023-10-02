@@ -3,7 +3,7 @@ import Layout from "./Layout";
 import styles from "../../styles/profile.module.css";
 import { User } from "../../types";
 import { GetSessionParams, getSession, useSession } from "next-auth/react";
-import axiosInstance from "../api/axios";
+import axiosInstance from "../../axios";
 import Question from "../../components/Question";
 
 const VisQuestions: React.FC = () => {

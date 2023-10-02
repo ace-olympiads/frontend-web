@@ -4,7 +4,7 @@ import styles from "../styles/mains.module.css";
 import { GetSessionParams } from "next-auth/react";
 import { Exam, QuestionData } from "../types";
 import { motion } from "framer-motion";
-import axiosInstance from "./api/axios";
+import axiosInstance from "../axios";
 import Question from "../components/Question";
 import ReactPaginate from "react-paginate";
 export async function getServerSideProps(

@@ -4,7 +4,7 @@ import { BsGoogle, BsFacebook, BsInstagram } from "react-icons/bs";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import { toast } from "react-hot-toast";
-import axiosInstance from "../pages/api/axios";
+import axiosInstance from "../axios";
 import Input from "./Input";
 import Button from "./Button";
 import SocialAuthButton from "./SocialAuthButton";

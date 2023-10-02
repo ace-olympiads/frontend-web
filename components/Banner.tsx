@@ -4,7 +4,7 @@ import { useSession } from "next-auth/react";
 import Image from "next/image";
 import { User } from "../types";
 
-import axiosInstance from "../pages/api/axios";
+import axiosInstance from "../axios";
 import userImg from "../public/assets/avatar.svg";
 const Banner = () => {
   const session = useSession();

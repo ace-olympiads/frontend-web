@@ -8,7 +8,7 @@ import Concept from "./Concept";
 import axios from "axios";
 import { QuestionType, ConceptType, User } from "../types";
 import { GetSessionParams, getSession } from "next-auth/react";
-import axiosInstance from "../pages/api/axios";
+import axiosInstance from "../axios";
 
 type propstypes = { type: string; user?: User };
 type scrollVisibilityApiType = React.ContextType<typeof VisibilityContext>;

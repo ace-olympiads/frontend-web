@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { GetServerSideProps } from "next";
-import axiosInstance from "../api/axios";
+import axiosInstance from "../../axios";
 import { ContentProp, Exam, Video } from "../../types";
 import Question from "../../components/Question";
 import { useRouter } from "next/router";

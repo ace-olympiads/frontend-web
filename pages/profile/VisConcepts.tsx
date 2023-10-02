@@ -1,7 +1,7 @@
 import { User } from "../../types";
 import { GetSessionParams, getSession, useSession } from "next-auth/react";
 import React, { useEffect, useState } from "react";
-import axiosInstance from "../api/axios";
+import axiosInstance from "../../axios";
 import Layout from "./Layout";
 import VideoCard from "../../components/VideoCard";
 const VisConcepts: React.FC = () => {

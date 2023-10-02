@@ -1,7 +1,7 @@
 import { User } from "next-auth";
 import { useSession } from "next-auth/react";
 import React, { useEffect, useState, useContext } from "react";
-import axiosInstance from "../api/axios";
+import axiosInstance from "../../axios";
 import Comment from "../../components/Comment";
 import { Comment as comm } from "../../types";
 import styles from "../../styles/mycomments.module.css";

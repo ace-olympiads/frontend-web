@@ -2,7 +2,7 @@ import { User } from "next-auth";
 import { getSession } from "next-auth/react";
 import React from "react";
 import { QuestionType, ConceptType, Video } from "../../../../types";
-import axiosInstance from "../../../api/axios";
+import axiosInstance from "../../../../axios";
 import styles from "../../../../styles/VideoId.module.css";
 import YoutubeEmbed from "../../../../components/YoutubeEmbed";
 import { extractEmbedIdFromYouTubeLink } from "../../../../utils/youtubeId";

@@ -1,7 +1,7 @@
 import React from "react";
 import styles from "../styles/examination.module.css";
 import { GetSessionParams, getSession } from "next-auth/react";
-import axiosInstance from "./api/axios";
+import axiosInstance from "../axios";
 import ExamButton from "../components/ExamButton";
 import { Exam } from "../types";
 import BackButton from "../components/BackButton";

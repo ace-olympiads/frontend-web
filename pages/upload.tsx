@@ -3,7 +3,7 @@ import UploadForm from "../components/UploadForm";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { User } from "../types";
-import axiosInstance from "./api/axios";
+import axiosInstance from "../axios";
 import BackButton from "../components/BackButton";
 
 export async function getServerSideProps(

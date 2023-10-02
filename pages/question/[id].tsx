@@ -3,7 +3,7 @@ import YoutubeEmbed from "../../components/YoutubeEmbed";
 import SolutionBox from "../../components/SolutionBox";
 import Comments from "../../components/Comments";
 import styles from "../../styles/QuestionId.module.css";
-import axiosInstance from "../api/axios";
+import axiosInstance from "../../axios";
 import { extractEmbedIdFromYouTubeLink } from "../../utils/youtubeId";
 import { getSession } from "next-auth/react";
 import Concept from "../../components/Concept";

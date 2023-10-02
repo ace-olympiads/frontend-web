@@ -4,7 +4,7 @@ import { useSession } from "next-auth/react";
 import userImg from "../public/assets/userImg.png";
 import Comment from "./Comment";
 import { CommentParam, CommentProps, PostCommentProps } from "../types";
-import axiosInstance from "../pages/api/axios";
+import axiosInstance from "../axios";
 import Button from "./Button";
 import styles from "../styles/Comments.module.css";
 

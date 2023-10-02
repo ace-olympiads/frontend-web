@@ -6,7 +6,7 @@ import styles from "../styles/Comment.module.css";
 import Image from "next/image";
 import userImg from "../public/assets/avatar.svg";
 import cross from "../public/assets/cross.svg";
-import axiosInstance from "../pages/api/axios";
+import axiosInstance from "../axios";
 import dataContext from "../context/datacontext";
 const Comment: React.FC<CommentProps> = (props) => {
   const { id, commenter, email, content, published_at } = props;

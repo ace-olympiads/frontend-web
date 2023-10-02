@@ -3,7 +3,7 @@ import NextAuth from "next-auth";
 import InstagramProvider from "next-auth/providers/instagram";
 import FacebookProvider from "next-auth/providers/facebook";
 import CredentialsProvider from "next-auth/providers/credentials";
-import axiosInstance from "../axios";
+import axiosInstance from "../../../axios";
 
 export default NextAuth({
   providers: [
