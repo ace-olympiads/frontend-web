@@ -36,19 +36,25 @@ const JeeMains: React.FC<{ questions: QuestionData[] }> = ({ questions }) => {
   // ...
 
   // Filter questions based on search query
-  const filteredQuestions = questions.filter((question) =>
-    question.question_text.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  // const filteredQuestions = questions.filter((question) =>
+  //   question.question_text.toLowerCase().includes(searchQuery.toLowerCase())
+  // );
   // Here we use item offsets; we could also use page offsets
   // following the API or data you're working with.
   const [itemOffset, setItemOffset] = useState(0);
   useEffect(() => {
-    // Fetch items from another resources.
+    // Fetch all questions (without filtering) from props
+    const allQuestions = questions;
+  
+    // Filter the questions based on the search query
+    const filteredQuestions = allQuestions.filter((question) =>
+      question.question_text.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  
     const endOffset = itemOffset + itemsPerPage;
-    console.log(`Loading items from ${itemOffset} to ${endOffset}`);
     setCurrentItems(filteredQuestions.slice(itemOffset, endOffset));
     setPageCount(Math.ceil(filteredQuestions.length / itemsPerPage));
-  }, [itemOffset, itemsPerPage, filteredQuestions]);
+  }, [itemOffset, itemsPerPage, searchQuery, questions]);
   const handlePageClick = (event: { selected: number }) => {
     const newOffset = (event.selected * itemsPerPage) % questions.length;
     console.log(
@@ -60,18 +66,7 @@ const JeeMains: React.FC<{ questions: QuestionData[] }> = ({ questions }) => {
   return (
     <div className={styles.mains_wrapper}>
       <div className={styles.cover}>
-        {/* <div className={styles.header}>
-          <h1>JEE Mains</h1>
-          <button>{questions.length} Questions</button>
-        </div>
-        <h3>Courses that help beginner designers become true unicorns.</h3>
-        <input
-          type="text"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          placeholder="Search questions..."
-          className={styles.searchInput}
-        /> */}
+
 
         <div className={styles.content}>
           <div className={styles.header_wrapper}>

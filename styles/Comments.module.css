@@ -18,6 +18,7 @@
   display: flex;
   align-items: flex-start;
   margin-bottom: 20px;
+  width: 100%;
 }
 
 .comment-profile-image {
@@ -42,12 +43,11 @@
 }
 
 .comment-textarea {
-  flex: 1;
   padding: 10px;
   border: 1px solid #e0e0e0;
   background-color: #f5f5f5;
-  resize: vertical;
   margin-right: 10px;
+  width: 100%;
 }
 
 .comment-components {
@@ -60,7 +60,9 @@
     align-items: center;
   }
 
-  .comment-profile-image {
+  .comment-profile-image img {
     margin-bottom: 10px;
+    width: 30px;
+    height: 30px;
   }
 }

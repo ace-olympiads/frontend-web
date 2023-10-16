@@ -46,8 +46,9 @@ const Question = ({ question }: QuestionProps) => {
       animate={control}
       style={{ display: "flex", justifyContent: "center" }}
     >
-      <Link href={`/question/${question.id}`}>
-        <motion.div className={styles["question-card"]}>
+      {/* <Link href={`/question/${question.id}`}> */}
+        
+        <motion.div onClick={()=> router.push(`/question/${question.id}`)} className={styles["question-card"]}>
           {thumbnailUrl ? (
             <Image
               className={styles["thumb-question"]}
@@ -117,7 +118,7 @@ const Question = ({ question }: QuestionProps) => {
           View Answer
         </button> */}
         </motion.div>
-      </Link>
+      {/* </Link> */}
     </motion.div>
   );
 };
