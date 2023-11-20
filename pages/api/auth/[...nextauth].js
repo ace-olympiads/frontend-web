@@ -147,7 +147,6 @@ export default NextAuth({
             "/auth/convert-token/",
             sendingData
           );
-          console.log("item 4");
 
           const FinalUserDetails = {
             ...makeNewUser.data,
