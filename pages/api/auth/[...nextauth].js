@@ -61,7 +61,6 @@ export default NextAuth({
       clientSecret: process.env.INSTAGRAM_CLIENT_SECRET,
     }),
   ],
-  debug: process.env.NODE_ENV === "development",
   secret: process.env.NEXTAUTH_SECRET,
   callbacks: {
     async signIn({ account, profile, user }) {
