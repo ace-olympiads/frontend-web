@@ -38,9 +38,10 @@ const CarouselWrapper: React.FC<{ concepts: ConceptProps[] }> = ({
         afterChange={() => setIsMoving(false)}
         containerClass="first-carousel-container container"
       >
-        {concepts?.map((concept: any) => {
+        {concepts?.length >1 && concepts?.map((concept: any) => {
           return <Concept concept={concept} key={concept.id} />;
-        })}
+        
+         })}
       </Carousel>
     </div>
   );
