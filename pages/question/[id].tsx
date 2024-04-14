@@ -107,11 +107,7 @@ const QuestionPage: React.FC<QuestionPageProps> = ({
               : question?.question_text}
           </div>
         </div>
-        <YoutubeEmbed
-          embedId={`${extractEmbedIdFromYouTubeLink(
-            `${question?.video_solution_url}`
-          )}`}
-        />{" "}
+        
         <div className={styles["utilities"]}>
           <div className={styles["tags-container"]}>
             Related Tags <br />
@@ -164,6 +160,11 @@ const QuestionPage: React.FC<QuestionPageProps> = ({
             />
           </div>
         </div>
+        <YoutubeEmbed
+          embedId={`${extractEmbedIdFromYouTubeLink(
+            `${question?.video_solution_url}`
+          )}`}
+        />{" "}
         <SolutionBox
           solution={`${question?.text_solution}`}
           latex={`${question?.text_solution_latex}`}
