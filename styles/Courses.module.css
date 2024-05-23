@@ -1,0 +1,149 @@
+.container {
+  padding: 0 2rem;
+}
+
+
+.main_new{
+  /* max-height: 100vh; */
+  padding: 2rem 0;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+  
+.head {
+    color: #4B01D4;
+    font-family: 'Inter';
+    font-size: 18px;
+    font-weight: medium;
+    max-width: 800px;
+    margin: 0 5vw;
+  }
+  .head2 {
+    color: #0A093D;
+    font-family: 'Inter';
+    font-size: 36px;
+    font-weight: bold;
+    margin: 0 5vw;
+  }
+  .para {
+    padding: 1rem 0;
+    width: 28vw;
+    color: #656464;
+    font-family: 'Inter';
+    font-size: 13px;
+    font-weight: 300;
+    text-align: center;
+    margin: 0 5vw;
+  }
+  .examcard{
+    margin: 3rem;
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    background: linear-gradient(
+      180deg,
+      rgba(241, 246, 253, 0) 13.52%,
+      rgb(241, 246, 253) 30.11%,
+      rgb(241, 246, 253) 63.58%,
+      rgb(255, 255, 255) 100%
+    );
+  }
+  .cardsgrid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+  .card {
+    display: flex;
+    flex-direction: row;
+    text-align: left;
+    align-items: center;
+    margin: 1rem;
+    padding: 1.5rem;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 522px;
+  }
+  
+  .card2 {
+    display: flex;
+    flex-direction: row;
+    text-align: left;
+    align-items: center;
+    position: relative;
+    left: 50%;
+    margin: 1rem;
+    padding: 1.5rem;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 522px;
+  }
+  .cardContent{
+    width: 315px;
+  }
+  .cardContent > h3{
+    font-size: 24px;
+    font-family: 'Inter';
+    font-weight: 500;
+  }
+  .cardContent > p{
+    font-size: 16px;
+    font-family: 'Inter';
+    font-weight: 400;
+    color: #656464;
+  }
+  @media (max-width: 600px) {
+    .grid {
+      width: 100%;
+      flex-direction: column;
+    }
+  }
+  
+  @media (prefers-color-scheme: dark) {
+  
+    .card,
+    .footer {
+      border-color: #222;
+    }
+  
+    .code {
+      background: #111;
+    }
+  
+    .logo img {
+      filter: invert(1);
+    }
+  }
+  
+  
+  
+  .logos {
+    overflow: hidden;
+    width: 100%;
+  }
+  
+  .logos-slide {
+    display: flex;
+    flex-direction: row;
+    animation: scroll 50s linear infinite;
+    white-space: nowrap;
+    /* Keep the testimonials in a single line */
+  }
+  
+  /* Define the animation to scroll the testimonials */
+  @keyframes scroll {
+    0% {
+      transform: translateX(0);
+    }
+  
+    100% {
+      transform: translateX(-100%);
+      /* Adjust based on your content width */
+    }
+  }

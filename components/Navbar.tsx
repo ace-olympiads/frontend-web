@@ -57,12 +57,14 @@ const Navbar = () => {
   const [expandSchoolPro, setExpandSchoolPro] = useState(false);
 
   return (
+
+    //mobile Navbar
     <div className="navbar">
       {isMobile ? (
         <div className={styles.mobileNavbar}>
           <div className={styles.mobileTopNavbar}>
             <div className={styles.logo}>
-              <Link href="/">ITI AGNIHOTRI</Link>
+              <Link href="/">AceAcad</Link>
             </div>
             <div className={styles.mobileIcons}>
               <div
@@ -91,7 +93,7 @@ const Navbar = () => {
           >
             <nav className={styles.mobileBottomNavbar}>
               <div className={styles.logo}>
-                <Link href="/">ITI AGNIHOTRI</Link>
+                <Link href="/">AceAcad</Link>
               </div>
               <hr className={styles.mobileDivider} />
               <ul className={styles["nav-links"]}>
@@ -179,55 +181,17 @@ const Navbar = () => {
           </div>
         </div>
       ) : (
+
+
+    // Desktop Navbar
         <div className={styles.desktopNavbar}>
           <div className={styles.upperNavbar}>
             <div className={styles.logo}>
-              <Link href="/">ITI AGNIHOTRI</Link>
+              <Link href="/">AceAcad</Link>
             </div>
-            <SearchBar
-              searchQuery={searchQuery}
-              onSearchQueryChange={handleSearchQueryChange}
-              onSearchResults={handleSearchResults}
-            />
-            <div className={styles.authButtons}>
-              {session.data?.user ? (
-                <>
-                  <div style={{ cursor: "pointer" }}>
-                    <UserProfileMenu
-                      userImage={
-                        session?.data?.user?.image
-                          ? session.data?.user.image
-                          : avatar
-                      }
-                    />
-                  </div>
-                  <button
-                    onClick={() => signOut()}
-                    className={styles.loginButton}
-                  >
-                    Logout
-                  </button>
-                </>
-              ) : (
-                <>
-                  <button
-                    onClick={() => router.push("/auth")}
-                    className={styles.loginButton}
-                  >
-                    Login
-                  </button>
-                  <button
-                    className={`${styles.signupButton} ${styles.upperSignupButton}`}
-                    onClick={() => router.push("/auth")}
-                  >
-                    Sign Up
-                  </button>
-                </>
-              )}
-            </div>
-          </div>
-          <hr className={styles.borderLine} />
-          <nav className={styles.bottomNavbar}>
+
+
+            <nav className={styles.bottomNavbar}>
             <ul className={styles["nav-links"]}>
               <li>
                 <Link href="/about">About</Link>
@@ -322,6 +286,46 @@ const Navbar = () => {
               </li>
             </ul>
           </nav>
+
+
+            <SearchBar
+              searchQuery={searchQuery}
+              onSearchQueryChange={handleSearchQueryChange}
+              onSearchResults={handleSearchResults}
+              inputplaceholder="Search for questions..."
+            />
+            <div className={styles.authButtons}>
+              {session.data?.user ? (
+                <>
+                  <div style={{ cursor: "pointer" }}>
+                    <UserProfileMenu
+                      userImage={
+                        session?.data?.user?.image
+                          ? session.data?.user.image
+                          : avatar
+                      }
+                    />
+                  </div>
+                  <button
+                    onClick={() => signOut()}
+                    className={styles.loginButton}
+                  >
+                    Logout
+                  </button>
+                </>
+              ) : (
+                <>
+                  <button
+                    onClick={() => router.push("/auth")}
+                    className={styles.loginButton}
+                  >
+                    Login
+                  </button>
+                </>
+              )}
+            </div>
+          </div>
+          
         </div>
       )}
     </div>

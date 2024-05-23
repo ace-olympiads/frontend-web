@@ -42,5 +42,5 @@ export default function useDrag() {
     dragging,
     position,
     setDragging,
-  };
+   };
 }

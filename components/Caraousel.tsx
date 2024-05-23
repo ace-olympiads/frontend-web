@@ -6,7 +6,7 @@ import styles from "../styles/Carousel.module.css";
 import { ConceptProps, ConceptType, Exam } from "../types";
 import Concept from "./Concept";
 const CarouselWrapper: React.FC<{ concepts: ConceptProps[] }> = ({
-  concepts,
+  concepts=[],
 }) => {
   const [isMoving, setIsMoving] = useState(false);
   console.log(" concepts");

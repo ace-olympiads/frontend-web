@@ -5,10 +5,11 @@ import Navbar from "../components/Navbar";
 import { Toaster } from "react-hot-toast";
 import Footer from "../components/Footer";
 import { Inter } from "next/font/google";
+import ContextProvider from "../context/ContextProvider";
 
 // If loading a variable font, you don't need to specify the font weight
 const inter = Inter({ subsets: ["latin"] });
-import ContextProvider from "../context/ContextProvider";
+
 function MyApp({ Component, pageProps }: AppProps) {
   return (
     <main className={inter.className}>

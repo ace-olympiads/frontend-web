@@ -1,13 +1,15 @@
 import React, { useState, ChangeEvent, useEffect, useRef } from "react";
 import axios from "axios";
 import { useRouter } from "next/router";
-
+import { CiSearch } from "react-icons/ci";
 import styles from "../styles/SearchBar.module.css";
+
 
 interface SearchBarProps {
   onSearchResults: (results: SearchResult[]) => void;
   onSearchQueryChange: (newQuery: string) => void;
   searchQuery: string;
+  inputplaceholder:string;
 }
 
 interface SearchResult {
@@ -22,10 +24,12 @@ const SearchBar: React.FC<SearchBarProps> = ({
   onSearchResults,
   onSearchQueryChange,
   searchQuery,
+  inputplaceholder
 }) => {
   const [showDropdown, setShowDropdown] = useState(false);
   const [loading, setLoading] = useState(false);
   const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
+  
   const router = useRouter();
   const inputRef = useRef<HTMLInputElement | null>(null);
 
@@ -98,13 +102,16 @@ const SearchBar: React.FC<SearchBarProps> = ({
 
   return (
     <div className={styles.container} ref={inputRef}>
+      <div className={styles.logo_icon}>
+        <CiSearch />
+      </div>
       <input
         type="text"
         value={searchQuery}
         onChange={handleInputChange}
         onClick={handleInputClick}
         className={styles.input}
-        placeholder="Search for questions..."
+        placeholder={inputplaceholder}
       />
       {showDropdown && (
         <ul className={styles.dropdown}>
