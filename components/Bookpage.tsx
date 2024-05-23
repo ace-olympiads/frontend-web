@@ -4,8 +4,8 @@ import booksImage from '../public/assets/book.svg';
 
 const Bookpage = () => {
   return (
-    <div className="bg-white mt-[15vh] gap-[120px] p-10 min-h-screen flex flex-row items-center">
-      <div className="w-[40%]">
+    <div className="bg-white mt-[15vh] gap-[120px] p-10 min-h-screen flex flex-col md:flex-row items-center">
+      <div className="w-full md:w-[40%]">
         <h2 className="text-[#560FD7] font-[Inter] font-medium text-[18px]">
           Solve questions
         </h2>
@@ -21,13 +21,13 @@ const Bookpage = () => {
           Discover more →
         </button>
       </div>
-      <div className="flex flex-row gap-8 w-[60%]">
+      <div className="flex flex-col md:flex-row gap-8 w-full md:w-[60%]">
         <div className="flex flex-col gap-8">
           <QuestionCard rotate="-9.17" />
           <QuestionCard rotate="-9.17" />
         </div>
         <div className="flex flex-col justify-center items-center flex-grow">
-          <QuestionCard  />
+          <QuestionCard />
         </div>
       </div>
     </div>
@@ -36,8 +36,7 @@ const Bookpage = () => {
 
 const QuestionCard = ({ rotate = "0" }) => {
   return (
-    <div className="bg-white h-[39vh] w-[24vw] shadow-lg rounded-lg p-6 flex flex-col justify-between transform" style={{ transform: `rotate(${rotate}deg)` }}
-    >
+    <div className="bg-white md:h-[39vh] md:w-[24vw] shadow-lg rounded-lg p-6 flex flex-col justify-between transform" style={{ transform: `rotate(${rotate}deg)` }}>
       <div className="flex flex-col items-center">
         <div>
           <h3 className="text-purple-600 font-semibold text-lg mb-2">
@@ -47,23 +46,23 @@ const QuestionCard = ({ rotate = "0" }) => {
             The angular speed of the rod just after the collision is ....
           </p>
         </div>
-       <div className='flex gap-4'>
-       <Image
-          src={booksImage}
-          alt="Books"
-          width={150}
-          height={150}
-          className="mr-4"
-        />
-         <div className='flex flex-col gap-3' >
-         <button className=" bg-purple-100 h-[40px]  text-[#560FD7] py-2 px-4 rounded-full text-[12px]">
-          JEE-Mains
-        </button>
-        <button className=" bg-purple-100 h-[40px] text-[#560FD7] py-2 px-4 rounded-full text-[12px]">
-          NEET
-        </button>
-         </div>
-       </div>
+        <div className='flex gap-4'>
+          <Image
+            src={booksImage}
+            alt="Books"
+            width={150}
+            height={150}
+            className="mr-4"
+          />
+          <div className='flex flex-col gap-3' >
+            <button className=" bg-purple-100 h-[40px]  text-[#560FD7] py-2 px-4 rounded-full text-[12px]">
+              JEE-Mains
+            </button>
+            <button className=" bg-purple-100 h-[40px] text-[#560FD7] py-2 px-4 rounded-full text-[12px]">
+              NEET
+            </button>
+          </div>
+        </div>
       </div>
       <div className=" space-x-4">
         <a href="#" className="text-[#4A4A56]  text-[11px] inline-block">

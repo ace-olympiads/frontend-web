@@ -1,8 +1,7 @@
 import React from 'react';
 import styles from "../styles/Courses.module.css";
 import ChipTabs from './ChipTabs';
-import Bookpage from "./Bookpage";
-
+import Bookpage from './Bookpage';
 
 function Courses() {
   return (

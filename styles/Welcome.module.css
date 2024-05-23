@@ -13,27 +13,28 @@
 
 .content {
     display: flex;
-    flex-direction: row;
+    flex-direction: row; /* Change to column on smaller screens */
     width: 80%;
     height: 70%;
     justify-content: space-between;
 }
 
-.head_left{
+.head_left {
     display: flex;
     flex-direction: column;
     gap: 5%;
     width: 60%;
     height: 100%;
     max-width: 60vw;
-    padding: 5vh 0 ;
+    padding: 5vh 0;
 }
 
-.head_right{
-    padding-top: 40px;
+.head_right {
+    padding-top: 6%;
     max-width: 60vw;
 }
-.left_up{
+
+.left_up {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -42,60 +43,79 @@
     background-color: #ede6fc;
     border-radius: 10px;
 }
-.left_up_head{
-    font-family: "Inter", sans-serif;
+
+.left_up_head {
+    font-family: "Inter";
     font-weight: bold;
-    font-size: 56px;
+    font-size: 4vw;
     color: black;
 }
-.left_up_para{
+
+.left_up_para {
     max-width: 75%;
     font-family: "Inter", sans-serif;
-    font-size: 18px;
+    font-size: 1.2vw;
     color: #656464;
 }
-.left_up_button{
+
+.left_up_button {
     display: flex;
-    gap: 10px;
+    gap: 2%;
 }
-.left_up_button_div{
+
+.left_up_button_div {
     display: flex;
-    flex-direction: row;
-    font-family: "Inter", sans-serif;
-    font-size: 14px;
+    flex-direction: row; /* Change to column on smaller screens */
+    font-family: "Inter";
+    font-size: 1vw;
     color: white;
     background-color: #4B01D4;
-    padding: 15px 35px;
+    padding: 2% 4%;
     border-radius: 12px;
-    width: 145px;
-    height: 50px;
+    width: 20%;
     cursor: pointer;
 }
-.left_logo{
-    margin-top: 5px;
-    margin-left: 10px;
+
+.left_logo {
+    margin-top: 5%;
+    margin-left: 10%;
 }
-.left_up_button > h1{
+
+.left_up_button > h1 {
     font-weight: 400;
     font-family: "Inter", sans-serif;
-    font-size: 14px;
+    font-size: 1vw;
     color: black;
     padding: 15px 15px;
-
 }
 
-.left_up > p{
+.left_up > p {
     font-family: "Poppins", sans-serif;
     font-weight: normal;
-    font-size: 12px;
+    font-size: 1vw;
     color: #4B01D4;
 }
 
-
 @media (max-width: 768px) {
-    .home_wrapper {
-        justify-content: center;
-        align-items: center;
-        text-align: center;
+    .content {
+        flex-direction: column; /* Change flex direction to column on small screens */
+    }
+
+    .head_left, .head_right {
+        width: 100%; /* Ensure each section takes full width on small screens */
+        text-align: center; /* Center-align text for better readability */
+    }
+
+    .head_right {
+        margin-top: 5%; /* Add margin to separate the image from the text */
+    }
+
+    .left_up_button_div {
+        flex-direction: column; /* Stack buttons vertically */
+    }
+
+    .left_up_button_div button {
+        width: 100%; /* Make buttons full-width */
+        margin-bottom: 5%; /* Add margin between buttons */
     }
 }

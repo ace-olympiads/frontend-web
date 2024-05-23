@@ -10,17 +10,17 @@
   font-family: "Inter", sans-serif;
   border-radius: 500px;
 }
-.logo_icon{
+
+.logo_icon {
   width: 30px;
   height: 30px;
   margin-top: 10px;
-
 }
+
 .input {
   border: none;
   outline: none;
   flex: 1;
-
   padding: 0 10px;
   font-size: 14px;
   border-radius: 500px;
@@ -73,4 +73,66 @@
 
 .result-item p {
   margin-bottom: 0;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+  .container {
+    height: 40px;
+    padding: 0;
+  }
+
+  .logo_icon {
+    width: 25px;
+    height: 25px;
+    margin-top: 8px;
+  }
+
+  .input {
+    font-size: 12px;
+    padding: 0 8px;
+  }
+
+  .dropdownItem, .result-item {
+    padding: 8px;
+  }
+
+  .result-item h3 {
+    font-size: medium;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    flex-direction: column;
+    height: auto;
+    padding: 5px;
+  }
+
+  .logo_icon {
+    width: 20px;
+    height: 20px;
+    margin-top: 5px;
+  }
+
+  .input {
+    font-size: 12px;
+    padding: 5px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .dropdown {
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .dropdownItem, .result-item {
+    padding: 5px;
+    font-size: 14px;
+  }
+
+  .result-item h3 {
+    font-size: small;
+  }
 }

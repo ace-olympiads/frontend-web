@@ -1,19 +1,18 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+/* Base Styles */
 .container {
   padding: 0 2rem;
 }
 
-
 .main {
   min-height: 100vh;
-  padding: 4rem 0;
   flex: 1;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-
 }
-
 
 .head {
   color: #4B01D4;
@@ -23,6 +22,7 @@
   max-width: 800px;
   margin: 0 5vw;
 }
+
 .head2 {
   color: #0A093D;
   font-family: 'Inter';
@@ -30,7 +30,8 @@
   font-weight: bold;
   margin: 0 5vw;
 }
-.searchbar{
+
+.searchbar {
   margin-top: 1rem;
   font-family: "Inter";
   padding: 0 1vw;
@@ -38,8 +39,8 @@
   border-radius: 10px;
   border: 0.5px solid #6e6a745e;
 }
-.examcard{
-  margin: 3rem;
+
+.examcard {
   display: flex;
   justify-content: center;
   width: 100%;
@@ -51,17 +52,18 @@
     rgb(255, 255, 255) 100%
   );
 }
+
 .cardsgrid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 20px;
 }
-.card {
+
+.card, .card2 {
   display: flex;
   flex-direction: row;
   text-align: left;
   align-items: center;
-  margin: 1rem;
   padding: 1.5rem;
   background-color: white;
   border-radius: 10px;
@@ -70,42 +72,126 @@
 }
 
 .card2 {
-  display: flex;
-  flex-direction: row;
-  text-align: left;
-  align-items: center;
   position: relative;
   left: 50%;
-  margin: 1rem;
-  padding: 1.5rem;
-  background-color: white;
-  border-radius: 10px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  width: 522px;
 }
-.cardContent{
+
+.cardContent {
   width: 315px;
 }
-.cardContent > h3{
+
+.cardContent > h3 {
   font-size: 24px;
   font-family: 'Inter';
   font-weight: 500;
 }
-.cardContent > p{
+
+.cardContent > p {
   font-size: 16px;
   font-family: 'Inter';
   font-weight: 400;
   color: #656464;
 }
-@media (max-width: 600px) {
-  .grid {
-    width: 100%;
+
+@media (max-width: 1024px) {
+  .head2 {
+    font-size: 30px;
+  }
+
+  .searchbar {
+    width: 50vw;
+  }
+
+  .card, .card2 {
+    width: 400px;
+  }
+
+  .cardContent {
+    width: 250px;
+  }
+  .card2 {
+    left: 0%;
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 0 1rem;
+  }
+
+  .head {
+    font-size: 16px;
+  }
+
+  .head2 {
+    font-size: 28px;
+  }
+
+  .searchbar {
+    width: 60vw;
+  }
+
+  .cardsgrid {
+    grid-template-columns: 1fr;
+  }
+
+  .card, .card2 {
+    width: 300px;
     flex-direction: column;
+    align-items: center;
+  }
+
+  .cardContent {
+    width: 80%;
+  }
+
+  .examcard {
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .head {
+    font-size: 14px;
+  }
+
+  .head2 {
+    font-size: 24px;
+  }
+
+  .searchbar {
+    width: 80vw;
+    padding: 0.5rem;
+  }
+
+  .card, .card2 {
+    display: flex;
+    width: 100%;
+ 
+  }
+  .cardContent{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .cardContent > h3 {
+    font-size: 20px;
+  }
+
+  .cardContent > p {
+    font-size: 14px;
+  }
+
+  .logos-slide {
+    animation: scroll 30s linear infinite;
   }
 }
 
 @media (prefers-color-scheme: dark) {
-
   .card,
   .footer {
     border-color: #222;
@@ -120,8 +206,6 @@
   }
 }
 
-
-
 .logos {
   overflow: hidden;
   width: 100%;
@@ -132,10 +216,8 @@
   flex-direction: row;
   animation: scroll 50s linear infinite;
   white-space: nowrap;
-  /* Keep the testimonials in a single line */
 }
 
-/* Define the animation to scroll the testimonials */
 @keyframes scroll {
   0% {
     transform: translateX(0);
@@ -143,6 +225,5 @@
 
   100% {
     transform: translateX(-100%);
-    /* Adjust based on your content width */
   }
 }
