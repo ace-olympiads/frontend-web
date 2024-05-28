@@ -24,7 +24,7 @@ const VisConcepts: React.FC = () => {
       }
     };
     fetchUser();
-  }, [session.status]);
+  }, [session.status, session?.data?.user?.email]);
   console.log(session);
   console.log(user?.last_viewed_concept_videos);
   return (

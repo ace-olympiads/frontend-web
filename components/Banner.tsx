@@ -26,7 +26,7 @@ const Banner = () => {
       }
     };
     fetchUser();
-  }, [session.status]);
+  }, [session.status,session?.data?.user?.email]);
 
   return (
     <div>

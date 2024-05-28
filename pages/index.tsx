@@ -6,38 +6,46 @@ import Courses from "../components/Courses";
 import Welcome from "../components/Welcome";
 import SearchBar from "../components/SearchBar";
 import styles from "../styles/Home.module.css";
+import Image from "next/image";
 import { ConceptProps, User, Testimonial as TestimonialType, QuestionType } from "../types";
 
 const cards = [
   {
     title: 'NMTC',
     description: 'Members, Friends Connection (like followers), Private Message',
-    icon: '/assets/examicons.svg'
+    icon: '/assets/examicons.svg',
+    width: 50, // Add appropriate width
+    height: 50, // Add appropriate height
   },
   {
     title: 'IJSO',
     description: 'You can create Members, Groups Module. We already created 3 modules. It\'s by drag & drop live builder.',
-    icon: '/assets/examicons.svg'
+    icon: '/assets/examicons.svg',
+    width: 50, // Add appropriate width
+    height: 50, // Add appropriate height
   },
   {
     title: 'JEE-Advanced',
     description: 'Forum is ready by BBPress. Your users can make topics and talk.',
-    icon: '/assets/adv.svg'
+    icon: '/assets/adv.svg',
+    width: 50, // Add appropriate width
+    height: 50, // Add appropriate height
   },
   {
     title: 'JEE-Mains',
     description: 'Your users can create groups to let other users to join and talk',
-    icon: '/assets/mains.svg'
+    icon: '/assets/mains.svg',
+    width: 50, // Add appropriate width
+    height: 50, // Add appropriate height
   },
   {
     title: 'NEET',
     description: 'Members, Groups list can be modified by drag & drop live builder.',
-    icon: '/assets/neet.svg'
+    icon: '/assets/neet.svg',
+    width: 50, // Add appropriate width
+    height: 50, // Add appropriate height
   }
 ];
-
-
-
 
 interface SearchResult {
   id: number;
@@ -129,7 +137,12 @@ const HomePage: React.FC<HomePageProps> = ({ user, concepts, testimonials, quest
           {cards.map((card, index) => (
             <div key={index} className={index == 4 ? styles.card2 : styles.card}>
               <div className={styles.cardIcon}>
-                <img src={card.icon} alt={`${card.title} icon`} />
+                <Image
+                  src={card.icon}
+                  alt={`${card.title} icon`}
+                  width={card.width}
+                  height={card.height}
+                />
               </div>
               <div className={styles.cardContent}>
                 <h3>{card.title}</h3>
@@ -139,7 +152,7 @@ const HomePage: React.FC<HomePageProps> = ({ user, concepts, testimonials, quest
           ))}
         </div>
       </div>
-      <Courses/>
+      <Courses />
     </div>
   );
 };
