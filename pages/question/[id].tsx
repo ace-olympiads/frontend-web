@@ -80,24 +80,6 @@ const QuestionPage: React.FC<QuestionPageProps> = ({
   }
   return (
     <div className={styles["main-container"]}>
-      <div className={styles["sidebar"]}>
-        <div className={styles["similar-questions-container"]}>
-          <div className={styles["similar-questions-title"]}>
-            Similar Questions
-          </div>
-          <div className={styles["scrolling-effect"]}>
-            {arr.map((e) => {
-              return (
-                <div key={e} className={styles["question-boxes"]}>
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                  Minima voluptatibus ea sunt laboriosam odio. Quod pariatur ut
-                  error earum minima.
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </div>
       <div className={styles["content"]}>
         <div className={styles["blue-bar"]}>
           <BackButton />
@@ -170,6 +152,31 @@ const QuestionPage: React.FC<QuestionPageProps> = ({
         />
         <div className={styles["comments-section"]}>
           {user ? <Comments id={id} user={user} /> : <Comments id={id} />}
+        </div>
+      </div>
+
+      {/* This is not sidebar as mentioned in css but its loweer similar question lists */}
+      <div className={styles["sidebar"]}>
+        <div className={styles["similar-questions-container"]}>
+          <div className={styles["similar-questions-title"]}>
+          <span className={styles["title-para"]}>More Questions</span>
+            <span className={styles["title-para2"]}>Similar Questions</span>
+          </div>
+          <div className={styles["scrolling-effect"]}>
+            {arr.map((e) => {
+              return (
+                <div key={e} className={styles["question-boxes"]}>
+                <div className="other-question">
+                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                                Minima voluptatibus ea sunt laboriosam odio. Quod pariatur ut
+                                error earum minima.
+                </p>
+                </div>
+                  <button>View Solutions</button>
+                </div>
+              );
+            })}
+          </div>
         </div>
       </div>
     </div>

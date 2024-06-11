@@ -29,10 +29,8 @@ const SearchBar: React.FC<SearchBarProps> = ({
   const [showDropdown, setShowDropdown] = useState(false);
   const [loading, setLoading] = useState(false);
   const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
-  
   const router = useRouter();
   const inputRef = useRef<HTMLInputElement | null>(null);
-
   const handleClickOutside = (event: MouseEvent) => {
     if (
       inputRef.current &&
@@ -50,11 +48,12 @@ const SearchBar: React.FC<SearchBarProps> = ({
     };
   }, []);
 
+  // highlight the text that matches the query in the search results
   const highlightText = (text: string, query: string) => {
     const regex = new RegExp(query, "gi");
     return text?.replace(regex, (match) => `<mark>${match}</mark>`);
   };
-
+// truncate the text to a certain number of words and if more than a words numbner then add "..." at the end
   const truncateText = (text: string, maxWords: number) => {
     const words = text.split(" ");
     if (words.length <= maxWords) {
@@ -63,6 +62,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
     return words.slice(0, maxWords).join(" ") + "...";
   };
 
+  
   const handleInputChange = async (e: ChangeEvent<HTMLInputElement>) => {
     const newQuery = e.target.value;
     onSearchQueryChange(newQuery);

@@ -129,7 +129,7 @@ const HomePage: React.FC<HomePageProps> = ({ user, concepts, testimonials, quest
           searchQuery={searchQuery}
           onSearchQueryChange={handleSearchQueryChange}
           onSearchResults={handleSearchResults}
-          inputplaceholder="Type the class / exam you’re preparing for"
+          inputplaceholder="Type the class / exam you're preparing for"
         />
       </div>
       <div className={styles.examcard}>
