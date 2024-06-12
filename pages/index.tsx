@@ -8,22 +8,23 @@ import SearchBar from "../components/SearchBar";
 import styles from "../styles/Home.module.css";
 import Image from "next/image";
 import { ConceptProps, User, Testimonial as TestimonialType, QuestionType } from "../types";
-
+import ChipTabs from '../components/ChipTabs';
+import Bookpage from '../components/Bookpage';
 const cards = [
-  {
-    title: 'NMTC',
-    description: 'Members, Friends Connection (like followers), Private Message',
-    icon: '/assets/examicons.svg',
-    width: 50, // Add appropriate width
-    height: 50, // Add appropriate height
-  },
-  {
-    title: 'IJSO',
-    description: 'You can create Members, Groups Module. We already created 3 modules. It\'s by drag & drop live builder.',
-    icon: '/assets/examicons.svg',
-    width: 50, // Add appropriate width
-    height: 50, // Add appropriate height
-  },
+  // {
+  //   title: 'NMTC',
+  //   description: 'Members, Friends Connection (like followers), Private Message',
+  //   icon: '/assets/examicons.svg',
+  //   width: 50, // Add appropriate width
+  //   height: 50, // Add appropriate height
+  // },
+  // {
+  //   title: 'IJSO',
+  //   description: 'You can create Members, Groups Module. We already created 3 modules. It\'s by drag & drop live builder.',
+  //   icon: '/assets/examicons.svg',
+  //   width: 50, // Add appropriate width
+  //   height: 50, // Add appropriate height
+  // },
   {
     title: 'JEE-Advanced',
     description: 'Forum is ready by BBPress. Your users can make topics and talk.',
@@ -122,6 +123,11 @@ const HomePage: React.FC<HomePageProps> = ({ user, concepts, testimonials, quest
   return (
     <div className={styles.main}>
       <Welcome />
+      <Courses />
+      <ChipTabs />
+      <br /><br /><br /><br /><br /><br /> <br />
+
+      
       <h1 className={styles.head}>Select for exam</h1>
       <h1 className={styles.head2}>What are you looking for</h1>
       <div className={styles.searchbar}>
@@ -133,9 +139,10 @@ const HomePage: React.FC<HomePageProps> = ({ user, concepts, testimonials, quest
         />
       </div>
       <div className={styles.examcard}>
+        
         <div className={styles.cardsgrid}>
           {cards.map((card, index) => (
-            <div key={index} className={index == 4 ? styles.card2 : styles.card}>
+            <div key={index} className={index == 2 ? styles.card2 : styles.card}>
               <div className={styles.cardIcon}>
                 <Image
                   src={card.icon}
@@ -152,7 +159,9 @@ const HomePage: React.FC<HomePageProps> = ({ user, concepts, testimonials, quest
           ))}
         </div>
       </div>
-      <Courses />
+      <div className={styles.downcard}>
+          <Bookpage/>
+        </div>
     </div>
   );
 };

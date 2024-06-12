@@ -101,7 +101,7 @@ const Navbar = () => {
                   <Link href="/about">About</Link>
                 </li>
                 <hr className={styles.mobileDivider} />
-                <li>
+                {/* <li>
                   <div
                     className={styles.mobileMenuItem}
                     onClick={() => setExpandOlympiads(!expandOlympiads)}
@@ -121,7 +121,7 @@ const Navbar = () => {
                       </li>
                     </ul>
                   )}
-                </li>
+                </li> */}
                 <hr className={styles.mobileDivider} />
                 <li>
                   <div
@@ -145,7 +145,7 @@ const Navbar = () => {
                   )}
                 </li>
                 <hr className={styles.mobileDivider} />
-                <li>
+                {/* <li>
                   <div
                     className={styles.mobileMenuItem}
                     onClick={() => setExpandSchoolPro(!expandSchoolPro)}
@@ -171,7 +171,7 @@ const Navbar = () => {
                       </li>
                     </ul>
                   )}
-                </li>
+                </li> */}
                 <hr className={styles.mobileDivider} />
                 <li className={styles.mobileMenuItem}>
                   <Link href="/contact">Ace-NEET</Link>
@@ -203,8 +203,8 @@ const Navbar = () => {
                 onMouseEnter={() => toggleDropdown(0)}
                 onMouseLeave={() => toggleDropdown(0)}
               >
-                <Link href="/services">Ace-Olympiads</Link>
-                <span
+                {/* <Link href="/services">Ace-Olympiads</Link> */}
+                {/* <span
                   className={`${styles.dropdownIcon} ${
                     activeTab === 0 ? styles.active : ""
                   }`}
@@ -212,15 +212,15 @@ const Navbar = () => {
                   <FiChevronDown />
                 </span>
                 {activeTab === 0 && (
-                  <ul className={styles.dropdown}>
-                    <li>
-                      <Link href="/service1">NMTC</Link>
-                    </li>
-                    <li>
-                      <Link href="/service2">IJSO</Link>
-                    </li>
-                  </ul>
-                )}
+                  // <ul className={styles.dropdown}>
+                  //   <li>
+                  //     <Link href="/service1">NMTC</Link>
+                  //   </li>
+                  //   <li>
+                  //     <Link href="/service2">IJSO</Link>
+                  //   </li>
+                  // </ul>
+                )} */}
               </li>
 
               <li
@@ -256,7 +256,7 @@ const Navbar = () => {
                 onMouseEnter={() => toggleDropdown(2)}
                 onMouseLeave={() => toggleDropdown(2)}
               >
-                <Link href="/portfolio">School-Pro</Link>
+                {/* <Link href="/portfolio">School-Pro</Link>
                 <span
                   className={`${styles.dropdownIcon} ${
                     activeTab === 2 ? styles.active : ""
@@ -281,7 +281,7 @@ const Navbar = () => {
                   </ul>
                 )}
               </li>
-              <li>
+              <li> */}
                 <Link href="/contact">Ace-NEET</Link>
               </li>
             </ul>
