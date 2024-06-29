@@ -57,12 +57,14 @@ const Navbar = () => {
   const [expandSchoolPro, setExpandSchoolPro] = useState(false);
 
   return (
+
+    //mobile Navbar
     <div className="navbar">
       {isMobile ? (
         <div className={styles.mobileNavbar}>
           <div className={styles.mobileTopNavbar}>
             <div className={styles.logo}>
-              <Link href="/">ITI AGNIHOTRI</Link>
+              <Link href="/">AceAcad</Link>
             </div>
             <div className={styles.mobileIcons}>
               <div
@@ -91,7 +93,7 @@ const Navbar = () => {
           >
             <nav className={styles.mobileBottomNavbar}>
               <div className={styles.logo}>
-                <Link href="/">ITI AGNIHOTRI</Link>
+                <Link href="/">AceAcad</Link>
               </div>
               <hr className={styles.mobileDivider} />
               <ul className={styles["nav-links"]}>
@@ -99,7 +101,7 @@ const Navbar = () => {
                   <Link href="/about">About</Link>
                 </li>
                 <hr className={styles.mobileDivider} />
-                <li>
+                {/* <li>
                   <div
                     className={styles.mobileMenuItem}
                     onClick={() => setExpandOlympiads(!expandOlympiads)}
@@ -119,7 +121,7 @@ const Navbar = () => {
                       </li>
                     </ul>
                   )}
-                </li>
+                </li> */}
                 <hr className={styles.mobileDivider} />
                 <li>
                   <div
@@ -143,7 +145,7 @@ const Navbar = () => {
                   )}
                 </li>
                 <hr className={styles.mobileDivider} />
-                <li>
+                {/* <li>
                   <div
                     className={styles.mobileMenuItem}
                     onClick={() => setExpandSchoolPro(!expandSchoolPro)}
@@ -169,7 +171,7 @@ const Navbar = () => {
                       </li>
                     </ul>
                   )}
-                </li>
+                </li> */}
                 <hr className={styles.mobileDivider} />
                 <li className={styles.mobileMenuItem}>
                   <Link href="/contact">Ace-NEET</Link>
@@ -179,55 +181,17 @@ const Navbar = () => {
           </div>
         </div>
       ) : (
+
+
+    // Desktop Navbar
         <div className={styles.desktopNavbar}>
           <div className={styles.upperNavbar}>
             <div className={styles.logo}>
-              <Link href="/">ITI AGNIHOTRI</Link>
+              <Link href="/">AceAcad</Link>
             </div>
-            <SearchBar
-              searchQuery={searchQuery}
-              onSearchQueryChange={handleSearchQueryChange}
-              onSearchResults={handleSearchResults}
-            />
-            <div className={styles.authButtons}>
-              {session.data?.user ? (
-                <>
-                  <div style={{ cursor: "pointer" }}>
-                    <UserProfileMenu
-                      userImage={
-                        session?.data?.user?.image
-                          ? session.data?.user.image
-                          : avatar
-                      }
-                    />
-                  </div>
-                  <button
-                    onClick={() => signOut()}
-                    className={styles.loginButton}
-                  >
-                    Logout
-                  </button>
-                </>
-              ) : (
-                <>
-                  <button
-                    onClick={() => router.push("/auth")}
-                    className={styles.loginButton}
-                  >
-                    Login
-                  </button>
-                  <button
-                    className={`${styles.signupButton} ${styles.upperSignupButton}`}
-                    onClick={() => router.push("/auth")}
-                  >
-                    Sign Up
-                  </button>
-                </>
-              )}
-            </div>
-          </div>
-          <hr className={styles.borderLine} />
-          <nav className={styles.bottomNavbar}>
+
+
+            <nav className={styles.bottomNavbar}>
             <ul className={styles["nav-links"]}>
               <li>
                 <Link href="/about">About</Link>
@@ -239,8 +203,8 @@ const Navbar = () => {
                 onMouseEnter={() => toggleDropdown(0)}
                 onMouseLeave={() => toggleDropdown(0)}
               >
-                <Link href="/services">Ace-Olympiads</Link>
-                <span
+                {/* <Link href="/services">Ace-Olympiads</Link> */}
+                {/* <span
                   className={`${styles.dropdownIcon} ${
                     activeTab === 0 ? styles.active : ""
                   }`}
@@ -248,15 +212,15 @@ const Navbar = () => {
                   <FiChevronDown />
                 </span>
                 {activeTab === 0 && (
-                  <ul className={styles.dropdown}>
-                    <li>
-                      <Link href="/service1">NMTC</Link>
-                    </li>
-                    <li>
-                      <Link href="/service2">IJSO</Link>
-                    </li>
-                  </ul>
-                )}
+                  // <ul className={styles.dropdown}>
+                  //   <li>
+                  //     <Link href="/service1">NMTC</Link>
+                  //   </li>
+                  //   <li>
+                  //     <Link href="/service2">IJSO</Link>
+                  //   </li>
+                  // </ul>
+                )} */}
               </li>
 
               <li
@@ -292,7 +256,7 @@ const Navbar = () => {
                 onMouseEnter={() => toggleDropdown(2)}
                 onMouseLeave={() => toggleDropdown(2)}
               >
-                <Link href="/portfolio">School-Pro</Link>
+                {/* <Link href="/portfolio">School-Pro</Link>
                 <span
                   className={`${styles.dropdownIcon} ${
                     activeTab === 2 ? styles.active : ""
@@ -317,11 +281,51 @@ const Navbar = () => {
                   </ul>
                 )}
               </li>
-              <li>
+              <li> */}
                 <Link href="/contact">Ace-NEET</Link>
               </li>
             </ul>
           </nav>
+
+
+            <SearchBar
+              searchQuery={searchQuery}
+              onSearchQueryChange={handleSearchQueryChange}
+              onSearchResults={handleSearchResults}
+              inputplaceholder="Search for questions..."
+            />
+            <div className={styles.authButtons}>
+              {session.data?.user ? (
+                <>
+                  <div style={{ cursor: "pointer" }}>
+                    <UserProfileMenu
+                      userImage={
+                        session?.data?.user?.image
+                          ? session.data?.user.image
+                          : avatar
+                      }
+                    />
+                  </div>
+                  <button
+                    onClick={() => signOut()}
+                    className={styles.loginButton}
+                  >
+                    Logout
+                  </button>
+                </>
+              ) : (
+                <>
+                  <button
+                    onClick={() => router.push("/auth")}
+                    className={styles.loginButton}
+                  >
+                    Login
+                  </button>
+                </>
+              )}
+            </div>
+          </div>
+          
         </div>
       )}
     </div>

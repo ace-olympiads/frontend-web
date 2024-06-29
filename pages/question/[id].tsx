@@ -64,7 +64,7 @@ const QuestionPage: React.FC<QuestionPageProps> = ({
   user,
 }) => {
   const router = useRouter();
-  const arr = [1, 2, 32, 3, 23, 23, 12, 31, 23, 12, 312, 13, 14, 15, 18];
+  const arr = [1, 2, 32, 3, 23, 23];
   function preprocessLatex(latex: string) {
     const replacedNewlines = latex.replace(/\n/g, "$\\\\$");
     const parts = replacedNewlines.split("$");
@@ -80,96 +80,82 @@ const QuestionPage: React.FC<QuestionPageProps> = ({
   }
   return (
     <div className={styles["main-container"]}>
+      <div className={styles["content-parent"]} >
+      <div className={styles["content-boy"]}>
+     <div className={styles["content"]}>
+
+    {/* back button */}
+
+    <div className={styles["back-btn-here"]} ><BackButton /></div>
+          <div className={styles["question-text-container"]}>
+            <div className={styles["question-tags"]} >
+              <h1>{question?.tags?.[0].name.toUpperCase()} </h1>
+              <h1>{question?.examinations?.[0].name.toUpperCase()}</h1>
+            </div>
+            <div className={styles["question-heading"]}>
+              Question {`${question?.id}`}
+            </div>
+            <div className={styles["question-text"]}>
+              <BlockMath
+                math={preprocessLatex(question?.question_text_latex || "")}
+              />
+            </div>
+          </div>
+    <div >
+      
+    </div>
+     <div className={styles["question-videos"]} >
+      <YoutubeEmbed
+      embedId={`${extractEmbedIdFromYouTubeLink(
+        `${question?.video_solution_url}`
+      )}`}
+    />
+    <SolutionBox
+      solution={`${question?.text_solution}`}
+      latex={`${question?.text_solution_latex}`}
+    />
+    </div>
+        </div>
+
+        <div className={styles["content-side"]}>
+              <h2 className={styles["similar-video-text"]}>Similar Concepts</h2>
+                  <div className={styles["video-grid"]}>
+                      <div className={styles["video-card"]}>Video</div>
+                      <div className={styles["video-card"]}>Video</div>
+                      <div className={styles["video-card"]}>Video</div>
+                      <div className={styles["video-card"]}>Video</div>
+                  </div>
+                  <div className={styles["graph-grid"]} dangerouslySetInnerHTML={{ __html: question?.iframeText || '' }}>
+                  </div>
+        </div>
+    </div>
+      <div className={styles["comments-section"]}>
+      {user ? <Comments id={id} user={user} /> : <Comments id={id} />}
+        </div>
+      </div>
+      
+      {/* This is not sidebar as mentioned in css but its loweer similar question lists */}
       <div className={styles["sidebar"]}>
         <div className={styles["similar-questions-container"]}>
           <div className={styles["similar-questions-title"]}>
-            Similar Questions
+          <span className={styles["title-para"]}>More Questions</span>
+            <span className={styles["title-para2"]}>Similar Questions</span>
           </div>
           <div className={styles["scrolling-effect"]}>
             {arr.map((e) => {
               return (
                 <div key={e} className={styles["question-boxes"]}>
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                  Minima voluptatibus ea sunt laboriosam odio. Quod pariatur ut
-                  error earum minima.
+                <div className="other-question">
+                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                                Minima voluptatibus ea sunt laboriosam odio. Quod pariatur ut
+                                error earum minima.
+                </p>
+                </div>
+                  <button>View Solutions</button>
                 </div>
               );
             })}
           </div>
-        </div>
-      </div>
-      <div className={styles["content"]}>
-        <div className={styles["blue-bar"]}>
-          <BackButton />
-          <div className={styles["question-title"]}>
-            {question?.question_text.length > 20
-              ? `${question?.question_text.slice(0, 20)}...`
-              : question?.question_text}
-          </div>
-        </div>
-        <YoutubeEmbed
-          embedId={`${extractEmbedIdFromYouTubeLink(
-            `${question?.video_solution_url}`
-          )}`}
-        />{" "}
-        <div className={styles["utilities"]}>
-          <div className={styles["tags-container"]}>
-            Related Tags <br />
-            {question?.tags?.map((tag) => {
-              return (
-                <span
-                  key={tag?.id}
-                  className={styles["tag-line"]}
-                  onClick={() => {
-                    router.push({
-                      pathname: `/tag/${tag.id}`,
-                      query: { data: "tags", id: tag.id, name: tag.name },
-                    });
-                  }}
-                >
-                  #{tag?.name}
-                </span>
-              );
-            })}
-          </div>
-          <div className={styles["tags-container"]}>
-            Examinations Appeared
-            <br />
-            {question?.examinations?.map((exam) => {
-              return (
-                <span
-                  key={exam?.id}
-                  className={styles["tag-line"]}
-                  onClick={() => {
-                    router.push({
-                      pathname: `/exam/${exam.id}`,
-                      query: { data: "exam", id: exam.id, name: exam.name },
-                    });
-                  }}
-                >
-                  #{exam?.name}
-                </span>
-              );
-            })}
-          </div>
-        </div>
-        <div className={styles["question-text-container"]}>
-          <div className={styles["question-heading"]}>
-            Question {`${question?.id}`}
-          </div>
-          <div className={styles["question-text"]}>
-            {question?.question_text}
-            <BlockMath
-              math={preprocessLatex(question?.question_text_latex || "")}
-            />
-          </div>
-        </div>
-        <SolutionBox
-          solution={`${question?.text_solution}`}
-          latex={`${question?.text_solution_latex}`}
-        />
-        <div className={styles["comments-section"]}>
-          {user ? <Comments id={id} user={user} /> : <Comments id={id} />}
         </div>
       </div>
     </div>

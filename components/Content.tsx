@@ -10,7 +10,7 @@ import { QuestionType, ConceptType, User } from "../types";
 import { GetSessionParams, getSession } from "next-auth/react";
 import axiosInstance from "../axios";
 
-type propstypes = { type: string; user?: User };
+type propstypes = { type: string; user: User };
 type scrollVisibilityApiType = React.ContextType<typeof VisibilityContext>;
 
 const Content = ({ type, user }: propstypes) => {
@@ -38,7 +38,7 @@ const Content = ({ type, user }: propstypes) => {
         .then((response) => setConcepts(response.data))
         .catch((error) => console.error(error));
     }
-  }, [type]);
+  }, [type,user?.email,user.last_viewed_concept_videos,user.last_viewed_questions]);
 
   const { dragStart, dragStop, dragMove } = useDrag();
 

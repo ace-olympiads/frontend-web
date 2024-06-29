@@ -30,7 +30,7 @@ const MyComments = () => {
       }
     };
     fetchComments();
-  }, [session.status, refetch]);
+  }, [session?.data?.user?.email,session.status, refetch]);
   console.log(session);
 
   const groupCommentsByQuestion = () => {

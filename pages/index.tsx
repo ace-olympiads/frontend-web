@@ -1,50 +1,86 @@
-import { useRouter } from "next/navigation";
-
-import React, { useEffect, useRef, useState } from "react";
-import Welcome from "../components/Welcome";
-import CarouselWrapper from "../components/Caraousel";
-import Content from "../components/Content";
-import Testimonials from "../components/Testimonial";
-
-import styles from "../styles/Home.module.css";
-
-import {
-  useSession,
-  signOut,
-  getSession,
-  GetSessionParams,
-} from "next-auth/react";
+import { useRouter } from "next/router";
+import React, { useState } from "react";
+import { useSession, signOut, getSession, GetSessionParams } from "next-auth/react";
 import axiosInstance from "../axios";
+import Courses from "../components/Courses";
+import Welcome from "../components/Welcome";
+import SearchBar from "../components/SearchBar";
+import styles from "../styles/Home.module.css";
+import Image from "next/image";
+import { ConceptProps, User, Testimonial as TestimonialType, QuestionType } from "../types";
+import ChipTabs from '../components/ChipTabs';
+import Bookpage from '../components/Bookpage';
+const cards = [
+  // {
+  //   title: 'NMTC',
+  //   description: 'Members, Friends Connection (like followers), Private Message',
+  //   icon: '/assets/examicons.svg',
+  //   width: 50, // Add appropriate width
+  //   height: 50, // Add appropriate height
+  // },
+  // {
+  //   title: 'IJSO',
+  //   description: 'You can create Members, Groups Module. We already created 3 modules. It\'s by drag & drop live builder.',
+  //   icon: '/assets/examicons.svg',
+  //   width: 50, // Add appropriate width
+  //   height: 50, // Add appropriate height
+  // },
+  {
+    title: 'JEE-Advanced',
+    description: 'Forum is ready by BBPress. Your users can make topics and talk.',
+    icon: '/assets/adv.svg',
+    width: 50, // Add appropriate width
+    height: 50, // Add appropriate height
+  },
+  {
+    title: 'JEE-Mains',
+    description: 'Your users can create groups to let other users to join and talk',
+    icon: '/assets/mains.svg',
+    width: 50, // Add appropriate width
+    height: 50, // Add appropriate height
+  },
+  {
+    title: 'NEET',
+    description: 'Members, Groups list can be modified by drag & drop live builder.',
+    icon: '/assets/neet.svg',
+    width: 50, // Add appropriate width
+    height: 50, // Add appropriate height
+  }
+];
 
-import { ConceptProps, User, Testimonial, QuestionType } from "../types";
-import Question from "../components/Question";
+interface SearchResult {
+  id: number;
+  title: string;
+  question_latex?: string;
+  solution: string;
+  solution_latex: string;
+}
 
 interface HomePageProps {
-  user: User;
-  concepts: ConceptProps[]; // Replace UserType with the actual type of the user object
-  testimonials: Testimonial[];
+  user?: User;
+  concepts: ConceptProps[];
+  testimonials: TestimonialType[];
   questions: QuestionType[];
 }
 
-export async function getServerSideProps(
-  context: GetSessionParams | undefined
-) {
+export async function getServerSideProps(context: GetSessionParams | undefined) {
   try {
     const session = await getSession(context);
-    const response = await axiosInstance.get(`/concepts/`);
-    const testimonialsData = await axiosInstance.get(`/testimonials/`);
-    console.log(testimonialsData);
-    const questionsData = await axiosInstance.get("/question/add");
-    const questions: QuestionType[] = questionsData.data;
-    const testimonials: Testimonial[] = testimonialsData.data;
-    const concepts: ConceptProps[] = response.data;
-    if (session) {
-      const mail = session?.user?.email;
+    const [conceptsResponse, testimonialsResponse, questionsResponse] = await Promise.all([
+      axiosInstance.get('/concepts/'),
+      axiosInstance.get('/testimonials/'),
+      axiosInstance.get('/question/add'),
+    ]);
 
-      const getDetails = await axiosInstance.get(
-        `/users/account/?email=${mail}`
-      );
-      const user: User = getDetails.data;
+    const concepts: ConceptProps[] = conceptsResponse.data;
+    const testimonials: TestimonialType[] = testimonialsResponse.data;
+    const questions: QuestionType[] = questionsResponse.data;
+
+    if (session) {
+      const email = session.user?.email;
+      const userResponse = await axiosInstance.get(`/users/account/?email=${email}`);
+      const user: User = userResponse.data;
+
       return {
         props: {
           user,
@@ -53,65 +89,77 @@ export async function getServerSideProps(
           questions,
         },
       };
-    } else {
-      const response = await axiosInstance.get(`/concepts/`);
-      const concepts: ConceptProps[] = response.data;
-      const testimonialsData = await axiosInstance.get(`/testimonials/`);
-      const testimonials: Testimonial[] = testimonialsData.data;
-      const questionsData = await axiosInstance.get("/question/add");
-      const questions: QuestionType[] = questionsData.data;
-      return {
-        props: {
-          concepts,
-          testimonials,
-          questions,
-        },
-      };
     }
-  } catch (error) {
-    console.log(error);
-  }
 
-  return {
-    props: {},
-  };
+    return {
+      props: {
+        concepts,
+        testimonials,
+        questions,
+      },
+    };
+  } catch (error) {
+    console.error(error);
+    return {
+      props: {},
+    };
+  }
 }
 
-const HomePage: React.FC<HomePageProps> = ({
-  user,
-  concepts,
-  testimonials,
-  questions,
-}) => {
-  console.log(testimonials);
+const HomePage: React.FC<HomePageProps> = ({ user, concepts, testimonials, questions }) => {
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
   const session = useSession();
   const router = useRouter();
 
+  const handleSearchQueryChange = (newQuery: string) => {
+    setSearchQuery(newQuery);
+  };
+
+  const handleSearchResults = (results: SearchResult[]) => {
+    setSearchResults(results);
+  };
+
   return (
-    <div>
+    <div className={styles.main}>
       <Welcome />
-      <div className={styles["logos"]}>
-        <div className={styles["logos-slide"]}>
-          {testimonials?.map((item, index) => (
-            <Testimonials item={item} key={index} />
+      <Courses />
+      <ChipTabs />
+      <br /><br /><br /><br /><br /><br /> <br />
+      <h1 className={styles.head}>Select for exam</h1>
+      <h1 className={styles.head2}>What are you looking for</h1>
+      <div className={styles.searchbar}>
+        <SearchBar
+          searchQuery={searchQuery}
+          onSearchQueryChange={handleSearchQueryChange}
+          onSearchResults={handleSearchResults}
+          inputplaceholder="Type the class / exam you're preparing for"
+        />
+      </div>
+      <div className={styles.examcard}>
+        
+        <div className={styles.cardsgrid}>
+          {cards.map((card, index) => (
+            <div key={index} className={index == 2 ? styles.card2 : styles.card}>
+              <div className={styles.cardIcon}>
+                <Image
+                  src={card.icon}
+                  alt={`${card.title} icon`}
+                  width={card.width}
+                  height={card.height}
+                />
+              </div>
+              <div className={styles.cardContent}>
+                <h3>{card.title}</h3>
+                <p>{card.description}</p>
+              </div>
+            </div>
           ))}
         </div>
       </div>
-      {/*  */}
-      <h1 className={styles.head}>
-        Explore our <span> Courses</span>
-      </h1>
-      <CarouselWrapper concepts={concepts} />
-      <h1 className={styles.head}>
-        Enhance knowledge with our <span>Amazing Solutions</span>
-      </h1>
-      <div className={styles.quesGrid}>
-        <div className={styles.questionWrap}>
-          {questions?.slice(0, 10).map((question, index) => {
-            return <Question key={index} question={question} />;
-          })}
+      <div className={styles.downcard}>
+          <Bookpage/>
         </div>
-      </div>
     </div>
   );
 };

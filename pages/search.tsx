@@ -1,5 +1,4 @@
-import { useState, ChangeEvent } from "react";
-import axios from "axios";
+import { useState } from "react";
 import { useRouter } from "next/router";
 
 import styles from "../styles/Search.module.css";
@@ -35,6 +34,7 @@ export default function Search() {
   const handleClickQuestion = (questionId: number) => {
     router.push(`/question/${questionId}`);
   };
+
   const handleSearchQueryChange = (newQuery: string) => {
     setSearchQuery(newQuery);
   };
@@ -42,61 +42,63 @@ export default function Search() {
   const handleSearchResults = (results: SearchResult[]) => {
     setSearchResults(results);
   };
+
   return (
     <>
-    <BackButton />
-    <div className={styles.container}>
-      <SearchBar
-        searchQuery={searchQuery}
-        onSearchQueryChange={handleSearchQueryChange}
-        onSearchResults={handleSearchResults}
-      />
-      <ul className={styles.results}>
-        {searchResults.length === 0 ? (
-          <li className={styles.resultItem}>
-            <p>No results found</p>
-          </li>
-        ) : (
-          searchResults.map((result) => (
-            <li
-              key={result.id}
-              className={styles["result-item"]}
-              onClick={() => handleClickQuestion(result.id)}
-            >
-              <h3
-                dangerouslySetInnerHTML={{
-                  __html: highlightText(result.title, searchQuery),
-                }}
-              />
-              <h3
-                dangerouslySetInnerHTML={{
-                  __html: highlightText(
-                    truncateText(result.question_latex || "", 10),
-                    searchQuery
-                  ),
-                }}
-              />
-              <p
-                dangerouslySetInnerHTML={{
-                  __html: highlightText(
-                    truncateText(result.solution, 20),
-                    searchQuery
-                  ),
-                }}
-              />
-              <p
-                dangerouslySetInnerHTML={{
-                  __html: highlightText(
-                    truncateText(result.solution_latex, 15),
-                    searchQuery
-                  ),
-                }}
-              />
+      <BackButton />
+      <div className={styles.container}>
+        <SearchBar
+          searchQuery={searchQuery}
+          onSearchQueryChange={handleSearchQueryChange}
+          onSearchResults={handleSearchResults}
+          inputplaceholder="Search for questions..."
+        />
+        <ul className={styles.results}>
+          {searchResults.length === 0 ? (
+            <li className={styles.resultItem}>
+              <p>No results found</p>
             </li>
-          ))
-        )}
-      </ul>
-    </div>
+          ) : (
+            searchResults.map((result) => (
+              <li
+                key={result.id}
+                className={styles["result-item"]}
+                onClick={() => handleClickQuestion(result.id)}
+              >
+                <h3
+                  dangerouslySetInnerHTML={{
+                    __html: highlightText(result.title, searchQuery),
+                  }}
+                />
+                <h3
+                  dangerouslySetInnerHTML={{
+                    __html: highlightText(
+                      truncateText(result.question_latex || "", 10),
+                      searchQuery
+                    ),
+                  }}
+                />
+                <p
+                  dangerouslySetInnerHTML={{
+                    __html: highlightText(
+                      truncateText(result.solution, 20),
+                      searchQuery
+                    ),
+                  }}
+                />
+                <p
+                  dangerouslySetInnerHTML={{
+                    __html: highlightText(
+                      truncateText(result.solution_latex, 15),
+                      searchQuery
+                    ),
+                  }}
+                />
+              </li>
+            ))
+          )}
+        </ul>
+      </div>
     </>
   );
 }
