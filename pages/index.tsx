@@ -126,8 +126,6 @@ const HomePage: React.FC<HomePageProps> = ({ user, concepts, testimonials, quest
       <Courses />
       <ChipTabs />
       <br /><br /><br /><br /><br /><br /> <br />
-
-      
       <h1 className={styles.head}>Select for exam</h1>
       <h1 className={styles.head2}>What are you looking for</h1>
       <div className={styles.searchbar}>
