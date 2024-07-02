@@ -6,7 +6,7 @@ import styles from "../styles/Carousel.module.css";
 import { ConceptProps, ConceptType, Exam } from "../types";
 import Concept from "./Concept";
 const CarouselWrapper: React.FC<{ concepts: ConceptProps[] }> = ({
-  concepts,
+  concepts=[],
 }) => {
   const [isMoving, setIsMoving] = useState(false);
   console.log(" concepts");
@@ -38,10 +38,9 @@ const CarouselWrapper: React.FC<{ concepts: ConceptProps[] }> = ({
         afterChange={() => setIsMoving(false)}
         containerClass="first-carousel-container container"
       >
-        {concepts?.length >1 && concepts?.map((concept: any) => {
+        {concepts?.map((concept: any) => {
           return <Concept concept={concept} key={concept.id} />;
-        
-         })}
+        })}
       </Carousel>
     </div>
   );

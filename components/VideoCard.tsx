@@ -16,7 +16,7 @@ const VideoCard: React.FC<{ video: Video }> = ({ video }) => {
       )}/0.jpg`
     );
     console.log(thumbnailUrl);
-  }, [video]);
+  }, [video,thumbnailUrl]);
   console.log(thumbnailUrl);
   return (
     <div

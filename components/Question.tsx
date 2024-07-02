@@ -37,7 +37,7 @@ const Question = ({ question }: QuestionProps) => {
     } else {
       control.start("hidden");
     }
-  }, [control, inView]);
+  }, [control, inView,thumbnailUrl]);
   return (
     <motion.div
       ref={ref}

@@ -56,7 +56,7 @@ const QueryPage = ({ id, query }: PageProps) => {
       }
     };
     fetchParticularData();
-  }, []);
+  }, [id , query, session?.data?.user?.email]);
 
   return (
     <div>

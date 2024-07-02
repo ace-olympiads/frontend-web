@@ -37,6 +37,8 @@ export interface QuestionType {
   category?: string;
   concept?: Number;
   author?: Number;
+  name?: string;
+  iframeText?: string;
 }
 export interface QuestionPageProps {
   id: string;

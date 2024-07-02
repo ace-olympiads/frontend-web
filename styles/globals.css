@@ -2,6 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
+
 .katex-display>.katex>.katex-html {
   text-align: left;
 }

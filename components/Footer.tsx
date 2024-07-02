@@ -1,49 +1,27 @@
-import React from "react";
-import {
-  FaFacebook,
-  FaTwitter,
-  FaInstagram,
-  FaAccessibleIcon,
-} from "react-icons/fa";
-import styles from "../styles/footer.module.css";
-import logo from "../../assets/images/logo.png";
+import React from 'react';
+import Image from 'next/image';
+import footerimg from '../public/assets/mobile muckup.svg';
 
 const Footer = () => {
   return (
-    <div className={styles.footer}>
-      <div className={styles.footer_primary}>
-        <div className={styles.footer_title}>AceOlympiads | aceacad</div>
-        <div className={styles.footer_body}>
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Repellat quod
-          officiis praesentium.
-        </div>
-        <div className={styles.footer_nav}>
-          <div className={styles.footer_nav_links}>Home</div>
-          <div className={styles.footer_nav_links}>Services</div>
-          <div className={styles.footer_nav_links}>About</div>
-          <div className={styles.footer_nav_links}>FAQs</div>
-          <div className={styles.footer_nav_links}>Contact us</div>
-        </div>
+    <div className="h-[71vh] flex items-center justify-between px-12 bg-purple-50">
+      <div className="flex-1 pr-12">
+        <h4 className="text-[#560FD7] text-lg mb-2">Our Application</h4>
+        <h1 className="text-[#0A093D] text-5xl font-bold leading-tight mb-5">
+          Seamless Learning
+          <br />
+          Anytime, Anywhere!
+        </h1>
+        <p className="text-[#656464] text-lg">
+          Unleash potential. AceAcad: Tailored courses, Anywhere learning - Android & iOS
+        </p>
       </div>
-      <hr />
-      <div className={styles.footer_secondary}>
-        <div className={styles.footer_logo}>
-          <div className={styles.footer_logo_title}>AceOlympiads</div>
-        </div>
-        <div className={styles.footer_rights}>
-          @ 2023 aceacad. All Rights Reserved
-        </div>
-        <div className={styles.footer_socials}>
-          <div className={styles.footer_socials_fb}>
-            <FaFacebook />
-          </div>
-          <div className={styles.footer_socials_ln}>
-            <FaTwitter />
-          </div>
-          <div className={styles.footer_socials_tw}>
-            <FaInstagram />
-          </div>
-        </div>
+      <div className="relative">
+        <Image
+          src={footerimg}
+          alt="App Mockup"
+          className="rounded-3xl"
+        />
       </div>
     </div>
   );
