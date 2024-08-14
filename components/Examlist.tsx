@@ -2,7 +2,7 @@ import Image from "next/image";
 import styles from "../styles/Home.module.css";
 import React from 'react'
 
-export default function () {
+export default function Examlist() {
     const cards = [
         // {
         //   title: 'NMTC',

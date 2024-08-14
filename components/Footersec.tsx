@@ -1,8 +1,10 @@
 import React from 'react'
 import styles from "../styles/about.module.css";
-export default function 
-() {
+
+
+export default function Footersec() {
   return (
+    <>
     <footer className={styles.footer}>
     <div className={styles.footer__home} >
         <div className={styles.footer__section}>
@@ -40,6 +42,7 @@ export default function
     <div className={styles.footer__legal}>
         <p>&copy; 2024 AceAcad. All rights reserved.</p>
     </div>
-</footer>
+</footer></>
+    
   )
 }

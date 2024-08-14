@@ -10,7 +10,7 @@ import Examlist from '../components/Examlist';
 import { FaUser } from "react-icons/fa";
 import { HiOutlineMail } from "react-icons/hi";
 
-function about() {
+export function About() {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [message, setMessage] = useState('');
@@ -21,7 +21,6 @@ function about() {
     };
   return (
    <div className={styles.container}>
-
         <div className={styles.home}>
             <div className={styles.left}>
                 <h1 className={styles.left_h1}>Where Your Academic Journey Begins</h1>
@@ -118,4 +117,4 @@ function about() {
 
 
 
-export default about;
+export default About;

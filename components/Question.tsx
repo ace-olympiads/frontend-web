@@ -6,11 +6,8 @@ import { useRouter } from "next/router";
 import defaultImg from "../public/assets/userImg.png";
 import { QuestionProps } from "../types";
 import { motion, useAnimation } from "framer-motion";
-import Link from "next/link";
 import { useInView } from "react-intersection-observer";
-import like from "../public/assets/like.png";
-import views from "../public/assets/views.png";
-import comment from "../public/assets/chat.png";
+
 
 const Question = ({ question }: QuestionProps) => {
   const [thumbnailUrl, setThumbnail] = useState<string>("");
@@ -26,7 +23,7 @@ const Question = ({ question }: QuestionProps) => {
       )}/0.jpg`
     );
     console.log(thumbnailUrl);
-  }, [question]);
+  }, [question,thumbnailUrl]);
   console.log(thumbnailUrl);
   const control = useAnimation();
   const [ref, inView] = useInView();
