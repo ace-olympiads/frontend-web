@@ -10,6 +10,7 @@ import Image from "next/image";
 import { ConceptProps, User, Testimonial as TestimonialType, QuestionType } from "../types";
 import ChipTabs from '../components/ChipTabs';
 import Bookpage from '../components/Bookpage';
+import Examlist from '../components/Examlist';
 const cards = [
   // {
   //   title: 'NMTC',
@@ -136,27 +137,7 @@ const HomePage: React.FC<HomePageProps> = ({ user, concepts, testimonials, quest
           inputplaceholder="Type the class / exam you're preparing for"
         />
       </div>
-      <div className={styles.examcard}>
-        
-        <div className={styles.cardsgrid}>
-          {cards.map((card, index) => (
-            <div key={index} className={index == 2 ? styles.card2 : styles.card}>
-              <div className={styles.cardIcon}>
-                <Image
-                  src={card.icon}
-                  alt={`${card.title} icon`}
-                  width={card.width}
-                  height={card.height}
-                />
-              </div>
-              <div className={styles.cardContent}>
-                <h3>{card.title}</h3>
-                <p>{card.description}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
+      <Examlist/>
       <div className={styles.downcard}>
           <Bookpage/>
         </div>

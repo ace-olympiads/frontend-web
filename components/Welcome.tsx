@@ -24,7 +24,7 @@ const Welcome = () => {
               <div><button>Join us</button></div>
               <div className={styles.left_logo}><FaLongArrowAltRight/></div>
             </div>
-            <h1>Login</h1>
+            <h1 className={styles.login}>Login</h1>
           </div>
         </div>
 

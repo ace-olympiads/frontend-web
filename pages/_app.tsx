@@ -6,6 +6,7 @@ import { Toaster } from "react-hot-toast";
 import Footer from "../components/Footer";
 import { Inter } from "next/font/google";
 import ContextProvider from "../context/ContextProvider";
+import Footersec from "../components/Footersec";
 
 // If loading a variable font, you don't need to specify the font weight
 const inter = Inter({ subsets: ["latin"] });
@@ -19,6 +20,7 @@ function MyApp({ Component, pageProps }: AppProps) {
           <Navbar />
           <Component {...pageProps} />
           <Footer />
+          <Footersec />
         </ContextProvider>
       </SessionProvider>
     </main>

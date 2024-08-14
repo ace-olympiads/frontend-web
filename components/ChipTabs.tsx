@@ -39,7 +39,7 @@ interface CardProps {
 const Card: FC<CardProps> = ({ title, subtitle, videoUrl }) => {
   return (
     <div className="w-full md:w-[580px] h-[400px] md:h-[240px] bg-white shadow-md rounded-lg p-4 m-2 flex flex-col md:flex-row items-center gap-[50px]">
-  <div className="rounded-md w-full md:w-[190px] h-[162px] md:mr-4 border-[10px] border-[#e5d7fa]">
+  <div className="rounded-md w-full md:w-[190px] md:h-[162px] h-[600px] md:mr-4 border-[10px] border-[#e5d7fa]">
     <iframe
       width="100%"
       height="100%"
