@@ -47,7 +47,7 @@ export function About() {
         <div className={styles.below_home4}>
             <Image className={styles.below_home4_img} src={boy} alt='boy-gif'/>
             <p className={styles.below_home4_h1}>Simplifying complex concepts through interactive simulations and visual content.</p>
-            <h1 className={styles.below_home4_p1}>"Making learning engaging and accessible, one simulation at a time."</h1>
+            <h1 className={styles.below_home4_p1}>&quot;Making learning engaging and accessible, one simulation at a time.&quot;</h1>
         </div>
 
         <div className={styles.below_home5}>
