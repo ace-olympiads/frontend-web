@@ -31,6 +31,7 @@
 }
 
 .dropdown {
+
   position: absolute;
   top: 100%;
   left: 0;
@@ -45,6 +46,7 @@
   padding: 10px;
   cursor: pointer;
   transition: background-color 0.3s;
+
 }
 
 .dropdownItem:hover {
@@ -53,12 +55,12 @@
 
 .result-item {
   margin: 0;
-  padding: 10px;
-  border: 1px solid #ccc;
-  background-color: #f9f9f9;
+  padding: 1px 10px;
+  border-bottom: 1px solid #f0f0f0; 
   color: black;
   cursor: pointer;
   transition: background-color 0.3s;
+  border-radius: 30px;
 }
 
 .result-item:hover {
@@ -67,7 +69,7 @@
 
 .result-item h3 {
   font-size: large;
-  font-weight: bold;
+  font-weight: 5px;
   margin-top: 0;
 }
 

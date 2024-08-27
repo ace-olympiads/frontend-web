@@ -54,43 +54,51 @@ const SearchBar: React.FC<SearchBarProps> = ({
     return text?.replace(regex, (match) => `<mark>${match}</mark>`);
   };
 // truncate the text to a certain number of words and if more than a words numbner then add "..." at the end
-  const truncateText = (text: string, maxWords: number) => {
-    const words = text.split(" ");
-    if (words.length <= maxWords) {
-      return text;
-    }
-    return words.slice(0, maxWords).join(" ") + "...";
-  };
+const truncateText = (text: string, maxWords: number) => {
+  if (typeof text !== 'string') {
+    // Handle the case where text is not a string (e.g., undefined or null)
+    return '';
+  }
+
+  const words = text.split(" ");
+  if (words.length <= maxWords) {
+    return text;
+  }
+  return words.slice(0, maxWords).join(" ") + "...";
+};
 
   
   const handleInputChange = async (e: ChangeEvent<HTMLInputElement>) => {
     const newQuery = e.target.value;
     onSearchQueryChange(newQuery);
-
+  
     if (newQuery.trim() === "") {
       onSearchResults([]);
       setSearchResults([]);
       setShowDropdown(false);
       return;
     }
-
+  
     setLoading(true);
     try {
+      console.log('Sending query:', newQuery);
       const response = await axios.get<SearchResult[]>(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}question/search/`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/question/search/`,
         {
           params: { query: newQuery },
         }
       );
+      console.log('API Response:', response.data);
       onSearchResults(response.data);
       setSearchResults(response.data);
       setShowDropdown(true);
     } catch (error) {
-      console.error(error);
+      console.error('API Error:', error);
     } finally {
       setLoading(false);
     }
   };
+  
 
   const handleClickQuestion = (questionId: number) => {
     router.push(`/question/${questionId}`);
@@ -99,7 +107,6 @@ const SearchBar: React.FC<SearchBarProps> = ({
   const handleInputClick = () => {
     setShowDropdown(true);
   };
-
   return (
     <div className={styles.container} ref={inputRef}>
       <div className={styles.logo_icon}>
@@ -124,6 +131,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
                 className={styles["result-item"]}
                 onClick={() => handleClickQuestion(result.id)}
               >
+                 
                 <h3
                   dangerouslySetInnerHTML={{
                     __html: highlightText(result.title, searchQuery),

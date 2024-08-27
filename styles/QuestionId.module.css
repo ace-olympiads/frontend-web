@@ -10,26 +10,31 @@
   justify-content: center;
   flex-direction: row;
 }
-.content-side{
+
+.content-side {
   font-family: Arial, sans-serif;
+  width: 40%;
+
 }
-.question-videos{
+
+.question-videos {
   width: 90%;
-
-
   padding-left: 50px;
-
 }
-.back-btn-here{
+
+.back-btn-here {
   margin-left: 20px;
 }
+
 .video-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 20px;
   padding: 20px;
 }
-.similar-video-text{
+
+.similar-video-text {
+  margin-top: 50px;
   font-size: 20px;
   font-weight: bold;
   margin-bottom: 10px;
@@ -48,23 +53,28 @@
   font-weight: bold;
   color: #fbfbfb;
 }
+
 .sidebar {
-  width: 80vw;
+  width: 100%;
   background-color: #ffffff;
   padding: 20px;
+  display: flex;
+  justify-content: center;
 }
-.title-para{
+
+.title-para {
   font-size: 14px;
-  font-weight:400;
+  font-weight: 400;
   margin-bottom: 0px;
   font-family: 'Inter', sans-serif;
   display: flex;
   justify-content: center;
   color: #4B01D4;
 }
-.title-para2{
-display: flex;
-justify-content: center;
+
+.title-para2 {
+  display: flex;
+  justify-content: center;
 }
 
 .similar-questions-title {
@@ -82,41 +92,36 @@ justify-content: center;
   background-color: #ffffff;
   width: 60%;
 }
-.content-side{
-  width: 40%;
 
-}
-.graph-grid{
-  padding-right: 20px;
+.graph-container {
+  position: relative;
   width: 100%;
-  height: 75vh;
-  overflow-x: scroll;
-  scroll-behavior: smooth;
-  background-color: rgba(135, 160, 161, 0.305);
-}
-
-.blue-bar {
-  display: flex;
-  align-items: center;
-  background-color: #2F57EF;
-  padding: 10px 20px;
-  color: #ffffff;
-}
-
-.question-title {
-  flex: 1;
-  font-size: 18px;
-  font-weight: bold;
+  padding-bottom: 56.25%; /* 16:9 aspect ratio */
+  height: 0;
   overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+}
+
+.graph-grid {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+.graph-grid iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
 }
 
 .question-text-container {
   margin-top: 20px;
   padding: 20px;
 }
-.question-tags{
+
+.question-tags {
   margin-left: 5px;
   display: flex;
   color: #32323598;
@@ -124,10 +129,12 @@ justify-content: center;
   gap: 5px;
   font-style: 'Poppins';
 }
-.content-parent{
+
+.content-parent {
   display: flex;
   flex-direction: column;
 }
+
 .question-heading {
   font-size: 24px;
   font-weight: bold;
@@ -149,28 +156,19 @@ justify-content: center;
   justify-content: center;
 }
 
-.embed-container {
-  width: 100%;
-  height: 400px;
-  border: none;
-}
-.other-question{
-  display: flex;
-  flex-direction: column;
-
-}
-
 .scrolling-effect {
   display: flex;
   flex-direction: column;
 }
-.scrolling-effect p{
+
+.scrolling-effect p {
   font-family: 'Popins', sans-serif;
   font-size: 18px;
   color: #2F2C4A;
   padding: 20px;
 }
-.scrolling-effect button{
+
+.scrolling-effect button {
   margin-top: 20px;
   color: #4B01D4;
   height: 40px;
@@ -178,9 +176,7 @@ justify-content: center;
   width: 20%;
   background-color: #6e39d043;
 }
-.newhire{
-  font-size: 10px;
-}
+
 .question-boxes,
 .concept-boxes {
   padding: 10px;
@@ -189,50 +185,67 @@ justify-content: center;
   display: flex;
   border-radius: 10px;
 }
-.sidebar{
-  width: 100%;
-  display: flex;
-  justify-content: center;
-}
-.tags-container {
-  margin-top: 10px;
-}
-.similar-questions-container{
 
+.similar-questions-container {
   width: 80%;
 }
-.tag-line {
-  margin-right: 10px;
+
+.modal-toggle {
+  margin-left: 20px;
+  padding: 5px 10px;
+  background-color: #000000bf;
+  color: #ffffff;
+  border: none;
+  border-radius: 5px;
   cursor: pointer;
 }
-
-.utilities {
-  padding: 20px;
+.image-grid{
   display: flex;
-  justify-content: space-between;
+  gap: 20px;
+  padding:10px 0;
+  justify-content: center;
+  align-items: center;
+}
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
 }
 
-.tags-container {
-  flex: 1;
-  padding: 10px;
-  border: 1px solid #e0e0e0;
-  background-color: #f5f5f5;
-  margin-right: 10px;
+.modal-content {
+  background-color: white;
+  padding: 20px;
+  border-radius: 5px;
+  position: relative;
+  width: 90%;
+  height: 90%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-.tags-container:last-child {
-  margin-right: 0;
+.modal-iframe-container {
+  width: 100%;
+  height: 100%;
+  position: relative;
+
 }
 
-.tag-title {
-  font-weight: bold;
-  margin-bottom: 5px;
-}
-
-.tag-line {
-  display: inline-block;
-  margin-right: 5px;
-  cursor: pointer;
+.modal-iframe-container iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+  padding-left: 100px;
 }
 
 /* Responsive styles */
@@ -265,7 +278,87 @@ justify-content: center;
     margin-right: 0;
     margin-bottom: 10px;
   }
-  .question-text{
+
+  .question-text {
     font-size: 10px;
+  }
+
+  .content-boy {
+    flex-direction: column;
+  }
+
+  .content,
+  .content-side {
+    width: 100%;
+  }
+  .question-boxes{
+    flex-direction: column;
+  }
+  .scrolling-effect button {
+    margin-top: 0;
+    width: 100%;
+  }
+  
+}
+@media (max-width: 768px) {
+  .main-container {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    padding: 10px;
+  }
+
+  .content {
+    padding: 10px;
+  }
+
+  .question-title {
+    font-size: 16px;
+  }
+
+  .embed-container {
+    height: 250px;
+  }
+
+  .utilities {
+    flex-direction: column;
+  }
+
+  .tags-container {
+    margin-right: 0;
+    margin-bottom: 10px;
+  }
+
+  .question-text {
+    font-size: 10px;
+  }
+
+  .content-boy {
+    flex-direction: column;
+  }
+
+  .content,
+  .content-side {
+    width: 100%;
+  }
+
+  .question-boxes {
+    flex-direction: column;
+  }
+
+  .scrolling-effect button {
+    margin-top: 0;
+    width: 100%;
+  }
+
+  /* Disable modal and buttons on smaller screens */
+  .modal-overlay,
+  .modal-toggle {
+    display: none; /* Hide modal and buttons */
+  }
+
+  .image-grid {
+    pointer-events: none; /* Disable interaction with image-grid (prevents modal from opening) */
   }
 }
