@@ -107,7 +107,6 @@ const truncateText = (text: string, maxWords: number) => {
   const handleInputClick = () => {
     setShowDropdown(true);
   };
-  console.log(`${process.env.NEXT_PUBLIC_BACKEND_URL}/question/search/`);
   return (
     <div className={styles.container} ref={inputRef}>
       <div className={styles.logo_icon}>
