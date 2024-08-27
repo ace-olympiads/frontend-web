@@ -172,7 +172,7 @@ const QuestionPage: React.FC<QuestionPageProps> = ({
                     error earum minima.
                   </p>
                 </div>
-                <button>View Solutions</button>
+                <button className={styles["buttons-of-div"]}>View Solutions</button>
               </div>
             ))}
           </div>

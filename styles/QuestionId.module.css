@@ -191,7 +191,7 @@
 }
 
 .modal-toggle {
-  
+  margin-left: 20px;
   padding: 5px 10px;
   background-color: #000000bf;
   color: #ffffff;
@@ -290,5 +290,75 @@
   .content,
   .content-side {
     width: 100%;
+  }
+  .question-boxes{
+    flex-direction: column;
+  }
+  .scrolling-effect button {
+    margin-top: 0;
+    width: 100%;
+  }
+  
+}
+@media (max-width: 768px) {
+  .main-container {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    padding: 10px;
+  }
+
+  .content {
+    padding: 10px;
+  }
+
+  .question-title {
+    font-size: 16px;
+  }
+
+  .embed-container {
+    height: 250px;
+  }
+
+  .utilities {
+    flex-direction: column;
+  }
+
+  .tags-container {
+    margin-right: 0;
+    margin-bottom: 10px;
+  }
+
+  .question-text {
+    font-size: 10px;
+  }
+
+  .content-boy {
+    flex-direction: column;
+  }
+
+  .content,
+  .content-side {
+    width: 100%;
+  }
+
+  .question-boxes {
+    flex-direction: column;
+  }
+
+  .scrolling-effect button {
+    margin-top: 0;
+    width: 100%;
+  }
+
+  /* Disable modal and buttons on smaller screens */
+  .modal-overlay,
+  .modal-toggle {
+    display: none; /* Hide modal and buttons */
+  }
+
+  .image-grid {
+    pointer-events: none; /* Disable interaction with image-grid (prevents modal from opening) */
   }
 }
