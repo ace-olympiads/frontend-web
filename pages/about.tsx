@@ -49,7 +49,7 @@ export function About() {
             <p className={styles.below_home4_h1}>Simplifying complex concepts through interactive simulations and visual content.</p>
             <h1 className={styles.below_home4_p1}>&quot;Making learning engaging and accessible, one simulation at a time.&quot;</h1>
         </div>
-
+n
         <div className={styles.below_home5}>
             <p className={styles.below_home5_h1}>Our Courses</p>
             <h1 className={styles.below_home5_p1}>Exams We Cover</h1>

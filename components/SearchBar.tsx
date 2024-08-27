@@ -66,31 +66,34 @@ const SearchBar: React.FC<SearchBarProps> = ({
   const handleInputChange = async (e: ChangeEvent<HTMLInputElement>) => {
     const newQuery = e.target.value;
     onSearchQueryChange(newQuery);
-
+  
     if (newQuery.trim() === "") {
       onSearchResults([]);
       setSearchResults([]);
       setShowDropdown(false);
       return;
     }
-
+  
     setLoading(true);
     try {
+      console.log('Sending query:', newQuery);
       const response = await axios.get<SearchResult[]>(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}question/search/`,
         {
           params: { query: newQuery },
         }
       );
+      console.log('API Response:', response.data);
       onSearchResults(response.data);
       setSearchResults(response.data);
       setShowDropdown(true);
     } catch (error) {
-      console.error(error);
+      console.error('API Error:', error);
     } finally {
       setLoading(false);
     }
   };
+  
 
   const handleClickQuestion = (questionId: number) => {
     router.push(`/question/${questionId}`);
@@ -99,7 +102,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
   const handleInputClick = () => {
     setShowDropdown(true);
   };
-
+  console.log(`${process.env.NEXT_PUBLIC_BACKEND_URL}question/search/`);
   return (
     <div className={styles.container} ref={inputRef}>
       <div className={styles.logo_icon}>
