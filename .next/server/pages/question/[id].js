@@ -42,26 +42,27 @@ module.exports = {
 	"title-para2": "QuestionId_title-para2__ZMOEd",
 	"similar-questions-title": "QuestionId_similar-questions-title__pxHlh",
 	"content": "QuestionId_content__giAv2",
+	"graph-container": "QuestionId_graph-container__VBp3g",
 	"graph-grid": "QuestionId_graph-grid__bbq_6",
-	"blue-bar": "QuestionId_blue-bar__5Niiw",
-	"question-title": "QuestionId_question-title__ZbmnC",
 	"question-text-container": "QuestionId_question-text-container__Dg89w",
 	"question-tags": "QuestionId_question-tags__d6Bhv",
 	"content-parent": "QuestionId_content-parent__EiL7K",
 	"question-heading": "QuestionId_question-heading__njvDb",
 	"question-text": "QuestionId_question-text__7YLa4",
 	"comments-section": "QuestionId_comments-section__HRabK",
-	"embed-container": "QuestionId_embed-container__UX_6p",
-	"other-question": "QuestionId_other-question__tiHyV",
 	"scrolling-effect": "QuestionId_scrolling-effect__uy_eD",
-	"newhire": "QuestionId_newhire__LoNl5",
 	"question-boxes": "QuestionId_question-boxes__VpG3I",
 	"concept-boxes": "QuestionId_concept-boxes__9LeFh",
-	"tags-container": "QuestionId_tags-container__Bm4KK",
 	"similar-questions-container": "QuestionId_similar-questions-container__3OwYB",
-	"tag-line": "QuestionId_tag-line__fha8M",
+	"modal-toggle": "QuestionId_modal-toggle__QDplR",
+	"image-grid": "QuestionId_image-grid__4Qo9m",
+	"modal-overlay": "QuestionId_modal-overlay__41062",
+	"modal-content": "QuestionId_modal-content__N4b4K",
+	"modal-iframe-container": "QuestionId_modal-iframe-container__nfK22",
+	"question-title": "QuestionId_question-title__ZbmnC",
+	"embed-container": "QuestionId_embed-container__UX_6p",
 	"utilities": "QuestionId_utilities__6Vhp0",
-	"tag-title": "QuestionId_tag-title__ztML4"
+	"tags-container": "QuestionId_tags-container__Bm4KK"
 };
 
 
@@ -439,7 +440,7 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_com
 
 
 
-async function getServerSideProps(context) {
+const getServerSideProps = async (context)=>{
     const { id  } = context.query;
     const session = await (0,next_auth_react__WEBPACK_IMPORTED_MODULE_6__.getSession)(context);
     if (session) {
@@ -475,7 +476,7 @@ async function getServerSideProps(context) {
             }
         };
     }
-}
+};
 const QuestionPage = ({ id , question , concepts , user  })=>{
     const router = (0,next_router__WEBPACK_IMPORTED_MODULE_7__.useRouter)();
     const arr = [
@@ -486,6 +487,8 @@ const QuestionPage = ({ id , question , concepts , user  })=>{
         23,
         23
     ];
+    const [iframeContent, setIframeContent] = (0,react__WEBPACK_IMPORTED_MODULE_1__.useState)("");
+    const [isModalOpen, setIsModalOpen] = (0,react__WEBPACK_IMPORTED_MODULE_1__.useState)(false);
     function preprocessLatex(latex) {
         const replacedNewlines = latex.replace(/\n/g, "$\\\\$");
         const parts = replacedNewlines.split("$");
@@ -498,6 +501,29 @@ const QuestionPage = ({ id , question , concepts , user  })=>{
         });
         return processedParts.join("");
     }
+    function updateIframeContent(iframeHtml, removeControls = false) {
+        let updatedHtml = iframeHtml;
+        // Remove existing width and height attributes
+        updatedHtml = updatedHtml.replace(/width="[^"]*"/, "");
+        updatedHtml = updatedHtml.replace(/height="[^"]*"/, "");
+        // Remove controls if specified
+        if (removeControls) {
+            updatedHtml = updatedHtml.replace(/scrolling="no"/, 'scrolling="no" style="border: none;"');
+            updatedHtml = updatedHtml.replace(/ctl=true/, "ctl=false");
+        }
+        return updatedHtml;
+    }
+    (0,react__WEBPACK_IMPORTED_MODULE_1__.useEffect)(()=>{
+        if (question?.iframeText) {
+            const updatedIframeContent = updateIframeContent(question.iframeText, true);
+            setIframeContent(updatedIframeContent);
+        }
+    }, [
+        question?.iframeText
+    ]);
+    const toggleModal = ()=>{
+        setIsModalOpen(!isModalOpen);
+    };
     return /*#__PURE__*/ (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)("div", {
         className: (_styles_QuestionId_module_css__WEBPACK_IMPORTED_MODULE_11___default()["main-container"]),
         children: [
@@ -546,7 +572,6 @@ const QuestionPage = ({ id , question , concepts , user  })=>{
                                             })
                                         ]
                                     }),
-                                    /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("div", {}),
                                     /*#__PURE__*/ (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)("div", {
                                         className: (_styles_QuestionId_module_css__WEBPACK_IMPORTED_MODULE_11___default()["question-videos"]),
                                         children: [
@@ -564,6 +589,23 @@ const QuestionPage = ({ id , question , concepts , user  })=>{
                             /*#__PURE__*/ (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)("div", {
                                 className: (_styles_QuestionId_module_css__WEBPACK_IMPORTED_MODULE_11___default()["content-side"]),
                                 children: [
+                                    /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("div", {
+                                        className: (_styles_QuestionId_module_css__WEBPACK_IMPORTED_MODULE_11___default()["graph-container"]),
+                                        children: /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("div", {
+                                            className: (_styles_QuestionId_module_css__WEBPACK_IMPORTED_MODULE_11___default()["graph-grid"]),
+                                            dangerouslySetInnerHTML: {
+                                                __html: iframeContent
+                                            }
+                                        })
+                                    }),
+                                    /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("div", {
+                                        className: (_styles_QuestionId_module_css__WEBPACK_IMPORTED_MODULE_11___default()["image-grid"]),
+                                        children: /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("button", {
+                                            onClick: toggleModal,
+                                            className: (_styles_QuestionId_module_css__WEBPACK_IMPORTED_MODULE_11___default()["modal-toggle"]),
+                                            children: isModalOpen ? "" : "Full Screen"
+                                        })
+                                    }),
                                     /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("h2", {
                                         className: (_styles_QuestionId_module_css__WEBPACK_IMPORTED_MODULE_11___default()["similar-video-text"]),
                                         children: "Similar Concepts"
@@ -588,12 +630,6 @@ const QuestionPage = ({ id , question , concepts , user  })=>{
                                                 children: "Video"
                                             })
                                         ]
-                                    }),
-                                    /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("div", {
-                                        className: (_styles_QuestionId_module_css__WEBPACK_IMPORTED_MODULE_11___default()["graph-grid"]),
-                                        dangerouslySetInnerHTML: {
-                                            __html: question?.iframeText || ""
-                                        }
                                     })
                                 ]
                             })
@@ -630,8 +666,7 @@ const QuestionPage = ({ id , question , concepts , user  })=>{
                         }),
                         /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("div", {
                             className: (_styles_QuestionId_module_css__WEBPACK_IMPORTED_MODULE_11___default()["scrolling-effect"]),
-                            children: arr.map((e)=>{
-                                return /*#__PURE__*/ (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)("div", {
+                            children: arr.map((e)=>/*#__PURE__*/ (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)("div", {
                                     className: (_styles_QuestionId_module_css__WEBPACK_IMPORTED_MODULE_11___default()["question-boxes"]),
                                     children: [
                                         /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("div", {
@@ -641,11 +676,32 @@ const QuestionPage = ({ id , question , concepts , user  })=>{
                                             })
                                         }),
                                         /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("button", {
+                                            className: (_styles_QuestionId_module_css__WEBPACK_IMPORTED_MODULE_11___default()["buttons-of-div"]),
                                             children: "View Solutions"
                                         })
                                     ]
-                                }, e);
-                            })
+                                }, e))
+                        })
+                    ]
+                })
+            }),
+            isModalOpen && /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("div", {
+                className: (_styles_QuestionId_module_css__WEBPACK_IMPORTED_MODULE_11___default()["modal-overlay"]),
+                onClick: toggleModal,
+                children: /*#__PURE__*/ (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)("div", {
+                    className: (_styles_QuestionId_module_css__WEBPACK_IMPORTED_MODULE_11___default()["modal-content"]),
+                    onClick: (e)=>e.stopPropagation(),
+                    children: [
+                        /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("div", {
+                            className: (_styles_QuestionId_module_css__WEBPACK_IMPORTED_MODULE_11___default()["modal-iframe-container"]),
+                            dangerouslySetInnerHTML: {
+                                __html: iframeContent
+                            }
+                        }),
+                        /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("button", {
+                            onClick: toggleModal,
+                            className: (_styles_QuestionId_module_css__WEBPACK_IMPORTED_MODULE_11___default()["modal-toggle"]),
+                            children: "Close"
                         })
                     ]
                 })

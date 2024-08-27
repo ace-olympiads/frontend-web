@@ -27,7 +27,7 @@ axios__WEBPACK_IMPORTED_MODULE_0__ = (__webpack_async_dependencies__.then ? (awa
 const searchHandler = async (req, res)=>{
     const { query  } = req.query;
     try {
-        const response = await axios__WEBPACK_IMPORTED_MODULE_0__["default"].get(`${"https://backend.aceacad.com/"}question/search/`, {
+        const response = await axios__WEBPACK_IMPORTED_MODULE_0__["default"].get(`${"https://backend.aceacad.com/"}/question/search/`, {
             params: {
                 query
             }

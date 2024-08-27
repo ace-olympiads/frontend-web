@@ -68,6 +68,10 @@ const SearchBar = ({ onSearchResults , onSearchQueryChange , searchQuery , input
     };
     // truncate the text to a certain number of words and if more than a words numbner then add "..." at the end
     const truncateText = (text, maxWords)=>{
+        if (typeof text !== "string") {
+            // Handle the case where text is not a string (e.g., undefined or null)
+            return "";
+        }
         const words = text.split(" ");
         if (words.length <= maxWords) {
             return text;
@@ -85,16 +89,18 @@ const SearchBar = ({ onSearchResults , onSearchQueryChange , searchQuery , input
         }
         setLoading(true);
         try {
-            const response = await axios__WEBPACK_IMPORTED_MODULE_2__["default"].get(`${"https://backend.aceacad.com/"}question/search/`, {
+            console.log("Sending query:", newQuery);
+            const response = await axios__WEBPACK_IMPORTED_MODULE_2__["default"].get(`${"https://backend.aceacad.com/"}/question/search/`, {
                 params: {
                     query: newQuery
                 }
             });
+            console.log("API Response:", response.data);
             onSearchResults(response.data);
             setSearchResults(response.data);
             setShowDropdown(true);
         } catch (error) {
-            console.error(error);
+            console.error("API Error:", error);
         } finally{
             setLoading(false);
         }
