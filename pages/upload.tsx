@@ -1,49 +1,46 @@
 import { GetSessionParams, getSession, useSession } from "next-auth/react";
 import UploadForm from "../components/UploadForm";
 import { useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter } from "next/router"; // Use from "next/router" instead of "next/navigation"
 import { User } from "../types";
 import axiosInstance from "../axios";
 import BackButton from "../components/BackButton";
 
-export async function getServerSideProps(
-  context: GetSessionParams | undefined
-) {
+export async function getServerSideProps(context: GetSessionParams | undefined) {
   const session = await getSession(context);
 
-  try {
-    const mail = session?.user?.email;
-    const getDetails = await axiosInstance.get(`/users/account/?email=${mail}`);
-    const user: User = getDetails.data;
+  let user = null;
 
-    return {
-      props: {
-        user,
-      },
-    };
-  } catch (error) {
-    console.log(error);
+  if (session) {
+    try {
+      const mail = session.user?.email;
+      const getDetails = await axiosInstance.get(`/users/account/?email=${mail}`);
+      user = getDetails.data;
+    } catch (error) {
+      console.error("Error fetching user details:", error);
+    }
   }
 
   return {
-    props: {},
+    props: { user },
   };
 }
-const UploadPage: React.FC<{ user: User }> = ({ user }) => {
-  console.log(user);
-  const session = useSession();
+
+const UploadPage: React.FC<{ user: User | null }> = ({ user }) => {
+  const { data: session, status } = useSession(); // Correctly track session state
   const router = useRouter();
+
   useEffect(() => {
-    console.log(session?.status);
-    if (session?.status !== "authenticated") {
-      router.push("/");
+    console.log("Session status:", status);
+    if (status === "unauthenticated") {
+      console.warn("User is unauthenticated, but staying on the page.");
     }
-  }, [session?.status, router]);
+  }, [status]);
 
   return (
     <>
       <BackButton />
-      <UploadForm user={user} />;
+      <UploadForm user={user} />
     </>
   );
 };

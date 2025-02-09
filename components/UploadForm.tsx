@@ -1,10 +1,30 @@
 import React, { useState, ChangeEvent, FormEvent, useEffect } from "react";
+import dynamic from 'next/dynamic';
+import 'react-quill/dist/quill.snow.css';
 import styles from "../styles/Upload.module.css";
 import axios from "axios";
 import "katex/dist/katex.min.css";
 import { BlockMath } from "react-katex";
 import { Item, ConceptData, QuestionData, VideoData, User } from "../types";
 
+// Dynamically import ReactQuill with no SSR
+const ReactQuill = dynamic(
+  () => import('react-quill'),
+  { ssr: false }
+);
+
+const modules = {
+  toolbar: [
+    [{ 'header': [1, 2, 3, false] }],
+    ['bold', 'italic', 'underline'],
+    ['link', 'image', 'formula'], // 'link' and 'image' for pasting URLs
+  ]
+};
+const formats = [
+  'header',
+  'bold', 'italic', 'underline',
+  'link', 'image', 'formula'
+];
 const UploadForm: React.FC<{ user: User }> = ({ user }) => {
   const [uploadType, setUploadType] = useState("");
   const [concepts, setConcepts] = useState<ConceptData[]>([]);
@@ -134,13 +154,17 @@ const UploadForm: React.FC<{ user: User }> = ({ user }) => {
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    if (uploadType === "question") {
+    if (1 === 1) {
       try {
         await axios.post(
-          `${process.env.NEXT_PUBLIC_BACKEND_URL}question/add/`,
+          `http://localhost:8000/question/add/`,
           {
             ...questionData,
-            author: user?.id,
+            author: "idk",
+            question_text_latex: (questionData.question_text_latex),
+            text_solution_latex: (questionData.text_solution_latex),
+            tags: selectedTags.map(tag => ({ name: tag.name })),
+            examinations: selectedExaminations.map(exam => ({ name: exam.name })),
           }
         );
         setQuestionData({
@@ -213,19 +237,25 @@ const UploadForm: React.FC<{ user: User }> = ({ user }) => {
       }));
     }
   };
-  function preprocessLatex(latex: string) {
-    const replacedNewlines = latex.replace(/\n/g, "$\\\\$");
-    const parts = replacedNewlines.split("$");
-  
-    const processedParts = parts.map((part, index) => {
-      if (index % 2 === 0) {
-        return `\\text{${part}}`;
-      } else {
-        return part;
+  const preprocessLatex = (content: string) => {
+    if (!content) return '';
+
+    try {
+      // Extract LaTeX expressions from the content (between $$ ... $$)
+      const latexRegex = /\$\$(.*?)\$\$/g;
+      const matches = content.match(latexRegex);
+
+      if (matches) {
+        // Return only the first found LaTeX expression
+        return matches[0].replace(/\$\$/g, '').trim();
       }
-    });
-    return processedParts.join("");
-  }
+      return content; // Return entire content if no LaTeX is found
+    } catch (error) {
+      console.error('Error preprocessing LaTeX:', error);
+      return '';
+    }
+  };
+
   return (
     <div className={styles.container}>
       <h1>Upload Form</h1>
@@ -263,12 +293,21 @@ const UploadForm: React.FC<{ user: User }> = ({ user }) => {
             <div>
               <label>
                 Question Text Latex:
-                <textarea
-                  name="question_text_latex"
+                <ReactQuill
+                  theme="snow"
+                  modules={modules}
+                  formats={formats}
                   value={questionData.question_text_latex}
-                  onChange={handleChange}
-                  className={styles.textarea}
-                ></textarea>
+                  onChange={(content) => {
+                    handleChange({
+                      target: {
+                        name: 'question_text_latex',
+                        value: content
+                      }
+                    } as React.ChangeEvent<HTMLInputElement>);
+                  }}
+                  className={styles.quillEditor}
+                />
               </label>
               <div className={styles.latex}>
                 <BlockMath math={preprocessLatex(questionData.question_text_latex)} />
@@ -288,30 +327,27 @@ const UploadForm: React.FC<{ user: User }> = ({ user }) => {
             </div>
             <div>
               <label>
-                Text Solution:
-                <textarea
-                  name="text_solution"
-                  value={questionData.text_solution}
-                  onChange={handleChange}
-                  className={styles.textarea}
-                ></textarea>
-              </label>
-            </div>
-            <div>
-              <label>
                 Text Solution (Latex):
-                <textarea
-                  name="text_solution_latex"
+                <ReactQuill
+                  theme="snow"
+                  modules={modules}
+                  formats={formats}
                   value={questionData.text_solution_latex}
-                  onChange={handleChange}
-                  className={styles.textarea}
-                ></textarea>
+                  onChange={(content) => {
+                    handleChange({
+                      target: {
+                        name: 'text_solution_latex',
+                        value: content
+                      }
+                    } as React.ChangeEvent<HTMLInputElement>);
+                  }}
+                  className={styles.quillEditor}
+                />
               </label>
               <div className={styles.latex}>
                 <BlockMath math={preprocessLatex(questionData.text_solution_latex)} />
               </div>
             </div>
-
             <div>
               <label>
                 Category:
@@ -352,11 +388,10 @@ const UploadForm: React.FC<{ user: User }> = ({ user }) => {
               <div className={styles["item-element"]}>
                 {tags?.map((tag) => (
                   <div
-                    className={`${styles["item-individual-element"]} ${
-                      selectedTags.some((t) => t.name === tag.name)
-                        ? styles["selected-item"]
-                        : ""
-                    }`}
+                    className={`${styles["item-individual-element"]} ${selectedTags.some((t) => t.name === tag.name)
+                      ? styles["selected-item"]
+                      : ""
+                      }`}
                     key={tag.name}
                     onClick={() => selectTag(tag)}
                   >
@@ -391,11 +426,10 @@ const UploadForm: React.FC<{ user: User }> = ({ user }) => {
               <div className={styles["item-element"]}>
                 {examinations?.map((examination) => (
                   <div
-                    className={`${styles["item-individual-element"]} ${
-                      selectedExaminations.some((e) => e.name === examination.name)
-                        ? styles["selected-item"]
-                        : ""
-                    }`}
+                    className={`${styles["item-individual-element"]} ${selectedExaminations.some((e) => e.name === examination.name)
+                      ? styles["selected-item"]
+                      : ""
+                      }`}
                     key={examination.name}
                     onClick={() => selectExamination(examination)}
                   >

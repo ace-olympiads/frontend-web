@@ -4,7 +4,7 @@ import YoutubeEmbed from "../../components/YoutubeEmbed";
 import SolutionBox from "../../components/SolutionBox";
 import Comments from "../../components/Comments";
 import styles from "../../styles/QuestionId.module.css";
-import axiosInstance from "../../axios";
+import axios from 'axios';
 import { extractEmbedIdFromYouTubeLink } from "../../utils/youtubeId";
 import { getSession } from "next-auth/react";
 import Concept from "../../components/Concept";
@@ -21,25 +21,21 @@ import { BlockMath } from "react-katex";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { id } = context.query;
-  const session = await getSession(context);
-
-  if (session) {
-    const mail = session?.user?.email;
-    const getDetails = await axiosInstance.get(`/users/account/?email=${mail}`);
-    const user: User = getDetails.data;
-    const questionFetch = await axiosInstance.get(`question/${id}`, {
-      data: { email: mail },
-    });
-    const conceptsFetch = await axiosInstance.get(`concepts/`);
-    const question: QuestionType = questionFetch.data;
-    const concepts: ConceptType[] = conceptsFetch.data;
-    return { props: { id, user, question, concepts } };
-  } else {
-    const questionFetch = await axiosInstance.get(`question/${id}`);
-    const conceptsFetch = await axiosInstance.get(`concepts/`);
+  try {
+    const questionFetch = await axios.get(`http://localhost:8000/api/question/${id}`);
+    const conceptsFetch = await axios.get(`http://localhost:8000/api/concepts/`);
     const question: QuestionType = questionFetch.data;
     const concepts: ConceptType[] = conceptsFetch.data;
     return { props: { id, question, concepts } };
+  } catch (error) {
+    console.error('Error fetching data:', error);
+    return {
+      props: {
+        id,
+        question: null,
+        concepts: []
+      }
+    };
   }
 };
 
@@ -47,7 +43,6 @@ const QuestionPage: React.FC<QuestionPageProps> = ({
   id,
   question,
   concepts,
-  user,
 }) => {
   const router = useRouter();
   const arr = [1, 2, 32, 3, 23, 23];
@@ -105,8 +100,7 @@ const QuestionPage: React.FC<QuestionPageProps> = ({
             </div>
             <div className={styles["question-text-container"]}>
               <div className={styles["question-tags"]}>
-                <h1>{question?.tags?.[0].name.toUpperCase()} </h1>
-                <h1>{question?.examinations?.[0].name.toUpperCase()}</h1>
+                <h1>{question?.category === 'G' ? 'GEOMETRY' : question?.category}</h1>
               </div>
               <div className={styles["question-heading"]}>
                 Question {`${question?.id}`}
@@ -152,7 +146,7 @@ const QuestionPage: React.FC<QuestionPageProps> = ({
           </div>
         </div>
         <div className={styles["comments-section"]}>
-          {user ? <Comments id={id} user={user} /> : <Comments id={id} />}
+          <Comments id={id} />
         </div>
       </div>
 

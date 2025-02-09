@@ -5,9 +5,9 @@ import { ContentProp, Exam, Video } from "../../types";
 import Question from "../../components/Question";
 import { useRouter } from "next/router";
 import styles from "../../styles/query.module.css";
-import { useSession } from "next-auth/react";
 import VideoCard from "../../components/VideoCard";
 import BackButton from "../../components/BackButton";
+
 interface PageProps {
   query: string;
   id: string;
@@ -30,8 +30,8 @@ const QueryPage = ({ id, query }: PageProps) => {
   const [object, setObjects] = useState<ContentProp[]>([]);
   const [videos, setVideos] = useState<Video[]>();
   const [examQues, setExamQues] = useState<Exam>();
-  const session = useSession();
   const router = useRouter();
+
   useEffect(() => {
     const fetchParticularData = async () => {
       if (query === "tag") {
@@ -40,11 +40,7 @@ const QueryPage = ({ id, query }: PageProps) => {
         console.log(response.data);
         setObjects(response.data);
       } else if (query === "concept") {
-        const response = await axiosInstance.get(`/concepts/${id}`, {
-          data: {
-            email: session?.data?.user?.email,
-          },
-        });
+        const response = await axiosInstance.get(`/concepts/${id}`);
         const videoList = response.data.videos;
         console.log(videoList);
         setVideos(videoList);
@@ -56,7 +52,7 @@ const QueryPage = ({ id, query }: PageProps) => {
       }
     };
     fetchParticularData();
-  }, [id , query, session?.data?.user?.email]);
+  }, [id, query]);
 
   return (
     <div>

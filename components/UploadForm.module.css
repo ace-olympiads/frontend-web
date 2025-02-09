@@ -1,0 +1,9 @@
+.quillEditor {
+  height: 200px;
+  margin-bottom: 20px;
+  background: white;
+}
+
+.quillEditor :global(.ql-container) {
+  min-height: 150px;
+} 
