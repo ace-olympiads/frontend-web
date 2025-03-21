@@ -1,32 +1,160 @@
 import React, { useState, ChangeEvent, FormEvent, useEffect } from "react";
-import dynamic from 'next/dynamic';
-import 'react-quill/dist/quill.snow.css';
+import dynamic from "next/dynamic";
+import "react-quill/dist/quill.snow.css";
 import styles from "../styles/Upload.module.css";
 import axios from "axios";
 import "katex/dist/katex.min.css";
-import { BlockMath } from "react-katex";
+import { InlineMath, BlockMath } from "react-katex";
 import { Item, ConceptData, QuestionData, VideoData, User } from "../types";
 
 // Dynamically import ReactQuill with no SSR
-const ReactQuill = dynamic(
-  () => import('react-quill'),
-  { ssr: false }
-);
+const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
+
+// Enhanced LaTeX Input Field component with better preview and styling
+const LatexInputField = ({ value, onChange, label, name, rows = 5 }) => {
+  const [rawInput, setRawInput] = useState(value || "");
+  const [previewMode, setPreviewMode] = useState(false);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    setRawInput(value || "");
+  }, [value]);
+
+  const handleInputChange = (e) => {
+    const newValue = e.target.value;
+    setRawInput(newValue);
+    setError("");
+    
+    try {
+      // Basic validation - this won't catch all LaTeX errors but will help
+      if (countOccurrences(newValue, "$") % 2 !== 0) {
+        setError("Warning: Unmatched $ symbols");
+      }
+      
+      onChange({ target: { name, value: newValue } });
+    } catch (err) {
+      setError("Error in LaTeX syntax");
+      console.error("LaTeX error:", err);
+    }
+  };
+
+  // Helper function to count occurrences
+  const countOccurrences = (str, char) => {
+    return (str.match(new RegExp("\\" + char, "g")) || []).length;
+  };
+
+  // Safely render LaTeX with error handling
+  const SafeLatexRenderer = ({ latex }) => {
+    try {
+      // For the preview, we'll render each line separately
+      const lines = latex.split('\n').filter(line => line.trim());
+      
+      return (
+        <div>
+          {lines.map((line, index) => (
+            <div key={index} className="latex-line">
+              <BlockMath math={line} />
+            </div>
+          ))}
+        </div>
+      );
+    } catch (err) {
+      return <div className="latex-error">Error rendering LaTeX: {err.message}</div>;
+    }
+  };
+
+  return (
+    <div className={styles.latexInputContainer || "latex-input-container"}>
+      <label>{label}</label>
+      <div className={styles.latexEditor || "latex-editor"}>
+        {previewMode ? (
+          <div className={styles.latexPreview || "latex-preview"}>
+            <div className={styles.previewContent || "preview-content"}>
+              <SafeLatexRenderer latex={rawInput} />
+            </div>
+            <button
+              type="button"
+              className={styles.previewToggle || "preview-toggle"}
+              onClick={() => setPreviewMode(false)}
+            >
+              Edit
+            </button>
+          </div>
+        ) : (
+          <div className={styles.latexEditMode || "latex-edit-mode"}>
+            <textarea
+              name={name}
+              value={rawInput}
+              onChange={handleInputChange}
+              rows={rows}
+              className={styles.latexTextarea || "latex-textarea"}
+              placeholder="Enter LaTeX here..."
+            />
+            {error && <div className={styles.latexError || "latex-error"}>{error}</div>}
+            {/* <div className={styles.latexControls || "latex-controls"}>
+              <button
+                type="button"
+                className={styles.previewToggle || "preview-toggle"}
+                onClick={() => setPreviewMode(true)}
+              >
+                Preview
+              </button>
+              <button
+                type="button"
+                className={styles.helpButton || "help-button"}
+                onClick={() => window.open("https://en.wikibooks.org/wiki/LaTeX/Mathematics", "_blank")}
+              >
+                LaTeX Help
+              </button>
+            </div> */}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+// Component to display the rendered LaTeX question in preview mode
+const LatexQuestionView = ({ questionText, solutionText }) => {
+  return (
+    <div className={styles.questionPreview || "question-preview"}>
+      <h3>Question Preview</h3>
+      <div className={styles.questionContent || "question-content"}>
+        <BlockMath math={questionText} />
+      </div>
+      
+      {solutionText && (
+        <>
+          <h3>Solution Preview</h3>
+          <div className={styles.solutionContent || "solution-content"}>
+            <BlockMath math={solutionText} />
+          </div>
+        </>
+      )}
+    </div>
+  );
+};
 
 const modules = {
   toolbar: [
-    [{ 'header': [1, 2, 3, false] }],
-    ['bold', 'italic', 'underline'],
-    ['link', 'image', 'formula'], // 'link' and 'image' for pasting URLs
-  ]
+    [{ header: [1, 2, 3, false] }],
+    ["bold", "italic", "underline"],
+    ["link", "image", "formula"],
+  ],
 };
+
 const formats = [
-  'header',
-  'bold', 'italic', 'underline',
-  'link', 'image', 'formula'
+  "header",
+  "bold",
+  "italic",
+  "underline",
+  "link",
+  "image",
+  "formula",
 ];
+
 const UploadForm: React.FC<{ user: User }> = ({ user }) => {
-  const [uploadType, setUploadType] = useState("");
+  const [uploadType, setUploadType] = useState("question");
   const [concepts, setConcepts] = useState<ConceptData[]>([]);
   const [tags, setTags] = useState<Item[]>([]);
   const [selectedTags, setSelectedTags] = useState<Item[]>([]);
@@ -36,6 +164,8 @@ const UploadForm: React.FC<{ user: User }> = ({ user }) => {
   const [selectedExaminations, setSelectedExaminations] = useState<Item[]>([]);
   const [newExaminationInputVisible, setNewExaminationInputVisible] = useState(false);
   const [newExaminationInputValue, setNewExaminationInputValue] = useState("");
+  const [previewMode, setPreviewMode] = useState(false);
+  
   const [questionData, setQuestionData] = useState<QuestionData>({
     question_text: "",
     question_text_latex: "",
@@ -47,11 +177,13 @@ const UploadForm: React.FC<{ user: User }> = ({ user }) => {
     category: "",
     concept: null,
   });
+  
   const [conceptData, setConceptData] = useState<ConceptData>({
     id: -1,
     title: "",
     description: "",
   });
+  
   const [videoData, setVideoData] = useState<VideoData>({
     concept: null,
     title: "",
@@ -59,6 +191,23 @@ const UploadForm: React.FC<{ user: User }> = ({ user }) => {
     thumbnail_url: "",
   });
 
+  // Fetch data on component mount
+  useEffect(() => {
+    fetchConcepts();
+    fetchTags();
+    fetchExaminations();
+  }, []);
+
+  // Update questionData when tags or examinations change
+  useEffect(() => {
+    setQuestionData((prevData) => ({
+      ...prevData,
+      tags: selectedTags,
+      examinations: selectedExaminations,
+    }));
+  }, [selectedTags, selectedExaminations]);
+
+  // Tag management functions
   const selectTag = (tag: Item) => {
     setSelectedTags((prevTags) => {
       const isSelected = prevTags.some((t) => t.name === tag.name);
@@ -69,10 +218,12 @@ const UploadForm: React.FC<{ user: User }> = ({ user }) => {
       }
     });
   };
+
   const toggleNewTagInput = () => {
     setNewTagInputVisible(!newTagInputVisible);
     setNewTagInputValue("");
   };
+
   const addNewTag = () => {
     const trimmedValue = newTagInputValue.trim();
     if (trimmedValue !== "" && !tags.some((tag) => tag.name === trimmedValue)) {
@@ -83,16 +234,7 @@ const UploadForm: React.FC<{ user: User }> = ({ user }) => {
     toggleNewTagInput();
   };
 
-  const fetchTags = async () => {
-    try {
-      const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}question/tags/`
-      );
-      setTags(response.data);
-    } catch (error) {
-      console.error(error);
-    }
-  };
+  // Examination management functions
   const selectExamination = (examination: Item) => {
     setSelectedExaminations((prevExaminations) => {
       const isSelected = prevExaminations.some((t) => t.name === examination.name);
@@ -103,10 +245,12 @@ const UploadForm: React.FC<{ user: User }> = ({ user }) => {
       }
     });
   };
+
   const toggleNewExaminationInput = () => {
     setNewExaminationInputVisible(!newExaminationInputVisible);
     setNewExaminationInputValue("");
   };
+
   const addNewExamination = () => {
     const trimmedValue = newExaminationInputValue.trim();
     if (trimmedValue !== "" && !examinations.some((examination) => examination.name === trimmedValue)) {
@@ -117,56 +261,50 @@ const UploadForm: React.FC<{ user: User }> = ({ user }) => {
     toggleNewExaminationInput();
   };
 
-  const fetchExaminations = async () => {
-    try {
-      const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}question/examinations/`
-      );
-      setExaminations(response.data);
-    } catch (error) {
-      console.error(error);
-    }
-  };
-  useEffect(() => {
-    fetchConcepts();
-    fetchTags();
-    fetchExaminations();
-  }, []);
-  useEffect(() => {
-    setQuestionData((prevData) => ({
-      ...prevData,
-      tags: selectedTags,
-      examinations: selectedExaminations,
-    }));
-    console.log(selectedExaminations)
-    console.log(selectedTags)
-  }, [selectedTags, selectedExaminations]);
+  // API calls
   const fetchConcepts = async () => {
     try {
-      const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}concepts/`
-      );
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}concepts/`);
       setConcepts(response.data);
     } catch (error) {
-      console.error(error);
+      console.error("Error fetching concepts:", error);
+    }
+  };
+
+  const fetchTags = async () => {
+    try {
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}question/tags/`);
+      setTags(response.data);
+    } catch (error) {
+      console.error("Error fetching tags:", error);
+    }
+  };
+
+  const fetchExaminations = async () => {
+    try {
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}question/examinations/`);
+      setExaminations(response.data);
+    } catch (error) {
+      console.error("Error fetching examinations:", error);
     }
   };
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    if (1 === 1) {
+    
+    if (uploadType === "question") {
       try {
-        await axios.post(
-          `http://localhost:8000/question/add/`,
-          {
-            ...questionData,
-            author: "idk",
-            question_text_latex: (questionData.question_text_latex),
-            text_solution_latex: (questionData.text_solution_latex),
-            tags: selectedTags.map(tag => ({ name: tag.name })),
-            examinations: selectedExaminations.map(exam => ({ name: exam.name })),
-          }
-        );
+        // For question submission, we're storing both the raw LaTeX and formatted output
+        await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8000/"}question/add/`, {
+          ...questionData,
+          author: "idk", // Default to "idk" if user ID is not available
+          question_text_latex: questionData.question_text, // Store the raw LaTeX in the latex field
+          text_solution_latex: questionData.text_solution, // Store the raw LaTeX solution
+          tags: selectedTags.map((tag) => ({ name: tag.name })),
+          examinations: selectedExaminations.map((exam) => ({ name: exam.name })),
+        });
+        
+        // Reset form after successful submission
         setQuestionData({
           question_text: "",
           question_text_latex: "",
@@ -180,378 +318,324 @@ const UploadForm: React.FC<{ user: User }> = ({ user }) => {
         });
         setSelectedTags([]);
         setSelectedExaminations([]);
+        alert("Question submitted successfully!");
       } catch (error) {
-        console.error(error);
+        console.error("Error submitting question:", error);
+        alert("Error submitting question. Please check the console for details.");
       }
     } else if (uploadType === "concept") {
       try {
-        await axios.post(
-          `${process.env.NEXT_PUBLIC_BACKEND_URL}concepts/`,
-          conceptData
-        );
-        setConceptData({
-          id: -1,
-          title: "",
-          description: "",
-        });
+        await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}concepts/`, conceptData);
+        setConceptData({ id: -1, title: "", description: "" });
         fetchConcepts();
+        alert("Concept submitted successfully!");
       } catch (error) {
-        console.error(error);
+        console.error("Error submitting concept:", error);
+        alert("Error submitting concept. Please check the console for details.");
       }
     } else if (uploadType === "video") {
       try {
-        const response = await axios.post(
+        await axios.post(
           `${process.env.NEXT_PUBLIC_BACKEND_URL}concepts/${videoData.concept}/videos/`,
           { ...videoData, author: user?.id }
         );
-        setVideoData({
-          concept: null,
-          title: "",
-          youtube_url: "",
-          thumbnail_url: "",
-        });
+        setVideoData({ concept: null, title: "", youtube_url: "", thumbnail_url: "" });
+        alert("Video submitted successfully!");
       } catch (error) {
-        console.error(error);
+        console.error("Error submitting video:", error);
+        alert("Error submitting video. Please check the console for details.");
       }
     }
   };
 
-  const handleChange = (
-    e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
-  ) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
+    
     if (uploadType === "question") {
-      setQuestionData((prevData) => ({
-        ...prevData,
-        [name]: value,
-      }));
+      setQuestionData((prevData) => ({ ...prevData, [name]: value }));
     } else if (uploadType === "concept") {
-      setConceptData((prevData) => ({
-        ...prevData,
-        [name]: value,
-      }));
+      setConceptData((prevData) => ({ ...prevData, [name]: value }));
     } else if (uploadType === "video") {
-      setVideoData((prevData) => ({
-        ...prevData,
-        [name]: value,
-      }));
-    }
-  };
-  const preprocessLatex = (content: string) => {
-    if (!content) return '';
-
-    try {
-      // Extract LaTeX expressions from the content (between $$ ... $$)
-      const latexRegex = /\$\$(.*?)\$\$/g;
-      const matches = content.match(latexRegex);
-
-      if (matches) {
-        // Return only the first found LaTeX expression
-        return matches[0].replace(/\$\$/g, '').trim();
-      }
-      return content; // Return entire content if no LaTeX is found
-    } catch (error) {
-      console.error('Error preprocessing LaTeX:', error);
-      return '';
+      setVideoData((prevData) => ({ ...prevData, [name]: value }));
     }
   };
 
   return (
     <div className={styles.container}>
       <h1>Upload Form</h1>
-      <form onSubmit={handleSubmit}>
+      
+      <div className={styles.uploadTypeSelector}>
+        <label>Select upload type:</label>
+        <select
+          value={uploadType}
+          onChange={(e) => setUploadType(e.target.value)}
+          className={styles.select}
+        >
+          <option value="question">Question</option>
+          <option value="concept">Concept</option>
+          <option value="video">Video for Concept</option>
+        </select>
+      </div>
+      
+      {uploadType === "question" && (
         <div>
-          <label>
-            Select upload type:
-            <select
-              value={uploadType}
-              onChange={(e) => setUploadType(e.target.value)}
-              className={styles.select}
-            >
-              <option value="">Select</option>
-              <option value="question">Question</option>
-              <option value="concept">Concept</option>
-              <option value="video">Video for Concept</option>
-            </select>
-          </label>
-        </div>
-        {uploadType === "question" && (
-          <div>
-            <h2>Question Form</h2>
-            <div>
-              <label>
-                Question Text:
-                <input
-                  type="text"
+          {previewMode ? (
+            <LatexQuestionView 
+              questionText={questionData.question_text} 
+              solutionText={questionData.text_solution}
+            />
+          ) : (
+            <form onSubmit={handleSubmit}>
+              <h2>Question Form</h2>
+              
+              <div>
+                <LatexInputField
+                  label="Question Text (LaTeX):"
                   name="question_text"
                   value={questionData.question_text}
                   onChange={handleChange}
-                  className={styles.input}
+                  rows={6}
                 />
-              </label>
-            </div>
-            <div>
-              <label>
-                Question Text Latex:
-                <ReactQuill
-                  theme="snow"
-                  modules={modules}
-                  formats={formats}
-                  value={questionData.question_text_latex}
-                  onChange={(content) => {
-                    handleChange({
-                      target: {
-                        name: 'question_text_latex',
-                        value: content
-                      }
-                    } as React.ChangeEvent<HTMLInputElement>);
-                  }}
-                  className={styles.quillEditor}
-                />
-              </label>
-              <div className={styles.latex}>
-                <BlockMath math={preprocessLatex(questionData.question_text_latex)} />
               </div>
-            </div>
-            <div>
-              <label>
-                Video Solution URL:
-                <input
-                  type="text"
-                  name="video_solution_url"
-                  value={questionData.video_solution_url}
-                  onChange={handleChange}
-                  className={styles.input}
-                />
-              </label>
-            </div>
-            <div>
-              <label>
-                Text Solution (Latex):
-                <ReactQuill
-                  theme="snow"
-                  modules={modules}
-                  formats={formats}
-                  value={questionData.text_solution_latex}
-                  onChange={(content) => {
-                    handleChange({
-                      target: {
-                        name: 'text_solution_latex',
-                        value: content
-                      }
-                    } as React.ChangeEvent<HTMLInputElement>);
-                  }}
-                  className={styles.quillEditor}
-                />
-              </label>
-              <div className={styles.latex}>
-                <BlockMath math={preprocessLatex(questionData.text_solution_latex)} />
-              </div>
-            </div>
-            <div>
-              <label>
-                Category:
-                <select
-                  name="category"
-                  value={questionData.category}
-                  onChange={handleChange}
-                  className={styles.select}
-                >
-                  <option value="" selected>
-                    Select Category
-                  </option>
-                  <option value="G">General User</option>
-                  <option value="P">Premium User</option>
-                </select>
-              </label>
-            </div>
-            <div>
-              <label>
-                Concept:
-                <select
-                  name="concept"
-                  value={questionData.concept || ""}
-                  onChange={handleChange}
-                  className={styles.select}
-                >
-                  <option value="">Select Concept</option>
-                  {concepts.map((concept) => (
-                    <option key={concept.id} value={concept.id}>
-                      {concept.title}
-                    </option>
-                  ))}
-                </select>
-              </label>
-            </div>
-            <div>
-              <label>Tags</label>
-              <div className={styles["item-element"]}>
-                {tags?.map((tag) => (
-                  <div
-                    className={`${styles["item-individual-element"]} ${selectedTags.some((t) => t.name === tag.name)
-                      ? styles["selected-item"]
-                      : ""
-                      }`}
-                    key={tag.name}
-                    onClick={() => selectTag(tag)}
-                  >
-                    {tag.name}
-                  </div>
-                ))}
-                {newTagInputVisible ? (
+              
+              <div>
+                <label>
+                  Video Solution URL:
                   <input
                     type="text"
-                    value={newTagInputValue}
-                    onChange={(e) => setNewTagInputValue(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") {
-                        addNewTag();
-                      }
-                    }}
-                    className={styles["new-item-input"]}
-                    autoFocus
+                    name="video_solution_url"
+                    value={questionData.video_solution_url}
+                    onChange={handleChange}
+                    className={styles.input}
                   />
-                ) : (
-                  <div
-                    className={styles["add-new-item-button"]}
-                    onClick={toggleNewTagInput}
-                  >
-                    +
-                  </div>
-                )}
+                </label>
               </div>
-            </div>
-            <div>
-              <label>Examinations</label>
-              <div className={styles["item-element"]}>
-                {examinations?.map((examination) => (
-                  <div
-                    className={`${styles["item-individual-element"]} ${selectedExaminations.some((e) => e.name === examination.name)
-                      ? styles["selected-item"]
-                      : ""
+              
+              <div>
+                <LatexInputField
+                  label="Text Solution (LaTeX):"
+                  name="text_solution"
+                  value={questionData.text_solution}
+                  onChange={handleChange}
+                  rows={8}
+                />
+              </div>
+              
+              <div>
+                <label>
+                  Category:
+                  <select
+                    name="category"
+                    value={questionData.category}
+                    onChange={handleChange}
+                    className={styles.select}
+                  >
+                    <option value="">Select Category</option>
+                    <option value="G">General User</option>
+                    <option value="P">Premium User</option>
+                  </select>
+                </label>
+              </div>
+              
+              <div>
+                <label>
+                  Concept:
+                  <select
+                    name="concept"
+                    value={questionData.concept || ""}
+                    onChange={handleChange}
+                    className={styles.select}
+                  >
+                    <option value="">Select Concept</option>
+                    {concepts.map((concept) => (
+                      <option key={concept.id} value={concept.id}>
+                        {concept.title}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+              </div>
+              
+              <div>
+                <label>Tags</label>
+                <div className={styles["item-element"]}>
+                  {tags?.map((tag) => (
+                    <div
+                      className={`${styles["item-individual-element"]} ${
+                        selectedTags.some((t) => t.name === tag.name)
+                          ? styles["selected-item"]
+                          : ""
                       }`}
-                    key={examination.name}
-                    onClick={() => selectExamination(examination)}
-                  >
-                    {examination.name}
-                  </div>
-                ))}
-                {newExaminationInputVisible ? (
-                  <input
-                    type="text"
-                    value={newExaminationInputValue}
-                    onChange={(e) => setNewExaminationInputValue(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") {
-                        addNewExamination();
-                      }
-                    }}
-                    className={styles["new-item-input"]}
-                    autoFocus
-                  />
-                ) : (
-                  <div
-                    className={styles["add-new-item-button"]}
-                    onClick={toggleNewExaminationInput}
-                  >
-                    +
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-        )}
-        {uploadType === "concept" && (
-          <div>
-            <h2>Concept Form</h2>
-            <div>
-              <label>
-                Title:
-                <input
-                  type="text"
-                  name="title"
-                  value={conceptData.title}
-                  onChange={handleChange}
-                  className={styles.input}
-                />
-              </label>
-            </div>
-            <div>
-              <label>
-                Description:
-                <textarea
-                  name="description"
-                  value={conceptData.description}
-                  onChange={handleChange}
-                  className={styles.textarea}
-                ></textarea>
-              </label>
-            </div>
-          </div>
-        )}
-        {uploadType === "video" && (
-          <div>
-            <h2>Video Form</h2>
-            <div>
-              <label>
-                Concept:
-                <select
-                  name="concept"
-                  value={videoData.concept ?? ""}
-                  onChange={handleChange}
-                  className={styles.select}
-                >
-                  <option value="" selected>
-                    Select Concept
-                  </option>
-                  {concepts.map((concept) => (
-                    <option key={concept.id} value={concept.id}>
-                      {concept.title}
-                    </option>
+                      key={tag.name}
+                      onClick={() => selectTag(tag)}
+                    >
+                      {tag.name}
+                    </div>
                   ))}
-                </select>
-              </label>
-            </div>
-            <div>
-              <label>
-                Title:
-                <input
-                  type="text"
-                  name="title"
-                  value={videoData.title}
-                  onChange={handleChange}
-                  className={styles.input}
-                />
-              </label>
-            </div>
-            <div>
-              <label>
-                YouTube URL:
-                <input
-                  type="text"
-                  name="youtube_url"
-                  value={videoData.youtube_url}
-                  onChange={handleChange}
-                  className={styles.input}
-                />
-              </label>
-            </div>
-            <div>
-              <label>
-                Thumbnail URL:
-                <input
-                  type="text"
-                  name="thumbnail_url"
-                  value={videoData.thumbnail_url}
-                  onChange={handleChange}
-                  className={styles.input}
-                />
-              </label>
-            </div>
+                  {newTagInputVisible ? (
+                    <input
+                      type="text"
+                      value={newTagInputValue}
+                      onChange={(e) => setNewTagInputValue(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          addNewTag();
+                        }
+                      }}
+                      className={styles["new-item-input"]}
+                      autoFocus
+                    />
+                  ) : (
+                    <div
+                      className={styles["add-new-item-button"]}
+                      onClick={toggleNewTagInput}
+                    >
+                      +
+                    </div>
+                  )}
+                </div>
+              </div>
+              
+              <div>
+                <label>Examinations</label>
+                <div className={styles["item-element"]}>
+                  {examinations?.map((examination) => (
+                    <div
+                      className={`${styles["item-individual-element"]} ${
+                        selectedExaminations.some(
+                          (e) => e.name === examination.name
+                        )
+                          ? styles["selected-item"]
+                          : ""
+                      }`}
+                      key={examination.name}
+                      onClick={() => selectExamination(examination)}
+                    >
+                      {examination.name}
+                    </div>
+                  ))}
+                  {newExaminationInputVisible ? (
+                    <input
+                      type="text"
+                      value={newExaminationInputValue}
+                      onChange={(e) =>
+                        setNewExaminationInputValue(e.target.value)
+                      }
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          addNewExamination();
+                        }
+                      }}
+                      className={styles["new-item-input"]}
+                      autoFocus
+                    />
+                  ) : (
+                    <div
+                      className={styles["add-new-item-button"]}
+                      onClick={toggleNewExaminationInput}
+                    >
+                      +
+                    </div>
+                  )}
+                </div>
+              </div>
+              
+              <button type="submit" className={styles.submitButton}>Submit</button>
+            </form>
+          )}
+        </div>
+      )}
+      
+      {uploadType === "concept" && (
+        <form onSubmit={handleSubmit}>
+          <h2>Concept Form</h2>
+          <div>
+            <label>
+              Title:
+              <input
+                type="text"
+                name="title"
+                value={conceptData.title}
+                onChange={handleChange}
+                className={styles.input}
+              />
+            </label>
           </div>
-        )}
-        <button type="submit">Submit</button>
-      </form>
+          <div>
+            <label>
+              Description:
+              <textarea
+                name="description"
+                value={conceptData.description}
+                onChange={handleChange}
+                className={styles.textarea}
+              ></textarea>
+            </label>
+          </div>
+          <button type="submit" className={styles.submitButton}>Submit</button>
+        </form>
+      )}
+      
+      {uploadType === "video" && (
+        <form onSubmit={handleSubmit}>
+          <h2>Video Form</h2>
+          <div>
+            <label>
+              Concept:
+              <select
+                name="concept"
+                value={videoData.concept ?? ""}
+                onChange={handleChange}
+                className={styles.select}
+              >
+                <option value="">Select Concept</option>
+                {concepts.map((concept) => (
+                  <option key={concept.id} value={concept.id}>
+                    {concept.title}
+                  </option>
+                ))}
+              </select>
+            </label>
+          </div>
+          <div>
+            <label>
+              Title:
+              <input
+                type="text"
+                name="title"
+                value={videoData.title}
+                onChange={handleChange}
+                className={styles.input}
+              />
+            </label>
+          </div>
+          <div>
+            <label>
+              YouTube URL:
+              <input
+                type="text"
+                name="youtube_url"
+                value={videoData.youtube_url}
+                onChange={handleChange}
+                className={styles.input}
+              />
+            </label>
+          </div>
+          <div>
+            <label>
+              Thumbnail URL:
+              <input
+                type="text"
+                name="thumbnail_url"
+                value={videoData.thumbnail_url}
+                onChange={handleChange}
+                className={styles.input}
+              />
+            </label>
+          </div>
+          <button type="submit" className={styles.submitButton}>Submit</button>
+        </form>
+      )}
     </div>
   );
 };
