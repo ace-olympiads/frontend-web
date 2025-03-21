@@ -20,7 +20,7 @@ const LatexInputField = ({ value, onChange, label, name, rows = 5 }) => {
     setRawInput(value || "");
   }, [value]);
 
-  const handleInputChange = (e) => {
+  const handleInputChange = (e: { target: { value: any; }; }) => {
     const newValue = e.target.value;
     setRawInput(newValue);
     setError("");
@@ -39,28 +39,71 @@ const LatexInputField = ({ value, onChange, label, name, rows = 5 }) => {
   };
 
   // Helper function to count occurrences
-  const countOccurrences = (str, char) => {
+  const countOccurrences = (str: string, char: string) => {
     return (str.match(new RegExp("\\" + char, "g")) || []).length;
   };
 
-  // Safely render LaTeX with error handling
-  const SafeLatexRenderer = ({ latex }) => {
-    try {
-      // For the preview, we'll render each line separately
-      const lines = latex.split('\n').filter(line => line.trim());
-      
-      return (
-        <div>
-          {lines.map((line, index) => (
-            <div key={index} className="latex-line">
-              <BlockMath math={line} />
-            </div>
-          ))}
-        </div>
-      );
-    } catch (err) {
-      return <div className="latex-error">Error rendering LaTeX: {err.message}</div>;
-    }
+  // Render LaTeX content similar to QuestionViewer's renderLatexContent function
+  const renderLatexContent = (content: string) => {
+    if (!content) return null;
+  
+    // Split content into segments that are either LaTeX, images, or regular text
+    // Regex modified to be non-greedy for better matching
+    const segments = content.split(/(\$\$[\s\S]+?\$\$|\$[\s\S]+?\$|<img[^>]+>)/g);
+  
+    return (
+      <div className="space-y-4">
+        {segments.map((segment: string, index: React.Key | null | undefined) => {
+          if (segment.startsWith('$$') && segment.endsWith('$$')) {
+            // Handle block LaTeX - remove the delimiters and render
+            const latex = segment.slice(2, -2);
+            try {
+              return (
+                <div key={index} className="my-4">
+                  <BlockMath math={latex} errorColor="#cc0000" />
+                </div>
+              );
+            } catch (err) {
+              console.error("Error rendering block LaTeX:", err);
+              return <div key={index} className="latex-error">Error rendering LaTeX</div>;
+            }
+          } else if (segment.startsWith('$') && segment.endsWith('$')) {
+            // Handle inline LaTeX - remove the delimiters and render
+            const latex = segment.slice(1, -1);
+            try {
+              return <InlineMath key={index} math={latex} errorColor="#cc0000" />;
+            } catch (err) {
+              console.error("Error rendering inline LaTeX:", err);
+              return <span key={index} className="latex-error">Error rendering LaTeX</span>;
+            }
+          } else if (segment.startsWith('<img')) {
+            // Handle images
+            return (
+              <div key={index} className="my-4">
+                <div dangerouslySetInnerHTML={{ __html: segment }} />
+              </div>
+            );
+          } else if (segment.trim()) {
+            // Handle regular text, preserving paragraphs
+            return (
+              <div key={index}>
+                {segment.split(/\n\n+/).map((paragraph: string, pIndex: any) => (
+                  paragraph.trim() && (
+                    <p key={`${index}-${pIndex}`} 
+                       className="my-2"
+                       dangerouslySetInnerHTML={{
+                         __html: paragraph.replace(/\n/g, '<br>')
+                       }} 
+                    />
+                  )
+                ))}
+              </div>
+            );
+          }
+          return null;
+        })}
+      </div>
+    );
   };
 
   return (
@@ -70,7 +113,7 @@ const LatexInputField = ({ value, onChange, label, name, rows = 5 }) => {
         {previewMode ? (
           <div className={styles.latexPreview || "latex-preview"}>
             <div className={styles.previewContent || "preview-content"}>
-              <SafeLatexRenderer latex={rawInput} />
+              {renderLatexContent(rawInput)}
             </div>
             <button
               type="button"
@@ -91,7 +134,7 @@ const LatexInputField = ({ value, onChange, label, name, rows = 5 }) => {
               placeholder="Enter LaTeX here..."
             />
             {error && <div className={styles.latexError || "latex-error"}>{error}</div>}
-            {/* <div className={styles.latexControls || "latex-controls"}>
+            <div className={styles.latexControls || "latex-controls"}>
               <button
                 type="button"
                 className={styles.previewToggle || "preview-toggle"}
@@ -106,7 +149,7 @@ const LatexInputField = ({ value, onChange, label, name, rows = 5 }) => {
               >
                 LaTeX Help
               </button>
-            </div> */}
+            </div>
           </div>
         )}
       </div>
@@ -294,7 +337,6 @@ const UploadForm: React.FC<{ user: User }> = ({ user }) => {
     
     if (uploadType === "question") {
       try {
-        // For question submission, we're storing both the raw LaTeX and formatted output
         await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8000/"}question/add/`, {
           ...questionData,
           author: "idk", // Default to "idk" if user ID is not available

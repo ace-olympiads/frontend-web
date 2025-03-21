@@ -22,7 +22,7 @@ export default function UploadPage() {
     setUploading(true);
 
     try {
-        const response = await axiosInstance.post("/api/getPresignedUrl", {
+        const response = await axiosInstance.post("imageupload/image/", {
           fileName: file.name,
           fileType: file.type,
         });
