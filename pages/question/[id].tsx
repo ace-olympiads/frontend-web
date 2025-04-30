@@ -1,39 +1,41 @@
 import React, { useEffect, useState } from "react";
 import { GetServerSideProps } from "next";
 import YoutubeEmbed from "../../components/YoutubeEmbed";
-import SolutionBox from "../../components/SolutionBox";
-import Comments from "../../components/Comments";
 import styles from "../../styles/QuestionId.module.css";
 import axios from 'axios';
 import { extractEmbedIdFromYouTubeLink } from "../../utils/youtubeId";
-import { getSession } from "next-auth/react";
-import Concept from "../../components/Concept";
-import {
-  QuestionType,
-  QuestionPageProps,
-  ConceptType,
-  User,
-} from "../../types";
 import { useRouter } from "next/router";
 import BackButton from "../../components/BackButton";
 import "katex/dist/katex.min.css";
-import { BlockMath } from "react-katex";
+import { InlineMath, BlockMath } from "react-katex";
+
+// Define Question Type interface if not already defined in your types.ts
+interface QuestionType {
+  id: number;
+  question_text_latex: string;
+  text_solution_latex: string;
+  video_solution_url: string;
+  category: string;
+  iframeText?: string;
+}
+
+interface QuestionPageProps {
+  id: string | number;
+  question: QuestionType | null;
+}
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { id } = context.query;
   try {
-    const questionFetch = await axios.get(`http://localhost:8000/api/question/${id}`);
-    const conceptsFetch = await axios.get(`http://localhost:8000/api/concepts/`);
+    const questionFetch = await axios.get(`http://127.0.0.1:8000/question/${id}`);
     const question: QuestionType = questionFetch.data;
-    const concepts: ConceptType[] = conceptsFetch.data;
-    return { props: { id, question, concepts } };
+    return { props: { id, question } };
   } catch (error) {
     console.error('Error fetching data:', error);
     return {
       props: {
         id,
-        question: null,
-        concepts: []
+        question: null
       }
     };
   }
@@ -42,27 +44,83 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 const QuestionPage: React.FC<QuestionPageProps> = ({
   id,
   question,
-  concepts,
 }) => {
   const router = useRouter();
-  const arr = [1, 2, 32, 3, 23, 23];
-
   const [iframeContent, setIframeContent] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
-  function preprocessLatex(latex: string) {
-    const replacedNewlines = latex.replace(/\n/g, "$\\\\$");
-    const parts = replacedNewlines.split("$");
-    const processedParts = parts.map((part, index) => {
-      if (index % 2 === 0) {
-        return `\\text{${part}}`;
-      } else {
-        return part;
-      }
-    });
-    return processedParts.join("");
-  }
+  useEffect(() => {
+    if (question?.iframeText) {
+      const updatedIframeContent = updateIframeContent(question.iframeText, true);
+      setIframeContent(updatedIframeContent);
+    }
+  }, [question?.iframeText]);
 
+  // Enhanced function to render LaTeX content
+  const renderLatexContent = (content: string) => {
+    if (!content) return null;
+
+    // Improved regex to split input cleanly
+    const segments = content.split(
+      /(\$\$[\s\S]*?\$\$|\$[\s\S]*?\$|<img[^>]+>)/g
+    );
+
+    return (
+      <div className="space-y-4">
+        <p className="my-2 flex flex-wrap gap-x-1">
+          {segments.map((segment: string, index: number) => {
+            if (!segment.trim()) return null;
+
+            try {
+              // Block math
+              if (segment.startsWith("$$") && segment.endsWith("$$")) {
+                const latex = segment.slice(2, -2).trim();
+                return (
+                  <div key={index} className="w-full my-2">
+                    <BlockMath math={latex} errorColor="#cc0000" />
+                  </div>
+                );
+              }
+
+              // Inline math (even multiline) with space wrapping
+              if (segment.startsWith("$") && segment.endsWith("$")) {
+                const latex = segment.slice(1, -1).replace(/\n/g, " ").trim();
+                return (
+                  <span key={index} className="inline">
+                    <InlineMath math={latex} errorColor="#cc0000" />
+                  </span>
+                );
+              }
+
+              // Image
+              if (segment.startsWith("<img")) {
+                return (
+                  <span
+                    key={index}
+                    className="inline"
+                    dangerouslySetInnerHTML={{ __html: segment }}
+                  />
+                );
+              }
+
+              // Plain text — flatten newlines to spaces
+              const flattenedText = segment.replace(/\n+/g, " ");
+              return <span key={index}>{flattenedText}</span>;
+            } catch (err) {
+              console.error("Render error in LaTeX segment:", err);
+              return (
+                <span key={index} className="latex-error">
+                  [LaTeX Error]
+                </span>
+              );
+            }
+          })}
+        </p>
+      </div>
+    );
+  };
+  
   function updateIframeContent(iframeHtml: string, removeControls: boolean = false) {
     let updatedHtml = iframeHtml;
     
@@ -79,16 +137,13 @@ const QuestionPage: React.FC<QuestionPageProps> = ({
     return updatedHtml;
   }
 
-  useEffect(() => {
-    if (question?.iframeText) {
-      const updatedIframeContent = updateIframeContent(question.iframeText, true);
-      setIframeContent(updatedIframeContent);
-    }
-  }, [question?.iframeText]);
-
   const toggleModal = () => {
     setIsModalOpen(!isModalOpen);
   };
+
+  if (!question) {
+    return <div className="p-4 text-center">Loading question or question not found...</div>;
+  }
 
   return (
     <div className={styles["main-container"]}>
@@ -100,80 +155,49 @@ const QuestionPage: React.FC<QuestionPageProps> = ({
             </div>
             <div className={styles["question-text-container"]}>
               <div className={styles["question-tags"]}>
-                <h1>{question?.category === 'G' ? 'GEOMETRY' : question?.category}</h1>
+                <h1>{question.category === 'G' ? 'GEOMETRY' : question.category}</h1>
               </div>
               <div className={styles["question-heading"]}>
-                Question {`${question?.id}`}
+                Question {question.id}
               </div>
               <div className={styles["question-text"]}>
-                <BlockMath
-                  math={preprocessLatex(question?.question_text_latex || "")}
-                />
+                {renderLatexContent(question.question_text_latex || "")}
               </div>
             </div>
             <div className={styles["question-videos"]}>
-              <YoutubeEmbed
-                embedId={`${extractEmbedIdFromYouTubeLink(
-                  `${question?.video_solution_url}`
-                )}`}
-              />
-              <SolutionBox
-                solution={`${question?.text_solution}`}
-                latex={`${question?.text_solution_latex}`}
-              />
+              {question.video_solution_url && (
+                <YoutubeEmbed
+                  embedId={extractEmbedIdFromYouTubeLink(question.video_solution_url || "") || ""}
+                />
+              )}
+              <div className="solution-box">
+                <h2 className="text-xl font-bold mb-2">Solution:</h2>
+                <div className="bg-white rounded-lg p-4 shadow">
+                  {renderLatexContent(question.text_solution_latex || "")}
+                </div>
+              </div>
             </div>
           </div>
 
           <div className={styles["content-side"]}>
-            <div className={styles["graph-container"]}>
-              <div
-                className={styles["graph-grid"]}
-                dangerouslySetInnerHTML={{ __html: iframeContent }}
-              />
-            </div>
-            <div className={styles["image-grid"]} >
-              <button onClick={toggleModal} className={styles["modal-toggle"]}>
-                  {isModalOpen ? "" : "Full Screen"}
-              </button>
-            </div>
-            <h2 className={styles["similar-video-text"]}>Similar Concepts</h2>
-            <div className={styles["video-grid"]}>
-              <div className={styles["video-card"]}>Video</div>
-              <div className={styles["video-card"]}>Video</div>
-              <div className={styles["video-card"]}>Video</div>
-              <div className={styles["video-card"]}>Video</div>
-            </div>
-          </div>
-        </div>
-        <div className={styles["comments-section"]}>
-          <Comments id={id} />
-        </div>
-      </div>
-
-      <div className={styles["sidebar"]}>
-        <div className={styles["similar-questions-container"]}>
-          <div className={styles["similar-questions-title"]}>
-            <span className={styles["title-para"]}>More Questions</span>
-            <span className={styles["title-para2"]}>Similar Questions</span>
-          </div>
-          <div className={styles["scrolling-effect"]}>
-            {arr.map((e) => (
-              <div key={e} className={styles["question-boxes"]}>
-                <div className="other-question">
-                  <p>
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                    Minima voluptatibus ea sunt laboriosam odio. Quod pariatur ut
-                    error earum minima.
-                  </p>
+            {iframeContent && (
+              <div className={styles["graph-container"]}>
+                <div
+                  className={styles["graph-grid"]}
+                  dangerouslySetInnerHTML={{ __html: iframeContent }}
+                />
+                <div className={styles["image-grid"]}>
+                  <button onClick={toggleModal} className={styles["modal-toggle"]}>
+                    {isModalOpen ? "" : "Full Screen"}
+                  </button>
                 </div>
-                <button className={styles["buttons-of-div"]}>View Solutions</button>
               </div>
-            ))}
+            )}
           </div>
         </div>
       </div>
 
-      {isModalOpen && (
+      {isModalOpen && iframeContent && (
         <div className={styles["modal-overlay"]} onClick={toggleModal}>
           <div className={styles["modal-content"]} onClick={(e) => e.stopPropagation()}>
             <div 

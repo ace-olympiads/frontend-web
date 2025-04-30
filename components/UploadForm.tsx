@@ -1,5 +1,4 @@
 import React, { useState, ChangeEvent, FormEvent, useEffect } from "react";
-import dynamic from "next/dynamic";
 import "react-quill/dist/quill.snow.css";
 import styles from "../styles/Upload.module.css";
 import axios from "axios";
@@ -7,11 +6,15 @@ import "katex/dist/katex.min.css";
 import { InlineMath, BlockMath } from "react-katex";
 import { Item, ConceptData, QuestionData, VideoData, User } from "../types";
 
-// Dynamically import ReactQuill with no SSR
-const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 
 // Enhanced LaTeX Input Field component with better preview and styling
-const LatexInputField = ({ value, onChange, label, name, rows = 5 }) => {
+const LatexInputField: React.FC<{
+  value: string;
+  onChange: (e: ChangeEvent<HTMLTextAreaElement>) => void;
+  label: string;
+  name: string;
+  rows?: number;
+}> = ({ value, onChange, label, name, rows = 5 }) => {
   const [rawInput, setRawInput] = useState(value || "");
   const [previewMode, setPreviewMode] = useState(false);
   const [error, setError] = useState("");
@@ -31,7 +34,10 @@ const LatexInputField = ({ value, onChange, label, name, rows = 5 }) => {
         setError("Warning: Unmatched $ symbols");
       }
       
-      onChange({ target: { name, value: newValue } });
+      const syntheticEvent = {
+        target: { name, value: newValue } as EventTarget & HTMLTextAreaElement,
+      } as ChangeEvent<HTMLTextAreaElement>;
+      onChange(syntheticEvent);
     } catch (err) {
       setError("Error in LaTeX syntax");
       console.error("LaTeX error:", err);
@@ -47,64 +53,61 @@ const LatexInputField = ({ value, onChange, label, name, rows = 5 }) => {
   const renderLatexContent = (content: string) => {
     if (!content) return null;
   
-    // Split content into segments that are either LaTeX, images, or regular text
-    // Regex modified to be non-greedy for better matching
-    const segments = content.split(/(\$\$[\s\S]+?\$\$|\$[\s\S]+?\$|<img[^>]+>)/g);
+    // Improved regex to split input cleanly
+    const segments = content.split(/(\$\$[\s\S]*?\$\$|\$[\s\S]*?\$|<img[^>]+>)/g);
   
     return (
       <div className="space-y-4">
-        {segments.map((segment: string, index: React.Key | null | undefined) => {
-          if (segment.startsWith('$$') && segment.endsWith('$$')) {
-            // Handle block LaTeX - remove the delimiters and render
-            const latex = segment.slice(2, -2);
+        <p className="my-2 flex flex-wrap gap-x-1">
+          {segments.map((segment: string, index: React.Key) => {
+            if (!segment.trim()) return null;
+  
             try {
+              // Block math
+              if (segment.startsWith('$$') && segment.endsWith('$$')) {
+                const latex = segment.slice(2, -2).trim();
+                return (
+                  <div key={index} className="w-full my-2">
+                    <BlockMath math={latex} errorColor="#cc0000" />
+                  </div>
+                );
+              }
+  
+              // Inline math (even multiline) with space wrapping
+              if (segment.startsWith('$') && segment.endsWith('$')) {
+                const latex = segment.slice(1, -1).replace(/\n/g, ' ').trim();
+                return (
+                  <span key={index} className="inline">
+                    <InlineMath math={latex} errorColor="#cc0000" />
+                  </span>
+                );
+              }
+  
+              // Image
+              if (segment.startsWith('<img')) {
+                return (
+                  <span key={index} className="inline" dangerouslySetInnerHTML={{ __html: segment }} />
+                );
+              }
+  
+              // Plain text — flatten newlines to spaces
+              const flattenedText = segment.replace(/\n+/g, ' ');
+              return <span key={index}>{flattenedText}</span>;
+            } catch (err) {
+              console.error("Render error in LaTeX segment:", err);
               return (
-                <div key={index} className="my-4">
-                  <BlockMath math={latex} errorColor="#cc0000" />
-                </div>
+                <span key={index} className="latex-error">
+                  [LaTeX Error]
+                </span>
               );
-            } catch (err) {
-              console.error("Error rendering block LaTeX:", err);
-              return <div key={index} className="latex-error">Error rendering LaTeX</div>;
             }
-          } else if (segment.startsWith('$') && segment.endsWith('$')) {
-            // Handle inline LaTeX - remove the delimiters and render
-            const latex = segment.slice(1, -1);
-            try {
-              return <InlineMath key={index} math={latex} errorColor="#cc0000" />;
-            } catch (err) {
-              console.error("Error rendering inline LaTeX:", err);
-              return <span key={index} className="latex-error">Error rendering LaTeX</span>;
-            }
-          } else if (segment.startsWith('<img')) {
-            // Handle images
-            return (
-              <div key={index} className="my-4">
-                <div dangerouslySetInnerHTML={{ __html: segment }} />
-              </div>
-            );
-          } else if (segment.trim()) {
-            // Handle regular text, preserving paragraphs
-            return (
-              <div key={index}>
-                {segment.split(/\n\n+/).map((paragraph: string, pIndex: any) => (
-                  paragraph.trim() && (
-                    <p key={`${index}-${pIndex}`} 
-                       className="my-2"
-                       dangerouslySetInnerHTML={{
-                         __html: paragraph.replace(/\n/g, '<br>')
-                       }} 
-                    />
-                  )
-                ))}
-              </div>
-            );
-          }
-          return null;
-        })}
+          })}
+        </p>
       </div>
     );
   };
+  
+  
 
   return (
     <div className={styles.latexInputContainer || "latex-input-container"}>
@@ -158,7 +161,7 @@ const LatexInputField = ({ value, onChange, label, name, rows = 5 }) => {
 };
 
 // Component to display the rendered LaTeX question in preview mode
-const LatexQuestionView = ({ questionText, solutionText }) => {
+const LatexQuestionView: React.FC<{ questionText: string; solutionText?: string }> = ({ questionText, solutionText }) => {
   return (
     <div className={styles.questionPreview || "question-preview"}>
       <h3>Question Preview</h3>
@@ -339,7 +342,8 @@ const UploadForm: React.FC<{ user: User }> = ({ user }) => {
       try {
         await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8000/"}question/add/`, {
           ...questionData,
-          author: "idk", // Default to "idk" if user ID is not available
+          question_text: "",
+          author: 1, // Default to "idk" if user ID is not available
           question_text_latex: questionData.question_text, // Store the raw LaTeX in the latex field
           text_solution_latex: questionData.text_solution, // Store the raw LaTeX solution
           tags: selectedTags.map((tag) => ({ name: tag.name })),

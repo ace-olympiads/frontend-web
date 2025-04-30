@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
-import 'katex/dist/katex.min.css';
-import { InlineMath, BlockMath } from 'react-katex';
+import { useEffect, useState } from "react";
+import "katex/dist/katex.min.css";
+import { InlineMath, BlockMath } from "react-katex";
 
 interface Question {
   id: number;
@@ -28,27 +28,27 @@ interface Examination {
 
 export default function QuestionViewer() {
   const [question, setQuestion] = useState<Question | null>(null);
-  const [mode, setMode] = useState<'view' | 'test'>('view');
+  const [mode, setMode] = useState<"view" | "test">("view");
   const [testQuestion, setTestQuestion] = useState({
-    question_text_latex: '',
-    text_solution_latex: '',
-    video_solution_url: '',
-    category: 'G',
+    question_text_latex: "",
+    text_solution_latex: "",
+    video_solution_url: "",
+    category: "G",
     concept: null,
     tags: [] as Tag[],
-    examinations: [] as Examination[]
+    examinations: [] as Examination[],
   });
   const [previewMode, setPreviewMode] = useState(false);
 
   useEffect(() => {
-    if (mode === 'view') {
+    if (mode === "view") {
       const fetchQuestion = async () => {
         try {
-          const response = await fetch('http://127.0.0.1:8000/question/5');
+          const response = await fetch("http://127.0.0.1:8000/question/11");
           const data = await response.json();
           setQuestion(data);
         } catch (error) {
-          console.error('Error fetching question:', error);
+          console.error("Error fetching question:", error);
         }
       };
 
@@ -59,91 +59,107 @@ export default function QuestionViewer() {
   const renderLatexContent = (content: string) => {
     if (!content) return null;
 
-    // Decode HTML entities
-    const textarea = document.createElement('textarea');
-    textarea.innerHTML = content;
-    const decodedContent = textarea.value;
-
-    // Split content into segments that are either LaTeX, images, or regular text
-    const segments = decodedContent.split(/(\$\$[^$]+\$\$|\$[^$]+\$|<img[^>]+>)/g);
+    // Improved regex to split input cleanly
+    const segments = content.split(
+      /(\$\$[\s\S]*?\$\$|\$[\s\S]*?\$|<img[^>]+>)/g
+    );
 
     return (
       <div className="space-y-4">
-        {segments.map((segment, index) => {
-          if (segment.startsWith('$$') && segment.endsWith('$$')) {
-            // Handle block LaTeX
-            const latex = segment.slice(2, -2).trim();
-            return (
-              <div key={index} className="my-4">
-                <BlockMath math={latex} errorColor="#cc0000" />
-              </div>
-            );
-          } else if (segment.startsWith('$') && segment.endsWith('$')) {
-            // Handle inline LaTeX
-            const inlineLatex = segment.slice(1, -1).trim();
-            return <InlineMath key={index} math={inlineLatex} errorColor="#cc0000" />;
-          } else if (segment.startsWith('<img')) {
-            // Handle images
-            return (
-              <div key={index} className="my-4">
-                <div dangerouslySetInnerHTML={{ __html: segment }} />
-              </div>
-            );
-          } else {
-            // Handle regular text, preserving paragraphs
-            return segment.split(/\n\n+/).map((paragraph, pIndex) => (
-              paragraph.trim() && (
-                <p key={`${index}-${pIndex}`} 
-                   className="my-2"
-                   dangerouslySetInnerHTML={{
-                     __html: paragraph.replace(/\n/g, '<br>')
-                   }} 
-                />
-              )
-            ));
-          }
-        })}
+        <p className="my-2 flex flex-wrap gap-x-1">
+          {segments.map((segment: string, index: React.Key) => {
+            if (!segment.trim()) return null;
+
+            try {
+              // Block math
+              if (segment.startsWith("$$") && segment.endsWith("$$")) {
+                const latex = segment.slice(2, -2).trim();
+                return (
+                  <div key={index} className="w-full my-2">
+                    <BlockMath math={latex} errorColor="#cc0000" />
+                  </div>
+                );
+              }
+
+              // Inline math (even multiline) with space wrapping
+              if (segment.startsWith("$") && segment.endsWith("$")) {
+                const latex = segment.slice(1, -1).replace(/\n/g, " ").trim();
+                return (
+                  <span key={index} className="inline">
+                    <InlineMath math={latex} errorColor="#cc0000" />
+                  </span>
+                );
+              }
+
+              // Image
+              if (segment.startsWith("<img")) {
+                return (
+                  <span
+                    key={index}
+                    className="inline"
+                    dangerouslySetInnerHTML={{ __html: segment }}
+                  />
+                );
+              }
+
+              // Plain text — flatten newlines to spaces
+              const flattenedText = segment.replace(/\n+/g, " ");
+              return <span key={index}>{flattenedText}</span>;
+            } catch (err) {
+              console.error("Render error in LaTeX segment:", err);
+              return (
+                <span key={index} className="latex-error">
+                  [LaTeX Error]
+                </span>
+              );
+            }
+          })}
+        </p>
       </div>
     );
   };
 
-  const handleSubmitTest = async (e) => {
+  const handleSubmitTest = async (e: { preventDefault: () => void; }) => {
     e.preventDefault();
     try {
-      const response = await fetch('http://127.0.0.1:8000/question/add/', {
-        method: 'POST',
+      const response = await fetch("http://127.0.0.1:8000/question/add/", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           ...testQuestion,
           author: 1, // Default author ID
-          question_text: testQuestion.question_text_latex, // We're using the same field for both
+          question_text: "testQuestion.question_text_latex", // We're using the same field for both
           text_solution: testQuestion.text_solution_latex,
         }),
       });
-      
+
       if (response.ok) {
         const data = await response.json();
         alert(`Question uploaded successfully! ID: ${data.id}`);
         // Optionally switch to view mode and load the new question
         setQuestion(data);
-        setMode('view');
+        setMode("view");
       } else {
         const error = await response.json();
         alert(`Error uploading question: ${JSON.stringify(error)}`);
       }
     } catch (error) {
-      console.error('Error uploading question:', error);
-      alert(`Error uploading question: ${error.message}`);
+      console.error("Error uploading question:", error);
+      if (error instanceof Error) {
+        alert(`Error uploading question: ${error.message}`);
+      } else {
+        alert("Error uploading question: An unknown error occurred.");
+      }
     }
   };
 
-  const handleInputChange = (e) => {
+  const handleInputChange = (e: { target: { name: any; value: any; }; }) => {
     const { name, value } = e.target;
-    setTestQuestion(prev => ({
+    setTestQuestion((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
@@ -181,11 +197,11 @@ c) If the magnetic field strength is doubled to $B = 1.0\\text{ T}$, the radius 
 $$r' = \\frac{mv}{qB'} = \\frac{mv}{q(2B)} = \\frac{mv}{2qB} = \\frac{r}{2}$$
 
 Therefore, the radius would be halved to $r' = 2.5\\text{ mm}$.`,
-      video_solution_url: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
-      category: 'G',
+      video_solution_url: "https://www.youtube.com/embed/dQw4w9WgXcQ",
+      category: "G",
       concept: null,
-      tags: [{ name: 'Electromagnetism' }, { name: 'Circular Motion' }],
-      examinations: [{ name: 'Physics 101' }]
+      tags: [{ name: "Electromagnetism" }, { name: "Circular Motion" }],
+      examinations: [{ name: "Physics 101" }],
     });
   };
 
@@ -194,25 +210,29 @@ Therefore, the radius would be halved to $r' = 2.5\\text{ mm}$.`,
       <div className="flex justify-between mb-6">
         <h1 className="text-2xl font-bold">Question Testing Tool</h1>
         <div className="space-x-2">
-          <button 
-            onClick={() => setMode('view')} 
-            className={`px-4 py-2 rounded ${mode === 'view' ? 'bg-blue-600 text-white' : 'bg-gray-200'}`}
+          <button
+            onClick={() => setMode("view")}
+            className={`px-4 py-2 rounded ${
+              mode === "view" ? "bg-blue-600 text-white" : "bg-gray-200"
+            }`}
           >
             View Mode
           </button>
-          <button 
-            onClick={() => setMode('test')} 
-            className={`px-4 py-2 rounded ${mode === 'test' ? 'bg-blue-600 text-white' : 'bg-gray-200'}`}
+          <button
+            onClick={() => setMode("test")}
+            className={`px-4 py-2 rounded ${
+              mode === "test" ? "bg-blue-600 text-white" : "bg-gray-200"
+            }`}
           >
             Test Mode
           </button>
         </div>
       </div>
-      
-      {mode === 'view' && question ? (
+
+      {mode === "view" && question ? (
         <div>
           <h1 className="text-2xl font-bold mb-4">Question {question.id}</h1>
-          
+
           <div className="mb-6 bg-white rounded-lg p-4 shadow">
             {renderLatexContent(question.question_text_latex)}
           </div>
@@ -237,30 +257,32 @@ Therefore, the radius would be halved to $r' = 2.5\\text{ mm}$.`,
             </div>
           )}
         </div>
-      ) : mode === 'test' ? (
+      ) : mode === "test" ? (
         <div>
           <div className="mb-4 flex justify-between">
-            <button 
-              onClick={fillWithSample} 
+            <button
+              onClick={fillWithSample}
               className="bg-green-500 text-white px-4 py-2 rounded"
             >
               Fill with Sample Question
             </button>
-            <button 
-              onClick={() => setPreviewMode(!previewMode)} 
-              className={`px-4 py-2 rounded ${previewMode ? 'bg-blue-600 text-white' : 'bg-gray-200'}`}
+            <button
+              onClick={() => setPreviewMode(!previewMode)}
+              className={`px-4 py-2 rounded ${
+                previewMode ? "bg-blue-600 text-white" : "bg-gray-200"
+              }`}
             >
-              {previewMode ? 'Edit Mode' : 'Preview Mode'}
+              {previewMode ? "Edit Mode" : "Preview Mode"}
             </button>
           </div>
-          
+
           {previewMode ? (
             <div>
               <h2 className="text-xl font-bold mb-2">Question Preview:</h2>
               <div className="mb-6 bg-white rounded-lg p-4 shadow">
                 {renderLatexContent(testQuestion.question_text_latex)}
               </div>
-              
+
               <h2 className="text-xl font-bold mb-2">Solution Preview:</h2>
               <div className="mb-6 bg-white rounded-lg p-4 shadow">
                 {renderLatexContent(testQuestion.text_solution_latex)}
@@ -269,7 +291,9 @@ Therefore, the radius would be halved to $r' = 2.5\\text{ mm}$.`,
           ) : (
             <form onSubmit={handleSubmitTest} className="space-y-4">
               <div>
-                <label className="block mb-1 font-semibold">Question Text (LaTeX):</label>
+                <label className="block mb-1 font-semibold">
+                  Question Text (LaTeX):
+                </label>
                 <textarea
                   name="question_text_latex"
                   value={testQuestion.question_text_latex}
@@ -279,9 +303,11 @@ Therefore, the radius would be halved to $r' = 2.5\\text{ mm}$.`,
                   placeholder="Enter LaTeX question content here..."
                 ></textarea>
               </div>
-              
+
               <div>
-                <label className="block mb-1 font-semibold">Solution Text (LaTeX):</label>
+                <label className="block mb-1 font-semibold">
+                  Solution Text (LaTeX):
+                </label>
                 <textarea
                   name="text_solution_latex"
                   value={testQuestion.text_solution_latex}
@@ -291,9 +317,11 @@ Therefore, the radius would be halved to $r' = 2.5\\text{ mm}$.`,
                   placeholder="Enter LaTeX solution content here..."
                 ></textarea>
               </div>
-              
+
               <div>
-                <label className="block mb-1 font-semibold">Video Solution URL:</label>
+                <label className="block mb-1 font-semibold">
+                  Video Solution URL:
+                </label>
                 <input
                   type="text"
                   name="video_solution_url"
@@ -303,7 +331,7 @@ Therefore, the radius would be halved to $r' = 2.5\\text{ mm}$.`,
                   placeholder="YouTube embed URL"
                 />
               </div>
-              
+
               <div>
                 <label className="block mb-1 font-semibold">Category:</label>
                 <select
@@ -316,9 +344,9 @@ Therefore, the radius would be halved to $r' = 2.5\\text{ mm}$.`,
                   <option value="P">Premium User</option>
                 </select>
               </div>
-              
-              <button 
-                type="submit" 
+
+              <button
+                type="submit"
                 className="bg-blue-600 text-white px-6 py-2 rounded font-semibold"
               >
                 Submit Test Question
