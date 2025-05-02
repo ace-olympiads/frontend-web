@@ -8,6 +8,7 @@ import avatar from "../public/assets/avatar.svg";
 import SearchBar from "./SearchBar";
 import { FiChevronDown, FiMenu, FiPlus, FiMinus } from "react-icons/fi";
 import UserProfileMenu from "./UserProfileMenu";
+import axiosInstance from "../axios";
 
 interface SearchResult {
   id: number;
@@ -16,16 +17,42 @@ interface SearchResult {
   solution: string;
   solution_latex: string;
 }
+
+interface NavbarItem {
+  id: number;
+  name: string;
+  display_name: string;
+  children: NavbarItem[];
+}
+
 const Navbar = () => {
   const [activeTab, setActiveTab] = useState<number | null>(null);
   const session = useSession();
+  const router = useRouter();
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  
+  // New state for navbar config
+  const [navbarItems, setNavbarItems] = useState<NavbarItem[]>([]);
+  const [expandedItems, setExpandedItems] = useState<{[key: string]: boolean}>({});
+
+  // Fetch navbar configuration from Django backend
+  useEffect(() => {
+    axiosInstance.get('users/navbar-config/') // adjust to match your backend route
+      .then(response => {
+        setNavbarItems(response.data.navbar_items);
+      })
+      .catch(error => {
+        console.error('Error fetching navbar:', error);
+      });
+  }, []);
+
   const toggleDropdown = (tabIndex: number) => {
     setActiveTab(activeTab === tabIndex ? null : tabIndex);
   };
-  const router = useRouter();
-  console.log("session is", session);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
+
   const handleSearchQueryChange = (newQuery: string) => {
     setSearchQuery(newQuery);
   };
@@ -34,12 +61,16 @@ const Navbar = () => {
     setSearchResults(results);
   };
 
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
   };
-  const [isMobile, setIsMobile] = useState(false);
+
+  const toggleMobileExpand = (itemName: string) => {
+    setExpandedItems(prev => ({
+      ...prev,
+      [itemName]: !prev[itemName]
+    }));
+  };
 
   useEffect(() => {
     const handleResize = () => {
@@ -52,13 +83,77 @@ const Navbar = () => {
     };
   }, []);
 
-  const [expandOlympiads, setExpandOlympiads] = useState(false);
-  const [expandJEE, setExpandJEE] = useState(false);
-  const [expandSchoolPro, setExpandSchoolPro] = useState(false);
+  // Render navigation items based on the config
+  const renderNavItems = (items: NavbarItem[] = [], isMobileView: boolean = false) => {
+    return items.map((item, index) => {
+      const hasChildren = item.children && item.children.length > 0;
+      const isExpanded = expandedItems[item.name] || false;
+      
+      // Generate URL from item name
+      const itemUrl = `/${item.name.replace('_', '-')}`;
+      
+      if (isMobileView) {
+        return (
+          <React.Fragment key={item.id}>
+            <li>
+              <div
+                className={styles.mobileMenuItem}
+                onClick={() => hasChildren ? toggleMobileExpand(item.name) : null}
+              >
+                <Link href={hasChildren ? "#" : itemUrl}>{item.display_name}</Link>
+                {hasChildren && (
+                  <div className={styles.mobileMenuIcon}>
+                    {isExpanded ? <FiMinus /> : <FiPlus />}
+                  </div>
+                )}
+              </div>
+              {hasChildren && isExpanded && (
+                <ul className={styles.mobileSubMenu}>
+                  {item.children.map(child => (
+                    <li key={child.id}>
+                      <Link href={`/${child.name.replace('_', '-')}`}>{child.display_name}</Link>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </li>
+            <hr className={styles.mobileDivider} />
+          </React.Fragment>
+        );
+      } else {
+        return (
+          <li
+            key={item.id}
+            className={hasChildren ? `${styles.dropdownToggle} ${activeTab === index ? styles.active : ""}` : ""}
+            onMouseEnter={hasChildren ? () => toggleDropdown(index) : undefined}
+            onMouseLeave={hasChildren ? () => toggleDropdown(index) : undefined}
+          >
+            <Link href={hasChildren ? "#" : itemUrl}>{item.display_name}</Link>
+            {hasChildren && (
+              <>
+                <span
+                  className={`${styles.dropdownIcon} ${activeTab === index ? styles.active : ""}`}
+                >
+                  <FiChevronDown />
+                </span>
+                {activeTab === index && (
+                  <ul className={styles.dropdown}>
+                    {item.children.map(child => (
+                      <li key={child.id}>
+                        <Link href={`/${child.name.replace('_', '-')}`}>{child.display_name}</Link>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </>
+            )}
+          </li>
+        );
+      }
+    });
+  };
 
   return (
-
-    //mobile Navbar
     <div className="navbar">
       {isMobile ? (
         <div className={styles.mobileNavbar}>
@@ -67,14 +162,6 @@ const Navbar = () => {
               <Link href="/">AceAcad</Link>
             </div>
             <div className={styles.mobileIcons}>
-              <div
-                onClick={() => {
-                  // Handle search icon click
-                }}
-                className={styles.mobileIcon}
-              >
-                {/* Add your search icon here */}
-              </div>
               <UserProfileMenu
                 userImage={
                   session?.data?.user?.image ? session.data?.user.image : avatar
@@ -97,196 +184,23 @@ const Navbar = () => {
               </div>
               <hr className={styles.mobileDivider} />
               <ul className={styles["nav-links"]}>
-                <li className={styles.mobileMenuItem}>
-                  <Link href="/about">About</Link>
-                </li>
-                <hr className={styles.mobileDivider} />
-                {/* <li>
-                  <div
-                    className={styles.mobileMenuItem}
-                    onClick={() => setExpandOlympiads(!expandOlympiads)}
-                  >
-                    Ace-Olympiads
-                    <div className={styles.mobileMenuIcon}>
-                      {expandOlympiads ? <FiMinus /> : <FiPlus />}
-                    </div>
-                  </div>
-                  {expandOlympiads && (
-                    <ul className={styles.mobileSubMenu}>
-                      <li>
-                        <Link href="/service1">NMTC</Link>
-                      </li>
-                      <li>
-                        <Link href="/service2">IJSO</Link>
-                      </li>
-                    </ul>
-                  )}
-                </li> */}
-                <hr className={styles.mobileDivider} />
-                <li>
-                  <div
-                    className={styles.mobileMenuItem}
-                    onClick={() => setExpandJEE(!expandJEE)}
-                  >
-                    Ace-JEE
-                    <div className={styles.mobileMenuIcon}>
-                      {expandJEE ? <FiMinus /> : <FiPlus />}
-                    </div>
-                  </div>
-                  {expandJEE && (
-                    <ul className={styles.mobileSubMenu}>
-                      <li>
-                        <Link href="/jee-mains">JEE Mains</Link>
-                      </li>
-                      <li>
-                        <Link href="/product2">JEE Advanced</Link>
-                      </li>
-                    </ul>
-                  )}
-                </li>
-                <hr className={styles.mobileDivider} />
-                {/* <li>
-                  <div
-                    className={styles.mobileMenuItem}
-                    onClick={() => setExpandSchoolPro(!expandSchoolPro)}
-                  >
-                    School-Pro
-                    <div className={styles.mobileMenuIcon}>
-                      {expandSchoolPro ? <FiMinus /> : <FiPlus />}
-                    </div>
-                  </div>
-                  {expandSchoolPro && (
-                    <ul className={styles.mobileSubMenu}>
-                      <li>
-                        <Link href="/project1">7th</Link>
-                      </li>
-                      <li>
-                        <Link href="/project2">8th</Link>
-                      </li>
-                      <li>
-                        <Link href="/project3">9th</Link>
-                      </li>
-                      <li>
-                        <Link href="/project3">10th</Link>
-                      </li>
-                    </ul>
-                  )}
-                </li> */}
-                <hr className={styles.mobileDivider} />
-                <li className={styles.mobileMenuItem}>
-                  <Link href="/contact">Ace-NEET</Link>
-                </li>
+                {renderNavItems(navbarItems, true)}
               </ul>
             </nav>
           </div>
         </div>
       ) : (
-
-
-    // Desktop Navbar
         <div className={styles.desktopNavbar}>
           <div className={styles.upperNavbar}>
             <div className={styles.logo}>
               <Link href="/">AceAcad</Link>
             </div>
 
-
             <nav className={styles.bottomNavbar}>
-            <ul className={styles["nav-links"]}>
-              <li>
-                <Link href="/about">About</Link>
-              </li>
-              <li
-                className={`${styles.dropdownToggle} ${
-                  activeTab === 0 ? styles.active : ""
-                }`}
-                onMouseEnter={() => toggleDropdown(0)}
-                onMouseLeave={() => toggleDropdown(0)}
-              >
-                {/* <Link href="/services">Ace-Olympiads</Link> */}
-                {/* <span
-                  className={`${styles.dropdownIcon} ${
-                    activeTab === 0 ? styles.active : ""
-                  }`}
-                >
-                  <FiChevronDown />
-                </span>
-                {activeTab === 0 && (
-                  // <ul className={styles.dropdown}>
-                  //   <li>
-                  //     <Link href="/service1">NMTC</Link>
-                  //   </li>
-                  //   <li>
-                  //     <Link href="/service2">IJSO</Link>
-                  //   </li>
-                  // </ul>
-                )} */}
-              </li>
-
-              <li
-                className={`${styles.dropdownToggle} ${
-                  activeTab === 1 ? styles.active : ""
-                }`}
-                onMouseEnter={() => toggleDropdown(1)}
-                onMouseLeave={() => toggleDropdown(1)}
-              >
-                <Link href="/products">Ace- JEE</Link>
-                <span
-                  className={`${styles.dropdownIcon} ${
-                    activeTab === 1 ? styles.active : ""
-                  }`}
-                >
-                  <FiChevronDown />
-                </span>
-                {activeTab === 1 && (
-                  <ul className={styles.dropdown}>
-                    <li>
-                      <Link href={"/jee-mains"}>JEE Mains</Link>
-                    </li>
-                    <li>
-                      <Link href="/product2">JEE Advanced</Link>
-                    </li>
-                  </ul>
-                )}
-              </li>
-              <li
-                className={`${styles.dropdownToggle} ${
-                  activeTab === 2 ? styles.active : ""
-                }`}
-                onMouseEnter={() => toggleDropdown(2)}
-                onMouseLeave={() => toggleDropdown(2)}
-              >
-                {/* <Link href="/portfolio">School-Pro</Link>
-                <span
-                  className={`${styles.dropdownIcon} ${
-                    activeTab === 2 ? styles.active : ""
-                  }`}
-                >
-                  <FiChevronDown />
-                </span>
-                {activeTab === 2 && (
-                  <ul className={styles.dropdown}>
-                    <li>
-                      <Link href="/project1">7th</Link>
-                    </li>
-                    <li>
-                      <Link href="/project2">8th</Link>
-                    </li>
-                    <li>
-                      <Link href="/project3">9th</Link>
-                    </li>
-                    <li>
-                      <Link href="/project3">10th</Link>
-                    </li>
-                  </ul>
-                )}
-              </li>
-              <li> */}
-                <Link href="/contact">Ace-NEET</Link>
-              </li>
-            </ul>
-          </nav>
-
+              <ul className={styles["nav-links"]}>
+                {renderNavItems(navbarItems)}
+              </ul>
+            </nav>
 
             <SearchBar
               searchQuery={searchQuery}
@@ -325,7 +239,6 @@ const Navbar = () => {
               )}
             </div>
           </div>
-          
         </div>
       )}
     </div>

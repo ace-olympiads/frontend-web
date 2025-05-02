@@ -46,8 +46,10 @@
 .nav-links {
   list-style: none;
   display: flex;
-  color: #656464;
+  align-items: center;
   gap: 20px;
+  padding: 0;
+  margin: 0;
   font-family: "Inter", sans-serif;
 }
 
