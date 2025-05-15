@@ -342,14 +342,14 @@ const UploadForm: React.FC<{ user: User }> = ({ user }) => {
       try {
         await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8000/"}question/add/`, {
           ...questionData,
-          question_text: "q",
+          question_text: "",
           author: 1, // Default to "idk" if user ID is not available
           question_text_latex: questionData.question_text, // Store the raw LaTeX in the latex field
           text_solution_latex: questionData.text_solution, // Store the raw LaTeX solution
           tags: selectedTags.map((tag) => ({ name: tag.name })),
           examinations: selectedExaminations.map((exam) => ({ name: exam.name })),
         });
-          
+        
         // Reset form after successful submission
         setQuestionData({
           question_text: "",
