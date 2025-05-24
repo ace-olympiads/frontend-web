@@ -310,7 +310,7 @@ const UploadForm: React.FC<{ user: User }> = ({ user }) => {
   // API calls
   const fetchConcepts = async () => {
     try {
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}concepts/`);
+      const response = await axios.get(`${process.env.BACKEND_URL}concepts/`);
       setConcepts(response.data);
     } catch (error) {
       console.error("Error fetching concepts:", error);
@@ -319,19 +319,25 @@ const UploadForm: React.FC<{ user: User }> = ({ user }) => {
 
   const fetchTags = async () => {
     try {
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}question/tags/`);
-      setTags(response.data);
+      const response = await axios.get(`${process.env.BACKEND_URL}question/tags/`);
+      // Ensure response.data is an array before setting it
+      setTags(Array.isArray(response.data) ? response.data : []);
     } catch (error) {
       console.error("Error fetching tags:", error);
+      // Set tags to empty array on error
+      setTags([]);
     }
   };
 
   const fetchExaminations = async () => {
     try {
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}question/examinations/`);
-      setExaminations(response.data);
+      const response = await axios.get(`${process.env.BACKEND_URL}question/examinations/`);
+      // Ensure response.data is an array before setting it
+      setExaminations(Array.isArray(response.data) ? response.data : []);
     } catch (error) {
       console.error("Error fetching examinations:", error);
+      // Set examinations to empty array on error
+      setExaminations([]);
     }
   };
 
@@ -340,9 +346,9 @@ const UploadForm: React.FC<{ user: User }> = ({ user }) => {
     
     if (uploadType === "question") {
       try {
-        await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8000/"}question/add/`, {
+        await axios.post(`${process.env.BACKEND_URL || "http://localhost:8000/"}question/add/`, {
           ...questionData,
-          question_text: "",
+          question_text: "h",
           author: 1, // Default to "idk" if user ID is not available
           question_text_latex: questionData.question_text, // Store the raw LaTeX in the latex field
           text_solution_latex: questionData.text_solution, // Store the raw LaTeX solution
@@ -371,7 +377,7 @@ const UploadForm: React.FC<{ user: User }> = ({ user }) => {
       }
     } else if (uploadType === "concept") {
       try {
-        await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}concepts/`, conceptData);
+        await axios.post(`${process.env.BACKEND_URL}concepts/`, conceptData);
         setConceptData({ id: -1, title: "", description: "" });
         fetchConcepts();
         alert("Concept submitted successfully!");
@@ -382,7 +388,7 @@ const UploadForm: React.FC<{ user: User }> = ({ user }) => {
     } else if (uploadType === "video") {
       try {
         await axios.post(
-          `${process.env.NEXT_PUBLIC_BACKEND_URL}concepts/${videoData.concept}/videos/`,
+          `${process.env.BACKEND_URL}concepts/${videoData.concept}/videos/`,
           { ...videoData, author: user?.id }
         );
         setVideoData({ concept: null, title: "", youtube_url: "", thumbnail_url: "" });

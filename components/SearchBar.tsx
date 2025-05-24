@@ -83,7 +83,7 @@ const truncateText = (text: string, maxWords: number) => {
     try {
       console.log('Sending query:', newQuery);
       const response = await axios.get<SearchResult[]>(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/question/search/`,
+        `${process.env.BACKEND_URL}/question/search/`,
         {
           params: { query: newQuery },
         }
