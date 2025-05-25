@@ -3,12 +3,13 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 20px;
+  padding: 0 40px;
   background-color: white;
-  font-family: "Latin";
-  font-size: 19px;
+  font-family: "Inter", sans-serif;
   height: 76px;
-  box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.1);
+  box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.05);
+  position: relative;
+  z-index: 1000;
 }
 
 .searchBar {
@@ -24,13 +25,35 @@
 
 .logo {
   cursor: pointer;
-  font-family: "Poppins";
-  font-weight: 600;
+  font-family: "Poppins", sans-serif;
+  font-weight: 700;
+  font-size: 1.5rem;
+  color: #1F2937;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
 
+.authButtons {
+  display: flex;
+  align-items: center;
+  gap: 15px;
 }
 
 .authButtons > button {
   color: white;
+  background: #4F46E5;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 16px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: background-color 0.2s ease;
+}
+
+.authButtons > button:hover {
+  background: #4338CA;
 }
 
 .bottomNavbar {
@@ -47,9 +70,9 @@
   list-style: none;
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 25px;
   padding: 0;
-  margin: 0;
+  margin: 0 20px;
   font-family: "Inter", sans-serif;
 }
 
