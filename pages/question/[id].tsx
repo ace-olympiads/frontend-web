@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { GetServerSideProps } from "next";
+import dynamic from 'next/dynamic';
 import YoutubeEmbed from "../../components/YoutubeEmbed";
 import styles from "../../styles/QuestionId.module.css";
 import axios from 'axios';
@@ -7,7 +8,17 @@ import { extractEmbedIdFromYouTubeLink } from "../../utils/youtubeId";
 import { useRouter } from "next/router";
 import BackButton from "../../components/BackButton";
 import "katex/dist/katex.min.css";
-import { InlineMath, BlockMath } from "react-katex";
+
+// Dynamically import components that use browser APIs with SSR disabled
+const InlineMath = dynamic(
+  () => import('react-katex').then((mod) => mod.InlineMath),
+  { ssr: false }
+);
+
+const BlockMath = dynamic(
+  () => import('react-katex').then((mod) => mod.BlockMath),
+  { ssr: false }
+);
 
 // Define Question Type interface if not already defined in your types.ts
 interface QuestionType {
@@ -49,6 +60,11 @@ const QuestionPage: React.FC<QuestionPageProps> = ({
   const [iframeContent, setIframeContent] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   useEffect(() => {
     if (question?.iframeText) {
@@ -68,7 +84,7 @@ const QuestionPage: React.FC<QuestionPageProps> = ({
 
     return (
       <div className="space-y-4">
-        <p className="my-2 flex flex-wrap gap-x-1">
+        <div className="my-2 flex flex-wrap gap-x-1">
           {segments.map((segment: string, index: number) => {
             if (!segment.trim()) return null;
 
@@ -116,7 +132,7 @@ const QuestionPage: React.FC<QuestionPageProps> = ({
               );
             }
           })}
-        </p>
+        </div>
       </div>
     );
   };
@@ -197,7 +213,7 @@ const QuestionPage: React.FC<QuestionPageProps> = ({
         </div>
       </div>
 
-      {isModalOpen && iframeContent && (
+      {isClient && isModalOpen && iframeContent && (
         <div className={styles["modal-overlay"]} onClick={toggleModal}>
           <div className={styles["modal-content"]} onClick={(e) => e.stopPropagation()}>
             <div 
