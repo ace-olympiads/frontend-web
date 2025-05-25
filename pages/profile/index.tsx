@@ -1,4 +1,4 @@
-import { useSession } from "next-auth/react";
+import { useSessionCompat as useSession } from "../../utils/auth-compat";
 import { useRouter } from "next/router";
 import React, { useEffect, useContext, useState } from "react";
 import dataContext from "../../context/datacontext";

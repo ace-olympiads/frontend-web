@@ -199,7 +199,7 @@ const formats = [
   "formula",
 ];
 
-const UploadForm: React.FC<{ user: User }> = ({ user }) => {
+const UploadForm: React.FC<{ user: User | null }> = ({ user }) => {
   const [uploadType, setUploadType] = useState("question");
   const [concepts, setConcepts] = useState<ConceptData[]>([]);
   const [tags, setTags] = useState<Item[]>([]);
@@ -389,7 +389,7 @@ const UploadForm: React.FC<{ user: User }> = ({ user }) => {
       try {
         await axios.post(
           `${process.env.BACKEND_URL}concepts/${videoData.concept}/videos/`,
-          { ...videoData, author: user?.id }
+          { ...videoData, author: user?.id || 1 }
         );
         setVideoData({ concept: null, title: "", youtube_url: "", thumbnail_url: "" });
         alert("Video submitted successfully!");

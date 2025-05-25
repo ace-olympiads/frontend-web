@@ -7,7 +7,7 @@ import Question from "./Question";
 import Concept from "./Concept";
 import axios from "axios";
 import { QuestionType, ConceptType, User } from "../types";
-import { GetSessionParams, getSession } from "next-auth/react";
+import { getSessionCompat as getSession } from "../utils/auth-compat";
 import axiosInstance from "../axios";
 
 type propstypes = { type: string; user: User };

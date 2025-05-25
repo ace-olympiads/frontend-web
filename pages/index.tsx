@@ -1,6 +1,6 @@
 import { useRouter } from "next/router";
 import React, { useState } from "react";
-import { useSession, signOut, getSession, GetSessionParams } from "next-auth/react";
+import { useSessionCompat as useSession, signOutCompat as signOut, getSessionCompat as getSession } from "../utils/auth-compat";
 import axiosInstance from "../axios";
 import Courses from "../components/Courses";
 import Welcome from "../components/Welcome";
@@ -64,9 +64,9 @@ interface HomePageProps {
   questions: QuestionType[];
 }
 
-export async function getServerSideProps(context: GetSessionParams | undefined) {
+export async function getServerSideProps(context: any) {
   try {
-    const session = await getSession(context);
+    const session = await getSession();
     const [conceptsResponse, testimonialsResponse, questionsResponse] = await Promise.all([
       axiosInstance.get('/concepts/'),
       axiosInstance.get('/testimonials/'),

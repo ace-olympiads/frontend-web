@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import styles from "../styles/banner.module.css";
-import { useSession } from "next-auth/react";
+import { useSessionCompat as useSession } from "../utils/auth-compat";
 import Image from "next/image";
 import { User } from "../types";
 

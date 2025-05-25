@@ -1,12 +1,13 @@
 import React from "react";
 import styles from "../styles/examination.module.css";
-import { GetSessionParams, getSession } from "next-auth/react";
+import { GetServerSidePropsContext } from "next";
+import { getSessionCompat as getSession } from "../utils/auth-compat";
 import axiosInstance from "../axios";
 import ExamButton from "../components/ExamButton";
 import { Exam } from "../types";
 import BackButton from "../components/BackButton";
 export async function getServerSideProps(
-  context: GetSessionParams | undefined
+  context: GetServerSidePropsContext
 ) {
   try {
     const response = await axiosInstance.get(`/question/examinations/`);

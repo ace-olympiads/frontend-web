@@ -1,7 +1,7 @@
 import React from "react";
 import { useState } from "react";
-
 import dataContext from "./datacontext";
+import { AuthProvider } from "./AuthContext";
 
 const ContextProvider = (props: {
   children:
@@ -18,13 +18,13 @@ const ContextProvider = (props: {
   const [refetch, setRefetch] = useState<boolean>();
   const [sidebarOption, setSideBarOption] = useState<string>("questions");
   return (
-    <div>
+    <AuthProvider>
       <dataContext.Provider
         value={{ refetch, setRefetch, sidebarOption, setSideBarOption }}
       >
         {props.children}
       </dataContext.Provider>
-    </div>
+    </AuthProvider>
   );
 };
 

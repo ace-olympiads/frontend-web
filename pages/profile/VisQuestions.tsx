@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import Layout from "./Layout";
 import styles from "../../styles/profile.module.css";
 import { User } from "../../types";
-import { GetSessionParams, getSession, useSession } from "next-auth/react";
+import { useSessionCompat as useSession, getSessionCompat as getSession } from "../../utils/auth-compat";
 import axiosInstance from "../../axios";
 import Question from "../../components/Question";
 

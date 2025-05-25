@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
-import { useSession } from "next-auth/react";
+import { useSessionCompat as useSession } from "../utils/auth-compat";
 import userImg from "../public/assets/userImg.png";
 import Comment from "./Comment";
 import { CommentParam, CommentProps, PostCommentProps } from "../types";
@@ -11,7 +11,7 @@ import styles from "../styles/Comments.module.css";
 const Comments: React.FC<CommentParam> = ({ id, user }) => {
   const [comments, setComments] = useState<CommentProps[]>();
   const [content, setContent] = useState<string>("");
-  const { data: session } = useSession();
+  const session = useSession();
   const [refetch, setRefetch] = useState<Boolean>(false);
 
   useEffect(() => {
@@ -30,7 +30,7 @@ const Comments: React.FC<CommentParam> = ({ id, user }) => {
     if (content !== "") {
       const data: PostCommentProps = {
         commenter: user?.id,
-        email: session?.user?.email,
+        email: session?.data?.user?.email,
         content: content,
         status: true,
         question: id,

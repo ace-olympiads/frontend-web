@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from "react";
 import BackButton from "../components/BackButton";
 import styles from "../styles/mains.module.css";
-import { GetSessionParams } from "next-auth/react";
+import { GetServerSidePropsContext } from "next";
 import { Exam, QuestionData } from "../types";
 import { motion } from "framer-motion";
 import axiosInstance from "../axios";
 import Question from "../components/Question";
 import ReactPaginate from "react-paginate";
 export async function getServerSideProps(
-  context: GetSessionParams | undefined
+  context: GetServerSidePropsContext
 ) {
   try {
     const response = await axiosInstance.get(`/question/add`);

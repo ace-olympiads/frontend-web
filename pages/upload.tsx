@@ -1,4 +1,4 @@
-import { GetSessionParams, getSession, useSession } from "next-auth/react";
+import { useSessionCompat as useSession, getSessionCompat as getSession } from "../utils/auth-compat";
 import UploadForm from "../components/UploadForm";
 import { useEffect } from "react";
 import { useRouter } from "next/router"; // Use from "next/router" instead of "next/navigation"
@@ -6,8 +6,8 @@ import { User } from "../types";
 import axiosInstance from "../axios";
 import BackButton from "../components/BackButton";
 
-export async function getServerSideProps(context: GetSessionParams | undefined) {
-  const session = await getSession(context);
+export async function getServerSideProps(context: any) {
+  const session = await getSession();
 
   let user = null;
 

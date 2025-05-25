@@ -1,4 +1,4 @@
-import { GetSessionParams } from "next-auth/react";
+import { GetServerSidePropsContext } from "next";
 import React, { useState } from "react";
 import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";

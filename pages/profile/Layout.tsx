@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import Sidebar from "../../components/Sidebar";
-import { useSession } from "next-auth/react";
+import { useSessionCompat as useSession } from "../../utils/auth-compat";
 import { useRouter } from "next/router";
 import Banner from "../../components/Banner";
 const Layout = ({ children }: { children: any }) => {

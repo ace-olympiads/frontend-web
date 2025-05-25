@@ -1,5 +1,5 @@
-import { User } from "next-auth";
-import { getSession } from "next-auth/react";
+import { User } from "../../../../types";
+import { getSessionCompat as getSession } from "../../../../utils/auth-compat";
 import React from "react";
 import type { QuestionType, ConceptType, Video } from "../../../../types";
 import axiosInstance from "../../../../axios";
@@ -16,7 +16,7 @@ export async function getServerSideProps(context: any) {
   console.log(context.query);
   const { conceptId, id } = context.query;
 
-  const session = await getSession(context);
+  const session = await getSession();
   try {
     const getVideos = await axiosInstance.get(
       `/concepts/${conceptId}/videos/${id}`

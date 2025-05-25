@@ -1,4 +1,4 @@
-import { useSession } from "next-auth/react";
+import { useSessionCompat as useSession } from "../utils/auth-compat";
 import React, { useContext } from "react";
 
 import { CommentProps } from "../types";
@@ -12,7 +12,7 @@ const Comment: React.FC<CommentProps> = (props) => {
   const { id, commenter, email, content, published_at } = props;
   const date = new Date(published_at);
   const { refetch, setRefetch } = useContext(dataContext);
-  const { data: session } = useSession();
+  const session = useSession();
   const handleDelete = async () => {
     try {
       const resp = await axiosInstance.delete(`/question/comments/${id}/`);
@@ -42,7 +42,7 @@ const Comment: React.FC<CommentProps> = (props) => {
           {date.toLocaleDateString()} {date.toLocaleTimeString()}
         </p>
       </div>
-      {session?.user?.name === commenter.username && (
+      {session?.data?.user?.name === commenter.username && (
         <div className={styles.cross} onClick={() => handleDelete()}>
           <Image height={30} width={30} src={cross} alt="user image" />
         </div>

@@ -1,15 +1,15 @@
 import React, { useState } from "react";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 import styles from "../styles/UserProfileMenu.module.css";
+import { useAuth } from "../context/AuthContext";
 
-interface UserProfileMenuProps {
-  userImage: string;
-}
+interface UserProfileMenuProps {}
 
-const UserProfileMenu: React.FC<UserProfileMenuProps> = ({ userImage }) => {
+const UserProfileMenu: React.FC<UserProfileMenuProps> = () => {
   const [isSubMenuOpen, setSubMenuOpen] = useState(false);
   const router = useRouter();
+  const { user, logout } = useAuth();
+  
   const openSubMenu = () => {
     setSubMenuOpen(true);
   };
@@ -27,14 +27,20 @@ const UserProfileMenu: React.FC<UserProfileMenuProps> = ({ userImage }) => {
       onMouseLeave={closeSubMenu}
     >
       <div className={styles["user-profile-icon"]}>
-        <Image src={userImage} width={42} height={42} alt="" />
+        <img 
+          src={user?.image || "https://api.dicebear.com/7.x/pixel-art/svg"} 
+          width={42} 
+          height={42} 
+          alt="" 
+          className={styles.avatar}
+        />
       </div>
       {isSubMenuOpen && (
         <div className={styles.submenu}>
           <ul>
             <li
               onClick={() => {
-                router.push("/profile");
+                router.push("/");
               }}
             >
               Dashboard
@@ -45,6 +51,13 @@ const UserProfileMenu: React.FC<UserProfileMenuProps> = ({ userImage }) => {
               }}
             >
               View Profile
+            </li>
+            <li
+              onClick={() => {
+                logout();
+              }}
+            >
+              Logout
             </li>
           </ul>
         </div>

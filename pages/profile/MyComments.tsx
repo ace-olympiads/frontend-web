@@ -1,5 +1,5 @@
-import { User } from "next-auth";
-import { useSession } from "next-auth/react";
+import { User } from "../../types";
+import { useSessionCompat as useSession } from "../../utils/auth-compat";
 import React, { useEffect, useState, useContext } from "react";
 import axiosInstance from "../../axios";
 import Comment from "../../components/Comment";

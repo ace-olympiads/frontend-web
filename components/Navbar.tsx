@@ -1,14 +1,13 @@
 import React, { useState, useEffect } from "react";
 import styles from "../styles/Navbar.module.css";
-import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { signOut } from "next-auth/react";
 import Link from "next/link";
 import avatar from "../public/assets/avatar.svg";
 import SearchBar from "./SearchBar";
 import { FiChevronDown, FiMenu, FiPlus, FiMinus } from "react-icons/fi";
 import UserProfileMenu from "./UserProfileMenu";
 import axiosInstance from "../axios";
+import { useAuth } from "../context/AuthContext";
 
 interface SearchResult {
   id: number;
@@ -27,7 +26,7 @@ interface NavbarItem {
 
 const Navbar = () => {
   const [activeTab, setActiveTab] = useState<number | null>(null);
-  const session = useSession();
+  const { user, logout } = useAuth();
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
@@ -162,11 +161,7 @@ const Navbar = () => {
               <Link href="/">AceAcad</Link>
             </div>
             <div className={styles.mobileIcons}>
-              <UserProfileMenu
-                userImage={
-                  session?.data?.user?.image ? session.data?.user.image : avatar
-                }
-              />
+              <UserProfileMenu />
               <div onClick={toggleSidebar} className={styles.mobileIcon}>
                 <FiMenu />
               </div>
@@ -209,19 +204,13 @@ const Navbar = () => {
               inputplaceholder="Search for questions..."
             />
             <div className={styles.authButtons}>
-              {session.data?.user ? (
+              {user ? (
                 <>
                   <div style={{ cursor: "pointer" }}>
-                    <UserProfileMenu
-                      userImage={
-                        session?.data?.user?.image
-                          ? session.data?.user.image
-                          : avatar
-                      }
-                    />
+                    <UserProfileMenu />
                   </div>
                   <button
-                    onClick={() => signOut()}
+                    onClick={() => logout()}
                     className={styles.loginButton}
                   >
                     Logout
@@ -230,7 +219,7 @@ const Navbar = () => {
               ) : (
                 <>
                   <button
-                    onClick={() => router.push("/auth")}
+                    onClick={() => router.push("/login")}
                     className={styles.loginButton}
                   >
                     Login
