@@ -23,8 +23,23 @@ const LatexInputField: React.FC<{
     setRawInput(value || "");
   }, [value]);
 
-  const handleInputChange = (e: { target: { value: any; }; }) => {
-    const newValue = e.target.value;
+  // Function to convert URLs to image tags
+  const processImageUrls = (text: string): string => {
+    // This regex matches URLs starting with https://
+    const urlRegex = /(https?:\/\/[^\s]+(\.(jpg|jpeg|png|gif|svg)))/gi;
+    
+    // Replace URLs with image tags
+    return text.replace(urlRegex, (url) => {
+      return `<img src="${url}" width="300" />`;
+    });
+  };
+
+  const handleInputChange = (e: { target: { value: string; }; }) => {
+    let newValue = e.target.value;
+    
+    // Process the input to convert URLs to image tags
+    newValue = processImageUrls(newValue);
+    
     setRawInput(newValue);
     setError("");
     
