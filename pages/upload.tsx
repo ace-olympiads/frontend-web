@@ -1,46 +1,51 @@
-import { useSessionCompat as useSession, getSessionCompat as getSession } from "../utils/auth-compat";
+import { useSessionCompat as useSession } from "../utils/auth-compat";
 import UploadForm from "../components/UploadForm";
 import { useEffect } from "react";
-import { useRouter } from "next/router"; // Use from "next/router" instead of "next/navigation"
+import { useRouter } from "next/router";
 import { User } from "../types";
 import axiosInstance from "../axios";
 import BackButton from "../components/BackButton";
 
-export async function getServerSideProps(context: any) {
-  const session = await getSession();
-
-  let user = null;
-
-  if (session) {
-    try {
-      const mail = session.user?.email;
-      const getDetails = await axiosInstance.get(`/users/account/?email=${mail}`);
-      user = getDetails.data;
-    } catch (error) {
-      console.error("Error fetching user details:", error);
-    }
-  }
-
+export async function getServerSideProps() {
   return {
-    props: { user },
+    props: {},
   };
 }
 
-const UploadPage: React.FC<{ user: User | null }> = ({ user }) => {
-  const { data: session, status } = useSession(); // Correctly track session state
+const UploadPage: React.FC = () => {
+  const { data: session, status } = useSession();
   const router = useRouter();
 
   useEffect(() => {
     console.log("Session status:", status);
+    
+    const fetchUserData = async () => {
+      if (session?.user?.email) {
+        try {
+          const mail = session.user.email;
+          const response = await axiosInstance.get(`/users/account/?email=${mail}`);
+          localStorage.setItem('user', JSON.stringify(response.data));
+        } catch (error) {
+          console.error("Error fetching user details:", error);
+          localStorage.removeItem('user');
+        }
+      } else {
+        localStorage.removeItem('user');
+      }
+    };
+
     if (status === "unauthenticated") {
       console.warn("User is unauthenticated, but staying on the page.");
+      localStorage.removeItem('user');
+    } else if (status === "authenticated") {
+      fetchUserData();
     }
-  }, [status]);
+  }, [session, status]);
 
   return (
     <>
       <BackButton />
-      <UploadForm user={user} />
+      <UploadForm />
     </>
   );
 };

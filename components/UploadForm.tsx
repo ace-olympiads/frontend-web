@@ -214,7 +214,20 @@ const formats = [
   "formula",
 ];
 
-const UploadForm: React.FC<{ user: User | null }> = ({ user }) => {
+const UploadForm: React.FC = () => {
+  const [user, setUser] = useState<User | null>(null);
+  
+  useEffect(() => {
+    // Get user from localStorage when component mounts
+    const userData = localStorage.getItem('user');
+    if (userData) {
+      try {
+        setUser(JSON.parse(userData));
+      } catch (error) {
+        console.error('Error parsing user data from localStorage:', error);
+      }
+    }
+  }, []);
   const [uploadType, setUploadType] = useState("question");
   const [concepts, setConcepts] = useState<ConceptData[]>([]);
   const [tags, setTags] = useState<Item[]>([]);
@@ -334,7 +347,7 @@ const UploadForm: React.FC<{ user: User | null }> = ({ user }) => {
 
   const fetchTags = async () => {
     try {
-      const response = await axios.get(`${process.env.BACKEND_URL}question/tags/`);
+      const response = await axios.get(`http://localhost:8000/question/tags/`);
       // Ensure response.data is an array before setting it
       setTags(Array.isArray(response.data) ? response.data : []);
     } catch (error) {
@@ -346,7 +359,7 @@ const UploadForm: React.FC<{ user: User | null }> = ({ user }) => {
 
   const fetchExaminations = async () => {
     try {
-      const response = await axios.get(`${process.env.BACKEND_URL}question/examinations/`);
+      const response = await axios.get(`http://localhost:8000/question/examinations/`);
       // Ensure response.data is an array before setting it
       setExaminations(Array.isArray(response.data) ? response.data : []);
     } catch (error) {
@@ -364,7 +377,8 @@ const UploadForm: React.FC<{ user: User | null }> = ({ user }) => {
         await axios.post(`${process.env.BACKEND_URL || "http://localhost:8000/"}question/add/`, {
           ...questionData,
           question_text: "h",
-          author: 1, // Default to "idk" if user ID is not available
+          email: user?.email || "anonymous@example.com",
+          author:1,
           question_text_latex: questionData.question_text, // Store the raw LaTeX in the latex field
           text_solution_latex: questionData.text_solution, // Store the raw LaTeX solution
           tags: selectedTags.map((tag) => ({ name: tag.name })),
