@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { GetServerSideProps } from "next";
+import Link from 'next/link';
 import dynamic from 'next/dynamic';
 import YoutubeEmbed from "../../components/YoutubeEmbed";
 import styles from "../../styles/QuestionId.module.css";
@@ -21,13 +22,39 @@ const BlockMath = dynamic(
 );
 
 // Define Question Type interface if not already defined in your types.ts
-interface QuestionType {
+interface Tag {
   id: number;
+  name: string;
+}
+
+interface Exam {
+  id: number;
+  name: string;
+}
+
+interface ConceptType {
+  id: number;
+  name: string;
+  // Add other concept properties as needed
+}
+
+interface QuestionType {
+  id: number | string;
   question_text_latex: string;
   text_solution_latex: string;
   video_solution_url: string;
   category: string;
   iframeText?: string;
+  tags?: Tag[];
+  examinations?: Exam[];
+  concept?: ConceptType | number | null;
+  similarQuestions?: SimilarQuestion[];
+}
+
+interface SimilarQuestion {
+  id: number;
+  question_text: string;
+  category: string;
 }
 
 interface QuestionPageProps {
@@ -38,9 +65,68 @@ interface QuestionPageProps {
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { id } = context.query;
   try {
-    const questionFetch = await axios.get(`http://127.0.0.1:8000/question/${id}`);
-    const question: QuestionType = questionFetch.data;
-    return { props: { id, question } };
+    // Fetch question data with related data
+    const questionFetch = await axios.get(`http://127.0.0.1:8000/question/${id}/`);
+    const questionData = questionFetch.data;
+    
+    // Process the question data to ensure consistent structure
+    const question: QuestionType = {
+      ...questionData,
+      id: questionData.id || id, // Ensure we have the ID
+      tags: questionData.tags || [],
+      examinations: questionData.examinations || [],
+      concept: questionData.concept || null,
+    };
+    
+    // Fetch all questions to find similar ones
+    const allQuestionsFetch = await axios.get('http://127.0.0.1:8000/question/add');
+    
+
+    
+    // Get current question's tags, exams, and concept for matching
+    const currentTags = question.tags?.map((t: any) => t.id) || [];
+    const currentExams = question.examinations?.map((e: any) => e.id) || [];
+    const currentConcept = typeof question.concept === 'object' ? question.concept?.id : question.concept;
+    
+    const similarQuestions = allQuestionsFetch.data
+      .filter((q: any) => {
+        // Skip the current question
+        if (q.id === question.id) return false;
+        
+        // Get comparison data for the question
+        const qTags = q.tags?.map((t: any) => t.id) || [];
+        const qExams = q.examinations?.map((e: any) => e.id) || [];
+        const qConcept = q.concept?.id;
+        
+        // console.log(`Checking question ${q.id}:`, { qTags, qExams, qConcept });
+        
+        // Check for matches in tags, exams, or concept
+        const hasMatchingTag = qTags.some((tagId: number) => currentTags.includes(tagId));
+        const hasMatchingExam = qExams.some((examId: number) => currentExams.includes(examId));
+        const hasMatchingConcept = currentConcept && qConcept === currentConcept;
+        
+        const isSimilar = hasMatchingTag || hasMatchingExam || hasMatchingConcept;
+        // console.log(`Question ${q.id} is similar:`, isSimilar, { hasMatchingTag, hasMatchingExam, hasMatchingConcept });
+        
+        return isSimilar;
+      })
+      .slice(0, 5) // Limit to 5 similar questions
+      .map((q: any) => ({
+        id: q.id,
+        question_text: q.question_text || 'Untitled Question',
+        category: q.category || 'General',
+        concept: q.concept || null
+      }));
+
+    return { 
+      props: { 
+        id, 
+        question: {
+          ...question,
+          similarQuestions: similarQuestions || []
+        } 
+      } 
+    };
   } catch (error) {
     console.error('Error fetching data:', error);
     return {
@@ -52,15 +138,62 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   }
 };
 
+const TagItem: React.FC<{ tag: Tag }> = ({ tag }) => (
+  <Link href={`/tags/${tag.id}`}>
+    <span className={styles.tag} style={{ cursor: 'pointer' }}>
+      {tag.name}
+    </span>
+  </Link>
+);
+
+const ExamItem: React.FC<{ exam: Exam }> = ({ exam }) => (
+  <Link href={`/examinations/${exam.id}`}>
+    <div className={styles.exam} style={{ cursor: 'pointer' }}>
+      {exam.name}
+    </div>
+  </Link>
+);
+
+const SimilarQuestionItem: React.FC<{ question: SimilarQuestion }> = ({ question }) => (
+  <div 
+    className={styles.similarQuestion}
+    onClick={() => window.location.href = `/question/${question.id}`}
+  >
+    <div className={styles.similarQuestionText}>
+      {question.question_text.length > 100 
+        ? `${question.question_text.substring(0, 100)}...` 
+        : question.question_text}
+    </div>
+    <div className={styles.similarQuestionCategory}>{question.category}</div>
+  </div>
+);
+
 const QuestionPage: React.FC<QuestionPageProps> = ({
   id,
   question,
 }) => {
   const router = useRouter();
-  const [iframeContent, setIframeContent] = useState('');
+  const [iframeContent, setIframeContent] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
   const [isClient, setIsClient] = useState(false);
+  
+  // Process metadata (tags and exams) for display
+  const metadata = [
+    ...(question?.tags?.map(tag => ({
+      ...tag,
+      type: 'tag' as const
+    })) || []),
+    ...(question?.examinations?.map(exam => ({
+      ...exam,
+      type: 'exam' as const
+    })) || [])
+  ];
+  
+  // Get concept data if available
+  const concept = question?.concept ? ({
+    id: typeof question.concept === 'number' ? question.concept : question.concept.id,
+    name: typeof question.concept === 'number' ? 'Loading...' : (question.concept.name || 'Unnamed Concept')
+  }) : null;
 
   useEffect(() => {
     setIsClient(true);
@@ -196,19 +329,78 @@ const QuestionPage: React.FC<QuestionPageProps> = ({
           </div>
 
           <div className={styles["content-side"]}>
+            {/* Graph/Iframe Section */}
             {iframeContent && (
-              <div className={styles["graph-container"]}>
-                <div
-                  className={styles["graph-grid"]}
-                  dangerouslySetInnerHTML={{ __html: iframeContent }}
-                />
-                <div className={styles["image-grid"]}>
-                  <button onClick={toggleModal} className={styles["modal-toggle"]}>
-                    {isModalOpen ? "" : "Full Screen"}
-                  </button>
+              <div className={styles.section}>
+                <div className={styles["graph-container"]}>
+                  <div
+                    className={styles["graph-grid"]}
+                    dangerouslySetInnerHTML={{ __html: iframeContent }}
+                  />
+                  <div className={styles["image-grid"]}>
+                    <button onClick={toggleModal} className={styles["modal-toggle"]}>
+                      {isModalOpen ? "" : "Full Screen"}
+                    </button>
+                  </div>
                 </div>
               </div>
             )}
+
+            {/* Metadata Section - Tags & Exams */}
+            <div className={styles.section}>
+              <h3 className={styles.sectionTitle}>Metadata</h3>
+              <div className={styles.metadataContainer}>
+                {metadata.length > 0 ? (
+                  <div className={styles.metadataGrid}>
+                    {metadata.map((item) => (
+                      <Link 
+                        key={`${item.type}-${item.id}`} 
+                        href={`/${item.type === 'tag' ? 'tags' : 'examinations'}/${item.id}`}
+                        passHref
+                      >
+                        <div 
+                          className={`${styles.metadataItem} ${styles[item.type]}`}
+                          style={{ cursor: 'pointer' }}
+                        >
+                          <span className={styles.metadataLabel}>
+                            {item.type === 'tag' ? '#' : '📝'}
+                          </span>
+                          {item.name}
+                        </div>
+                      </Link>
+                    ))}
+                  </div>
+                ) : (
+                  <div className={styles.noItems}>No metadata available</div>
+                )}
+              </div>
+            </div>
+
+            {/* Concept Section */}
+            {concept && (
+              <div className={styles.section}>
+                <h3 className={styles.sectionTitle}>Concept</h3>
+                <div className={styles.conceptContainer}>
+                  <div className={styles.conceptItem}>
+                    {concept.name}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Similar Questions Section */}
+            <div className={styles.section}>
+              <h3 className={styles.sectionTitle}>Similar Questions</h3>
+              <div className={styles.similarQuestionsContainer}>
+                {question?.similarQuestions?.length ? (
+                  question.similarQuestions.map((sq) => (
+                    <SimilarQuestionItem key={sq.id} question={sq} />
+                  ))
+                ) : (
+                  <div className={styles.noItems}>No similar questions found</div>
+                )}
+              </div>
+            </div>
           </div>
         </div>
       </div>

@@ -2,7 +2,7 @@ import axios from "axios";
 import http from "http"; // Import the 'http' module
 import { useAuth } from './context/AuthContext';
 
-const baseURL = `${process.env.BACKEND_URL || process.env.NEXT_PUBLIC_API_URL}`;
+const baseURL = `http://localhost:8000`;
 const axiosInstance = axios.create({
   baseURL: baseURL,
   headers: { "Content-Type": "application/json" },

@@ -11,8 +11,9 @@ export async function getServerSideProps(
   context: GetServerSidePropsContext
 ) {
   try {
-    const response = await axiosInstance.get(`/question/add`);
-    const questions: QuestionData[] = response.data;
+    const response = await fetch(`http://localhost:8000/question/add`);
+    console.log("Response:", response);
+    const questions: QuestionData[] = await response.json();
 
     return {
       props: {
@@ -47,10 +48,11 @@ const JeeMains: React.FC<{ questions: QuestionData[] }> = ({ questions }) => {
     const allQuestions = questions;
   
     // Filter the questions based on the search query
-    const filteredQuestions = allQuestions.filter((question) =>
+    const filteredQuestions = allQuestions?.filter((question) =>
       question.question_text.toLowerCase().includes(searchQuery.toLowerCase())
     );
-  
+    console.log(allQuestions)
+    console.log("dfsadsf")
     const endOffset = itemOffset + itemsPerPage;
     setCurrentItems(filteredQuestions.slice(itemOffset, endOffset));
     setPageCount(Math.ceil(filteredQuestions.length / itemsPerPage));
@@ -72,7 +74,7 @@ const JeeMains: React.FC<{ questions: QuestionData[] }> = ({ questions }) => {
           <div className={styles.header_wrapper}>
             <div className={styles.header}>
               <h4>JEE Mains</h4>
-              <button>{questions.length} Questions</button>
+              <button>{questions?.length} Questions</button>
             </div>
             <div className={styles.searchWrap}>
               <h3>
