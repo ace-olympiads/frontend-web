@@ -34,9 +34,25 @@ export function signOutCompat() {
  * Compatibility function to mimic next-auth's getSession
  * Note: This is a client-side only implementation
  */
-export async function getSessionCompat() {
-  // In client-side code, we can use localStorage
-  if (typeof window !== 'undefined') {
+interface SessionData {
+  user: {
+    email?: string;
+    username?: string;
+    image?: string;
+    [key: string]: any;
+  };
+  expires: string;
+  accessToken?: string;
+}
+
+export async function getSessionCompat(): Promise<SessionData | null> {
+  // On server-side, return null as we can't access localStorage
+  if (typeof window === 'undefined') {
+    return null;
+  }
+
+  // Client-side code
+  try {
     const user = localStorage.getItem('user');
     const accessToken = localStorage.getItem('accessToken');
     
@@ -47,6 +63,8 @@ export async function getSessionCompat() {
         accessToken
       };
     }
+  } catch (error) {
+    console.error('Error getting session:', error);
   }
   
   return null;

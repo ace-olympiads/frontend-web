@@ -10,12 +10,18 @@ import { QuestionType, ConceptType, User } from "../types";
 import { getSessionCompat as getSession } from "../utils/auth-compat";
 import axiosInstance from "../axios";
 
+// Define a more flexible question type that matches the actual data structure
+type ContentQuestionType = Omit<QuestionType, 'id'> & {
+  id?: number | string;
+  [key: string]: any;
+};
+
 type propstypes = { type: string; user: User };
 type scrollVisibilityApiType = React.ContextType<typeof VisibilityContext>;
 
 const Content = ({ type, user }: propstypes) => {
   const [concepts, setConcepts] = useState<ConceptType[]>();
-  const [questions, setQuestions] = useState<QuestionType[]>();
+  const [questions, setQuestions] = useState<ContentQuestionType[]>();
   useEffect(() => {
     if (user?.email) {
       console.log("inside");
@@ -80,13 +86,15 @@ const Content = ({ type, user }: propstypes) => {
               onMouseMove={handleDrag}
             >
               {questions && !concepts ? (
-                questions.map((e) => (
-                  <>
-                    {type === "question" && <Question question={e} />}
-                    {type === "Suggested FAQs" && <Question question={e} />}
-                    {type === "Recently Solved" && <Question question={e} />}
-                    {type === "Recently Learnt" && <Question question={e} />}
-                  </>
+                questions.map((e, index) => (
+                  <React.Fragment key={`question-${e.id || index}`}>
+                    {(type === "question" || 
+                      type === "Suggested FAQs" || 
+                      type === "Recently Solved" || 
+                      type === "Recently Learnt") && (
+                      <Question question={e} />
+                    )}
+                  </React.Fragment>
                 ))
               ) : concepts ? (
                 concepts.map((e) => (

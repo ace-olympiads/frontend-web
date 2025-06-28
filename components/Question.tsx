@@ -4,12 +4,39 @@ import { extractEmbedIdFromYouTubeLink } from "../utils/youtubeId";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import defaultImg from "../public/assets/userImg.png";
-import { QuestionProps } from "../types";
+import { QuestionProps as ImportedQuestionProps, QuestionData } from "../types";
 import { motion, useAnimation } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 
 
-const Question = ({ question }: QuestionProps) => {
+// Define a more flexible question type that matches the actual data structure
+type QuestionProps = {
+  id?: number | string;
+  question_text: string;
+  question_text_latex?: string;
+  video_solution_url: string;
+  text_solution?: string;
+  text_solution_latex?: string;
+  created_at?: string;
+  updated_at?: string;
+  tags?: any[];
+  examinations?: any[];
+  category?: string;
+  concept?: number | null;
+  author?: number;
+  name?: string;
+  iframeText?: string;
+  // Allow any additional properties
+  [key: string]: any;
+};
+
+// Helper function to safely get a string ID
+const getSafeId = (id: any): string => {
+  if (id === undefined || id === null) return '';
+  return String(id);
+};
+
+const Question = ({ question }: { question: QuestionProps }) => {
   const [thumbnailUrl, setThumbnail] = useState<string>("");
   const router = useRouter();
   const boxVariant = {
@@ -17,13 +44,17 @@ const Question = ({ question }: QuestionProps) => {
     hidden: { opacity: 0, x: 100 },
   };
   useEffect(() => {
-    setThumbnail(
-      `https://img.youtube.com/vi/${extractEmbedIdFromYouTubeLink(
-        `${question?.video_solution_url}`
-      )}/0.jpg`
-    );
-    console.log(thumbnailUrl);
-  }, [question,thumbnailUrl]);
+    if (question?.video_solution_url) {
+      const videoId = extractEmbedIdFromYouTubeLink(question.video_solution_url);
+      if (videoId) {
+        setThumbnail(`https://img.youtube.com/vi/${videoId}/0.jpg`);
+      } else {
+        setThumbnail('');
+      }
+    } else {
+      setThumbnail('');
+    }
+  }, [question?.video_solution_url]);
   console.log(thumbnailUrl);
   const control = useAnimation();
   const [ref, inView] = useInView();
@@ -78,17 +109,20 @@ const Question = ({ question }: QuestionProps) => {
             </span>
           </div>
 
-          <div className={styles.question_tags_container}>
-            {question?.tags?.slice(0, 3).map((tag) => {
-              return (
-                <div className={styles.question_tags_element} key={tag.id}>
-                  {tag.name.length < 8
-                    ? `#${tag.name}`
-                    : `#${tag.name.substring(0, 7)}...`}
-                </div>
-              );
-            })}
-          </div>
+          {question?.tags && question.tags.length > 0 && (
+            <div className={styles.question_tags_container}>
+              {question.tags.slice(0, 3).map((tag, index) => {
+                const tagName = tag?.name || `tag-${index}`;
+                return (
+                  <div className={styles.question_tags_element} key={tagName}>
+                    {tagName.length < 8
+                      ? `#${tagName}`
+                      : `#${tagName.substring(0, 7)}...`}
+                  </div>
+                );
+              })}
+            </div>
+          )}
           {/*
 
         <div className={styles.icons_wrapper}>

@@ -66,32 +66,41 @@ interface HomePageProps {
 
 export async function getServerSideProps(context: any) {
   try {
+    // Get session data if available (will be null on server-side)
     const session = await getSession();
+    
+    // Fetch public data that doesn't require authentication
     const [conceptsResponse, testimonialsResponse, questionsResponse] = await Promise.all([
-      axiosInstance.get('/concepts/'),
-      axiosInstance.get('/testimonials/'),
-      axiosInstance.get('/question/add'),
+      axiosInstance.get('/concepts/').catch(() => ({ data: [] })),
+      axiosInstance.get('/testimonials/').catch(() => ({ data: [] })),
+      axiosInstance.get('/question/add').catch(() => ({ data: [] })),
     ]);
 
-    const concepts: ConceptProps[] = conceptsResponse.data;
-    const testimonials: TestimonialType[] = testimonialsResponse.data;
-    const questions: QuestionType[] = questionsResponse.data;
+    const concepts: ConceptProps[] = conceptsResponse?.data || [];
+    const testimonials: TestimonialType[] = testimonialsResponse?.data || [];
+    const questions: QuestionType[] = questionsResponse?.data || [];
 
-    if (session) {
-      const email = session.user?.email;
-      const userResponse = await axiosInstance.get(`/users/account/?email=${email}`);
-      const user: User = userResponse.data;
+    // If we have a valid session with email, try to get user data
+    if (session?.user?.email) {
+      try {
+        const userResponse = await axiosInstance.get(`/users/account/?email=${session.user.email}`);
+        const user: User = userResponse.data;
 
-      return {
-        props: {
-          user,
-          concepts,
-          testimonials,
-          questions,
-        },
-      };
+        return {
+          props: {
+            user,
+            concepts,
+            testimonials,
+            questions,
+          },
+        };
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+        // Continue without user data if there's an error
+      }
     }
 
+    // Return data without user if not authenticated or if there was an error
     return {
       props: {
         concepts,
@@ -100,9 +109,13 @@ export async function getServerSideProps(context: any) {
       },
     };
   } catch (error) {
-    console.error(error);
+    console.error('Error in getServerSideProps:', error);
     return {
-      props: {},
+      props: {
+        concepts: [],
+        testimonials: [],
+        questions: [],
+      },
     };
   }
 }

@@ -1,16 +1,10 @@
 import { useSessionCompat as useSession } from "../../utils/auth-compat";
 import { useRouter } from "next/router";
-import React, { useEffect, useContext, useState } from "react";
-import dataContext from "../../context/datacontext";
-import Sidebar from "../../components/Sidebar";
-import Banner from "../../components/Banner";
-import MyComments from "./MyComments";
-import VisQuestions from "./VisQuestions";
-import MobNavigation from "../../components/MobNavigation";
-import VisConcepts from "./VisConcepts";
-const Profile = () => {
-  const { sidebarOption, setSideBarOption } = useContext(dataContext);
+import React, { useEffect, useState } from "react";
+export default function Profile() {
   const [windowWidth, setWindowWidth] = useState<number>(0);
+  const session = useSession();
+  const router = useRouter();
 
   useEffect(() => {
     // Update windowWidth when the component mounts and when the window is resized
@@ -20,56 +14,68 @@ const Profile = () => {
 
     // Set the initial window width
     updateWindowWidth();
-
-    // Add an event listener to update the window width on resize
     window.addEventListener("resize", updateWindowWidth);
 
-    // Clean up the event listener when the component unmounts
-    return () => {
-      window.removeEventListener("resize", updateWindowWidth);
-    };
-  }, []); // Empty dependency array to run this effect only once when the component mounts
-
-  useEffect(() => {
-    console.log(sidebarOption);
-  }, [sidebarOption]);
-  const session = useSession();
-  const router = useRouter();
-  console.log(session, "from layout");
-  useEffect(() => {
+    // Redirect if not authenticated
     if (session?.status === "unauthenticated") {
       router.push("/");
     }
-  }, [session?.status, router]);
-  const OptionDisplayed =
-    sidebarOption === "comments" ? (
-      <MyComments />
-    ) : sidebarOption === "questions" ? (
-      <VisQuestions />
-    ) : sidebarOption === "concepts" ? (
-      <VisConcepts />
-    ) : (
-      <></>
-    );
-  return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "row",
-        margin: "4vh 1vw",
-      }}
-    >
-      {windowWidth > 768 && <Sidebar />}
-      <div
-        className="content"
-        style={{ width: "100%", height: "auto", minHeight: "100vh" }}
-      >
-        <Banner />
-        {windowWidth < 768 && <MobNavigation />}
 
-        {OptionDisplayed}
+    return () => {
+      window.removeEventListener("resize", updateWindowWidth);
+    };
+  }, [session?.status, router]);
+
+  if (session?.status === "loading") {
+    return <div>Loading...</div>;
+  }
+
+  if (session?.status === "unauthenticated") {
+    return null; // Will redirect in useEffect
+  }
+
+  return (
+    <div style={{ maxWidth: '800px', margin: '2rem auto', padding: '0 1rem' }}>
+      <div style={{ 
+        backgroundColor: 'white', 
+        borderRadius: '8px',
+        padding: '2rem',
+        boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+      }}>
+        <div style={{ 
+          display: 'flex', 
+          flexDirection: 'column', 
+          alignItems: 'center', 
+          marginBottom: '2rem' 
+        }}>
+          <img 
+            src={session?.data?.user?.image || '/default-avatar.png'} 
+            alt={session?.data?.user?.name || 'User'}
+            style={{ 
+              width: '100px', 
+              height: '100px',
+              borderRadius: '50%',
+              marginBottom: '1rem',
+              objectFit: 'cover'
+            }}
+          />
+          <h1 style={{ fontSize: '2rem', margin: '0.5rem 0' }}>
+            {session?.data?.user?.name || 'User'}
+          </h1>
+          <p style={{ color: '#666', margin: '0.25rem 0' }}>
+            {session?.data?.user?.email}
+          </p>
+        </div>
+        
+        <div style={{ marginTop: '2rem' }}>
+          <h2 style={{ fontSize: '1.25rem', marginBottom: '1rem' }}>Account Details</h2>
+          <div style={{ paddingLeft: '1rem' }}>
+            <p><strong>Name:</strong> {session?.data?.user?.name || 'Not provided'}</p>
+            <p><strong>Email:</strong> {session?.data?.user?.email || 'Not provided'}</p>
+            <p><strong>Account Created:</strong> {session?.data?.user?.created_at ? new Date(session?.data?.user?.created_at).toLocaleDateString() : 'N/A'}</p>
+          </div>
+        </div>
       </div>
     </div>
   );
-};
-export default Profile;
+}

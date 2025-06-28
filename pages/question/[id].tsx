@@ -348,7 +348,7 @@ const QuestionPage: React.FC<QuestionPageProps> = ({
 
             {/* Metadata Section - Tags & Exams */}
             <div className={styles.section}>
-              <h3 className={styles.sectionTitle}>Metadata</h3>
+              <h3 className={styles.sectionTitle}>Tags & Exams</h3>
               <div className={styles.metadataContainer}>
                 {metadata.length > 0 ? (
                   <div className={styles.metadataGrid}>

@@ -24,7 +24,7 @@ export interface Tag {
 
 }
 export interface QuestionType {
-  id: Number;
+  id: number;
   question_text: string;
   question_text_latex?: string;
   video_solution_url: string;
@@ -35,8 +35,8 @@ export interface QuestionType {
   tags?: Tag[];
   examinations?: Exam[];
   category?: string;
-  concept?: Number;
-  author?: Number;
+  concept?: number;
+  author?: number;
   name?: string;
   iframeText?: string;
 }
