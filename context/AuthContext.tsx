@@ -76,6 +76,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       // Then exchange Firebase token for backend tokens
       const response = await fetch(`https://backend.aceacad.com/api/users/auth/firebase/`, {
         method: 'POST',
+        credentials: 'include', 
         headers: {
           'Content-Type': 'application/json',
         },
@@ -116,6 +117,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       // Then register with backend
       const response = await fetch(`https://backend.aceacad.com/api/users/auth/register/`, {
         method: 'POST',
+        credentials: 'include', 
         headers: {
           'Content-Type': 'application/json',
         },
@@ -161,6 +163,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       // Exchange Firebase token for backend tokens
       const response = await fetch(`https://backend.aceacad.com/api/users/auth/firebase/`, {
         method: 'POST',
+        credentials: 'include', 
         headers: {
           'Content-Type': 'application/json',
         },
