@@ -347,7 +347,7 @@ const UploadForm: React.FC = () => {
 
   const fetchTags = async () => {
     try {
-      const response = await axios.get(`http://localhost:8000/question/tags/`);
+      const response = await axios.get(`${process.env.BACKEND_URL}question/tags/`);
       // Ensure response.data is an array before setting it
       setTags(Array.isArray(response.data) ? response.data : []);
     } catch (error) {
@@ -359,7 +359,7 @@ const UploadForm: React.FC = () => {
 
   const fetchExaminations = async () => {
     try {
-      const response = await axios.get(`http://localhost:8000/question/examinations/`);
+      const response = await axios.get(`${process.env.BACKEND_URL}question/examinations/`);
       // Ensure response.data is an array before setting it
       setExaminations(Array.isArray(response.data) ? response.data : []);
     } catch (error) {

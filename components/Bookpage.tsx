@@ -7,7 +7,7 @@ const Bookpage = () => {
   const [questions, setQuestions] = useState<Question[]>([]);
 
   useEffect(() => {
-    axios.get('http://localhost:8000/users/question-cards/') // Update to correct backend URL
+    axios.get(process.env.NEXT_PUBLIC_API_URL + '/users/question-cards/') // Update to correct backend URL
       .then((res) => setQuestions(res.data.slice(0, 3))) // Take top 3
       .catch((err) => console.error("Error fetching questions:", err));
   }, []);

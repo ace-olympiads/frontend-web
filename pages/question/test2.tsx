@@ -33,7 +33,7 @@ $$= 2x\\sin(x) + x^2\\cos(x)$$
     if (!useSample) {
       const fetchQuestion = async () => {
         try {
-          const response = await fetch('http://127.0.0.1:8000/question/10');
+          const response = await fetch(`${process.env.BACKEND_URL || "http://localhost:8000/"}question/10`);
           const data = await response.json();
           setQuestion(data);
         } catch (error) {

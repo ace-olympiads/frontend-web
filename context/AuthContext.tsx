@@ -74,7 +74,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       const firebaseAuth = await loginWithEmailAndPassword(email, password);
       
       // Then exchange Firebase token for backend tokens
-      const response = await fetch(`http://localhost:8000/api/users/auth/firebase/`, {
+      const response = await fetch(`${process.env.BACKEND_URL || "http://localhost:8000/"}api/users/auth/firebase/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -114,7 +114,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       const firebaseAuth = await registerWithEmailAndPassword(email, password);
       
       // Then register with backend
-      const response = await fetch(`http://localhost:8000/api/users/auth/register/`, {
+      const response = await fetch(`${process.env.BACKEND_URL || "http://localhost:8000/"}api/users/auth/register/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -159,7 +159,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       const firebaseAuth = await signInWithGoogle();
       
       // Exchange Firebase token for backend tokens
-      const response = await fetch(`http://localhost:8000/api/users/auth/firebase/`, {
+      const response = await fetch(`${process.env.BACKEND_URL || "http://localhost:8000/"}api/users/auth/firebase/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

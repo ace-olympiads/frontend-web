@@ -69,7 +69,7 @@ const ChipTabs: FC = () => {
 
   useEffect(() => {
     axios
-      .get("http://localhost:8000/users/video-cards/") // Update this to your backend URL
+      .get(process.env.NEXT_PUBLIC_API_URL + "/users/video-cards/") // Update this to your backend URL
       .then((res) => {
         setCards(res.data);
         setLoading(false);
