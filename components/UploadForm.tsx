@@ -359,7 +359,7 @@ const UploadForm: React.FC = () => {
 
   const fetchExaminations = async () => {
     try {
-      const response = await axios.get(`http://localhost:8000/question/examinations/`);
+      const response = await axios.get(`https://backend.aceacad.com/question/examinations/`);
       // Ensure response.data is an array before setting it
       setExaminations(Array.isArray(response.data) ? response.data : []);
     } catch (error) {
@@ -374,7 +374,7 @@ const UploadForm: React.FC = () => {
     
     if (uploadType === "question") {
       try {
-        await axios.post(`${process.env.BACKEND_URL || "http://localhost:8000/"}question/add/`, {
+        await axios.post(`https://backend.aceacad.com/question/add/`, {
           ...questionData,
           question_text: "h",
           email: user?.email || "anonymous@example.com",
