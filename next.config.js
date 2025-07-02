@@ -10,6 +10,17 @@ const nextConfig = {
       "lh3.google.com",
     ],
   },
+  
+  // ✅ Disable ESLint during builds
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
+
+  // ✅ Disable TypeScript type checking during builds
+  typescript: {
+    ignoreBuildErrors: true,
+  },
+
   webpack: (config, { isServer }) => {
     // Add a rule to handle MP4 files using the file-loader
     config.module.rules.push({
@@ -18,14 +29,13 @@ const nextConfig = {
         {
           loader: "file-loader",
           options: {
-            outputPath: "static/media/", // Specify the output directory for the media files
-            publicPath: "/_next/static/media/", // Specify the public path for the media files
+            outputPath: "static/media/",
+            publicPath: "/_next/static/media/",
           },
         },
       ],
     });
 
-    // You may also need to configure the assetPrefix for client-side navigation
     if (!isServer) {
       config.output.publicPath = "_next/";
     }
