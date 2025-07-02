@@ -11,9 +11,9 @@ export async function getServerSideProps(context: any) {
   const { id } = context.params;
   
   try {
-    const response = await fetch(`${process.env.BACKEND_URL || "http://localhost:8000/"}question/tag/${id}`);
+    const response = await fetch(`${process.env.BACKEND_URL}question/tag/${id}`);
     const questions = await response.json();
-    const tagResponse = await fetch(`${process.env.BACKEND_URL || "http://localhost:8000/"}question/tags/`);
+    const tagResponse = await fetch(`${process.env.BACKEND_URL}question/tags/`);
     const tags = await tagResponse.json();
     const tagName = tags.find((t: any) => t.id === parseInt(id))?.name || 'Tag';
 

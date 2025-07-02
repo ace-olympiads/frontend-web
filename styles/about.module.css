@@ -184,17 +184,15 @@
 
 .footer {
     display: flex;
-    flex-direction: column  ;
+    flex-direction: column;
     justify-content: space-between;
-    padding: 80px 50px;
+    padding: 40px 50px 20px;
     color: #2f2f2f;
-    background-color: #f9f4fe;
-    border-top: 1px solid #ccc;
+    background-color: #fdfaff;
     font-family: 'Inter', sans-serif;
     font-size: 14px;
     width: 100%;
-    gap: 10px;
-    height: 39vh;
+    min-height: 200px;
 }
 
 .footer__section {
@@ -257,15 +255,56 @@
     font-size: 14px;
 }
 
+.contact__info {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    padding: 20px 0;
+    margin: 0 auto;
+    max-width: 1200px;
+    width: 100%;
+}
+
+.contact__link {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #333;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    padding: 8px 15px;
+    border-radius: 6px;
+}
+
+.contact__link:hover {
+    color: #7e22ce;
+    background-color: rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
+}
+
+.contact__icon {
+    font-size: 18px;
+    color: #7e22ce;
+}
+
+.contact__divider {
+    color: #d1d1d1;
+    font-weight: 300;
+    font-size: 20px;
+}
+
 .footer__legal {
-    flex: 1;
-    text-align: left;
+    text-align: center;
     font-size: 14px;
-    color: #545252;
-    margin-top: 16px;
-    padding-top: 20px;
-    font-weight: 600;
-    border-top: 2px solid #62626219;
+    color: #666;
+    padding: 20px 0 10px;
+    font-weight: 500;
+    border-top: 1px solid #eee;
+    margin-top: 20px;
+    width: 100%;
 }
 
 .footer__legal p {
@@ -274,8 +313,24 @@
 
 @media (max-width: 768px) {
     .footer {
+        padding: 30px 20px;
+    }
+    
+    .contact__info {
         flex-direction: column;
-        text-align: center;
+        gap: 15px;
+    }
+    
+    .contact__divider {
+        display: none;
+    }
+    
+    .contact__link {
+        padding: 10px 20px;
+        background-color: rgba(255, 255, 255, 0.7);
+        border-radius: 8px;
+        width: 100%;
+        justify-content: center;
     }
 
     .footer__section,

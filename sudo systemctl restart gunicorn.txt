@@ -1,0 +1,9 @@
+sudo systemctl restart gunicorn
+sudo systemctl restart nginx
+
+
+git pull
+npm run build
+pm2 list
+pm2 restart all
+sudo systemctl restart nginx

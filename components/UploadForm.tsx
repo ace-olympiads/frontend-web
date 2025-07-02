@@ -374,7 +374,7 @@ const UploadForm: React.FC = () => {
     
     if (uploadType === "question") {
       try {
-        await axios.post(`${process.env.BACKEND_URL || "http://localhost:8000/"}question/add/`, {
+        await axios.post(`${process.env.BACKEND_URL}question/add/`, {
           ...questionData,
           question_text: "h",
           email: user?.email || "anonymous@example.com",

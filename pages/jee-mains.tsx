@@ -11,7 +11,7 @@ export async function getServerSideProps(
   context: GetServerSidePropsContext
 ) {
   try {
-    const response = await fetch(`${process.env.BACKEND_URL || "http://localhost:8000/"}question/add`);
+    const response = await fetch(`${process.env.BACKEND_URL}question/add`);
     console.log("Response:", response);
     const questions: QuestionData[] = await response.json();
 
