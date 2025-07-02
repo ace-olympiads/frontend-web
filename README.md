@@ -13,7 +13,7 @@ This application uses Firebase for authentication. Follow these steps to set up 
 5. Create a `.env.local` file in the root directory of the project with the following variables (see `.env.local.example` for reference):
 
 ```
-NEXT_PUBLIC_API_URL=http://localhost:8000
+NEXT_PUBLIC_API_URL=https://backend.aceacad.com
 NEXT_PUBLIC_FIREBASE_API_KEY=your_api_key
 NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your_project.firebaseapp.com
 NEXT_PUBLIC_FIREBASE_PROJECT_ID=your_project_id
