@@ -40,10 +40,6 @@ export default function Footersec() {
     </ul>
     </div>
     <div className={styles.contact__info}>
-        <a href="tel:+919980305793" className={styles.contact__link}>
-            <span className={styles.contact__icon}>📞</span> (+91) 9980305793
-        </a>
-        <span className={styles.contact__divider}>|</span>
         <a href="mailto:aceolympiads@gmail.com" className={styles.contact__link}>
             <span className={styles.contact__icon}>✉️</span> aceolympiads@gmail.com
         </a>
