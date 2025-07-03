@@ -338,7 +338,7 @@ const UploadForm: React.FC = () => {
   // API calls
   const fetchConcepts = async () => {
     try {
-      const response = await axios.get(`${process.env.BACKEND_URL}concepts/`);
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/concepts/`);
       setConcepts(response.data);
     } catch (error) {
       console.error("Error fetching concepts:", error);
@@ -347,7 +347,7 @@ const UploadForm: React.FC = () => {
 
   const fetchTags = async () => {
     try {
-      const response = await axios.get(`https://backend.aceacad.com/question/tags/`);
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/question/tags/`);
       // Ensure response.data is an array before setting it
       setTags(Array.isArray(response.data) ? response.data : []);
     } catch (error) {
@@ -359,7 +359,7 @@ const UploadForm: React.FC = () => {
 
   const fetchExaminations = async () => {
     try {
-      const response = await axios.get(`https://backend.aceacad.com/question/examinations/`);
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/question/examinations/`);
       // Ensure response.data is an array before setting it
       setExaminations(Array.isArray(response.data) ? response.data : []);
     } catch (error) {
@@ -374,7 +374,7 @@ const UploadForm: React.FC = () => {
     
     if (uploadType === "question") {
       try {
-        await axios.post(`https://backend.aceacad.com/question/add/`, {
+        await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/question/add/`, {
           ...questionData,
           question_text: "h",
           email: user?.email || "anonymous@example.com",
@@ -406,7 +406,7 @@ const UploadForm: React.FC = () => {
       }
     } else if (uploadType === "concept") {
       try {
-        await axios.post(`${process.env.BACKEND_URL}concepts/`, conceptData);
+        await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/concepts/`, conceptData);
         setConceptData({ id: -1, title: "", description: "" });
         fetchConcepts();
         alert("Concept submitted successfully!");
@@ -417,7 +417,7 @@ const UploadForm: React.FC = () => {
     } else if (uploadType === "video") {
       try {
         await axios.post(
-          `${process.env.BACKEND_URL}concepts/${videoData.concept}/videos/`,
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/concepts/${videoData.concept}/videos/`,
           { ...videoData, author: user?.id || 1 }
         );
         setVideoData({ concept: null, title: "", youtube_url: "", thumbnail_url: "" });

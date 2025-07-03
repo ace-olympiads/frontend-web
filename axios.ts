@@ -2,7 +2,7 @@ import axios from "axios";
 import http from "http"; // Import the 'http' module
 import { useAuth } from './context/AuthContext';
 
-const baseURL = `https://backend.aceacad.com`;
+const baseURL = process.env.NEXT_PUBLIC_BACKEND_URL;
 const axiosInstance = axios.create({
   baseURL: baseURL,
   headers: { "Content-Type": "application/json" },

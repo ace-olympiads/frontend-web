@@ -74,8 +74,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       const firebaseAuth = await loginWithEmailAndPassword(email, password);
       
       // Then exchange Firebase token for backend tokens
-      const response = await fetch(`https://backend.aceacad.com/api/users/auth/firebase/`, {
-      // const response = await fetch(`${process.env.BACKEND_URL}api/users/auth/firebase/`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/users/auth/firebase/`, {
         method: 'POST',
         credentials: 'include', 
         headers: {
@@ -116,8 +115,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       const firebaseAuth = await registerWithEmailAndPassword(email, password);
       
       // Then register with backend
-      // const response = await fetch(`${process.env.BACKEND_URL}api/users/auth/register/`, {
-      const response = await fetch(`https://backend.aceacad.com/api/users/auth/register/`, {
+      // const response = await fetch(`${process.env.BACKEND_URL}/api/users/auth/register/`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/users/auth/register/`, {
         method: 'POST',
         credentials: 'include', 
         headers: {
@@ -163,8 +162,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       const firebaseAuth = await signInWithGoogle();
       
       // Exchange Firebase token for backend tokens
-      // const response = await fetch(`${process.env.BACKEND_URL}api/users/auth/firebase/`, {
-      const response = await fetch(`https://backend.aceacad.com/api/users/auth/firebase/`, {
+      // const response = await fetch(`${process.env.BACKEND_URL}/api/users/auth/firebase/`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/users/auth/firebase/`, {
         method: 'POST',
         credentials: 'include', 
         headers: {

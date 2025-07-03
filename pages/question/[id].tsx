@@ -66,7 +66,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   const { id } = context.query;
   try {
     // Fetch question data with related data
-    const questionFetch = await axios.get(`https://backend.aceacad.com/question/${id}/`);
+    const questionFetch = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/question/${id}/`);
     const questionData = questionFetch.data;
     
     // Process the question data to ensure consistent structure
@@ -79,7 +79,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     };
     
     // Fetch all questions to find similar ones
-    const allQuestionsFetch = await axios.get(`${process.env.BACKEND_URL}question/add`);
+    const allQuestionsFetch = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/question/add`);
     
 
     

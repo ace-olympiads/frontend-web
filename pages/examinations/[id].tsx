@@ -16,9 +16,9 @@ export async function getServerSideProps(context: any) {
   const { id } = context.params;
   
   try {
-    const response = await fetch(`https://backend.aceacad.com/question/examination/${id}`);
+    const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/question/examination/${id}`);
     const questions = await response.json();
-    const examResponse = await fetch(`https://backend.aceacad.com/question/examinations/`);
+    const examResponse = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/question/examinations/`);
     const exams = await examResponse.json();
     const examName = exams.find((e: any) => e.id === parseInt(id))?.name || 'Examination';
 

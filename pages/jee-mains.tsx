@@ -11,7 +11,7 @@ export async function getServerSideProps(
   context: GetServerSidePropsContext
 ) {
   try {
-    const response = await fetch(`https://backend.aceacad.com/question/add`);
+    const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/question/add`);
     console.log("Response:", response);
     const questions: QuestionData[] = await response.json();
 

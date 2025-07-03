@@ -44,7 +44,7 @@ export default function QuestionViewer() {
     if (mode === "view") {
       const fetchQuestion = async () => {
         try {
-          const response = await fetch(`${process.env.BACKEND_URL}question/11`);
+          const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/question/11`);
           const data = await response.json();
           setQuestion(data);
         } catch (error) {
@@ -122,7 +122,7 @@ export default function QuestionViewer() {
   const handleSubmitTest = async (e: { preventDefault: () => void; }) => {
     e.preventDefault();
     try {
-      const response = await fetch(`${process.env.BACKEND_URL}question/add/`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/question/add/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
