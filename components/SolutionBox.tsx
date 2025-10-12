@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import styles from "../styles/Solution.module.css";
 import { BlockMath } from "react-katex";
-import "katex/dist/katex.min.css";
+
 
 type SolutionProps = {
   solution: string;

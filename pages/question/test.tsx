@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import "katex/dist/katex.min.css";
+
 import { InlineMath, BlockMath } from "react-katex";
 
 interface Question {
