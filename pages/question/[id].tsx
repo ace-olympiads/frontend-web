@@ -8,7 +8,7 @@ import axios from 'axios';
 import { extractEmbedIdFromYouTubeLink } from "../../utils/youtubeId";
 import { useRouter } from "next/router";
 import BackButton from "../../components/BackButton";
-import "katex/dist/katex.min.css";
+
 
 // Dynamically import components that use browser APIs with SSR disabled
 const InlineMath = dynamic(
@@ -43,6 +43,7 @@ interface QuestionType {
   question_text_latex: string;
   text_solution_latex: string;
   video_solution_url: string;
+  simulation_link?: string;
   category: string;
   iframeText?: string;
   tags?: Tag[];
@@ -68,7 +69,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     // Fetch question data with related data
     const questionFetch = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/question/${id}/`);
     const questionData = questionFetch.data;
-    
+
     // Process the question data to ensure consistent structure
     const question: QuestionType = {
       ...questionData,
@@ -77,37 +78,37 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       examinations: questionData.examinations || [],
       concept: questionData.concept || null,
     };
-    
+
     // Fetch all questions to find similar ones
     const allQuestionsFetch = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/question/add`);
-    
 
-    
+
+
     // Get current question's tags, exams, and concept for matching
     const currentTags = question.tags?.map((t: any) => t.id) || [];
     const currentExams = question.examinations?.map((e: any) => e.id) || [];
     const currentConcept = typeof question.concept === 'object' ? question.concept?.id : question.concept;
-    
+
     const similarQuestions = allQuestionsFetch.data
       .filter((q: any) => {
         // Skip the current question
         if (q.id === question.id) return false;
-        
+
         // Get comparison data for the question
         const qTags = q.tags?.map((t: any) => t.id) || [];
         const qExams = q.examinations?.map((e: any) => e.id) || [];
         const qConcept = q.concept?.id;
-        
+
         // console.log(`Checking question ${q.id}:`, { qTags, qExams, qConcept });
-        
+
         // Check for matches in tags, exams, or concept
         const hasMatchingTag = qTags.some((tagId: number) => currentTags.includes(tagId));
         const hasMatchingExam = qExams.some((examId: number) => currentExams.includes(examId));
         const hasMatchingConcept = currentConcept && qConcept === currentConcept;
-        
+
         const isSimilar = hasMatchingTag || hasMatchingExam || hasMatchingConcept;
         // console.log(`Question ${q.id} is similar:`, isSimilar, { hasMatchingTag, hasMatchingExam, hasMatchingConcept });
-        
+
         return isSimilar;
       })
       .slice(0, 5) // Limit to 5 similar questions
@@ -118,14 +119,14 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         concept: q.concept || null
       }));
 
-    return { 
-      props: { 
-        id, 
+    return {
+      props: {
+        id,
         question: {
           ...question,
           similarQuestions: similarQuestions || []
-        } 
-      } 
+        }
+      }
     };
   } catch (error) {
     console.error('Error fetching data:', error);
@@ -155,13 +156,13 @@ const ExamItem: React.FC<{ exam: Exam }> = ({ exam }) => (
 );
 
 const SimilarQuestionItem: React.FC<{ question: SimilarQuestion }> = ({ question }) => (
-  <div 
+  <div
     className={styles.similarQuestion}
     onClick={() => window.location.href = `/question/${question.id}`}
   >
     <div className={styles.similarQuestionText}>
-      {question.question_text.length > 100 
-        ? `${question.question_text.substring(0, 100)}...` 
+      {question.question_text.length > 100
+        ? `${question.question_text.substring(0, 100)}...`
         : question.question_text}
     </div>
     <div className={styles.similarQuestionCategory}>{question.category}</div>
@@ -176,7 +177,7 @@ const QuestionPage: React.FC<QuestionPageProps> = ({
   const [iframeContent, setIframeContent] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isClient, setIsClient] = useState(false);
-  
+
   // Process metadata (tags and exams) for display
   const metadata = [
     ...(question?.tags?.map(tag => ({
@@ -188,7 +189,7 @@ const QuestionPage: React.FC<QuestionPageProps> = ({
       type: 'exam' as const
     })) || [])
   ];
-  
+
   // Get concept data if available
   const concept = question?.concept ? ({
     id: typeof question.concept === 'number' ? question.concept : question.concept.id,
@@ -206,14 +207,94 @@ const QuestionPage: React.FC<QuestionPageProps> = ({
     }
   }, [question?.iframeText]);
 
+  // Enhanced function to render LaTeX content with multiple delimiter support
+  const renderEnhancedLatexContent = (content: string) => {
+    if (!content) return null;
+
+    // Enhanced regex to handle multiple LaTeX delimiters: $$..$$, $...$, \[..\], \(..\), and images
+    const segments = content.split(/(\$\$[\s\S]*?\$\$|\$[\s\S]*?\$|\\\[[\s\S]*?\\\]|\\\([\s\S]*?\\\)|<img[^>]+>)/g);
+
+    return (
+      <div className="space-y-4">
+        <div className="my-2 flex flex-wrap gap-x-1">
+          {segments.map((segment: string, index: number) => {
+            if (!segment.trim()) return null;
+
+            try {
+              // Block math with $$..$$
+              if (segment.startsWith('$$') && segment.endsWith('$$')) {
+                const latex = segment.slice(2, -2).trim();
+                return (
+                  <div key={index} className="w-full my-2">
+                    <BlockMath math={latex} errorColor="#cc0000" />
+                  </div>
+                );
+              }
+
+              // Block math with \[..\]
+              if (segment.startsWith('\\[') && segment.endsWith('\\]')) {
+                const latex = segment.slice(2, -2).trim();
+                return (
+                  <div key={index} className="w-full my-2">
+                    <BlockMath math={latex} errorColor="#cc0000" />
+                  </div>
+                );
+              }
+
+              // Inline math with $...$
+              if (segment.startsWith('$') && segment.endsWith('$')) {
+                const latex = segment.slice(1, -1).replace(/\n/g, ' ').trim();
+                return (
+                  <span key={index} className="inline">
+                    <InlineMath math={latex} errorColor="#cc0000" />
+                  </span>
+                );
+              }
+
+              // Inline math with \(..\)
+              if (segment.startsWith('\\(') && segment.endsWith('\\)')) {
+                const latex = segment.slice(2, -2).replace(/\n/g, ' ').trim();
+                return (
+                  <span key={index} className="inline">
+                    <InlineMath math={latex} errorColor="#cc0000" />
+                  </span>
+                );
+              }
+
+              // Image
+              if (segment.startsWith('<img')) {
+                return (
+                  <span
+                    key={index}
+                    className="inline"
+                    dangerouslySetInnerHTML={{ __html: segment }}
+                  />
+                );
+              }
+
+              // Plain text — flatten newlines to spaces
+              const flattenedText = segment.replace(/\n+/g, ' ');
+              return <span key={index}>{flattenedText}</span>;
+            } catch (err) {
+              console.error("Render error in LaTeX segment:", err);
+              return (
+                <span key={index} className="latex-error">
+                  [LaTeX Error: {segment.substring(0, 20)}...]
+                </span>
+              );
+            }
+          })}
+        </div>
+      </div>
+    );
+  };
+
   // Enhanced function to render LaTeX content
   const renderLatexContent = (content: string) => {
     if (!content) return null;
 
-    // Improved regex to split input cleanly
-    const segments = content.split(
-      /(\$\$[\s\S]*?\$\$|\$[\s\S]*?\$|<img[^>]+>)/g
-    );
+    // Enhanced regex to handle multiple LaTeX delimiters: $$..$$, $...$, \[..\], \(..\), and images
+    const segments = content.split(/(\$\$[\s\S]*?\$\$|\$[\s\S]*?\$|\\\[[\s\S]*?\\\]|\\\([\s\S]*?\\\)|<img[^>]+>)/g);
 
     return (
       <div className="space-y-4">
@@ -269,20 +350,20 @@ const QuestionPage: React.FC<QuestionPageProps> = ({
       </div>
     );
   };
-  
+
   function updateIframeContent(iframeHtml: string, removeControls: boolean = false) {
     let updatedHtml = iframeHtml;
-    
+
     // Remove existing width and height attributes
     updatedHtml = updatedHtml.replace(/width="[^"]*"/, '');
     updatedHtml = updatedHtml.replace(/height="[^"]*"/, '');
-    
+
     // Remove controls if specified
     if (removeControls) {
       updatedHtml = updatedHtml.replace(/scrolling="no"/, 'scrolling="no" style="border: none;"');
       updatedHtml = updatedHtml.replace(/ctl=true/, 'ctl=false');
     }
-    
+
     return updatedHtml;
   }
 
@@ -310,7 +391,7 @@ const QuestionPage: React.FC<QuestionPageProps> = ({
                 Question {question.id}
               </div>
               <div className={styles["question-text"]}>
-                {renderLatexContent(question.question_text_latex || "")}
+                {renderEnhancedLatexContent(question.question_text_latex || "")}
               </div>
             </div>
             <div className={styles["question-videos"]}>
@@ -322,9 +403,73 @@ const QuestionPage: React.FC<QuestionPageProps> = ({
               <div className="solution-box">
                 <h2 className="text-xl font-bold mb-2">Solution:</h2>
                 <div className="bg-white rounded-lg p-4 shadow">
-                  {renderLatexContent(question.text_solution_latex || "")}
+                  {renderEnhancedLatexContent(question.text_solution_latex || "")}
                 </div>
               </div>
+
+              {/* Simulation/Interactive Content */}
+              {question.simulation_link && (
+                <div className="simulation-box mt-6">
+                  <h2 className="text-xl font-bold mb-2">Interactive Simulation:</h2>
+                  <div className="bg-white rounded-lg p-4 shadow">
+                    <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded">
+                      <p className="text-sm text-blue-800 mb-2">
+                        <strong>Note:</strong> Some websites cannot be displayed in embedded frames due to security policies.
+                      </p>
+                      <a
+                        href={question.simulation_link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
+                      >
+                        Open Simulation in New Tab ↗
+                      </a>
+                    </div>
+                    <div className="relative">
+                      <iframe
+                        src={question.simulation_link}
+                        width="100%"
+                        height="400"
+                        frameBorder="0"
+                        allowFullScreen
+                        title="Interactive Simulation"
+                        className="rounded border w-full"
+                        onLoad={(e) => {
+                          // Check if iframe loaded successfully
+                          const iframe = e.target as HTMLIFrameElement;
+                          try {
+                            // This will throw an error if the iframe is blocked
+                            iframe.contentWindow?.location.href;
+                          } catch (error) {
+                            console.log('Iframe blocked by security policy');
+                          }
+                        }}
+                        onError={(e) => {
+                          console.error('Iframe failed to load:', e);
+                          const iframe = e.target as HTMLIFrameElement;
+                          const parent = iframe.parentElement;
+                          if (parent) {
+                            parent.innerHTML = `
+                              <div class="p-4 bg-yellow-50 border border-yellow-200 rounded text-center">
+                                <p class="text-yellow-800 mb-2">
+                                  <strong>Cannot display embedded content</strong>
+                                </p>
+                                <p class="text-sm text-yellow-700 mb-3">
+                                  This website cannot be embedded due to security restrictions.
+                                </p>
+                                <a href="${question.simulation_link}" target="_blank" rel="noopener noreferrer" 
+                                   class="inline-flex items-center px-4 py-2 bg-yellow-600 text-white rounded hover:bg-yellow-700 transition-colors">
+                                  Open in New Tab ↗
+                                </a>
+                              </div>
+                            `;
+                          }
+                        }}
+                      />
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 
@@ -353,12 +498,12 @@ const QuestionPage: React.FC<QuestionPageProps> = ({
                 {metadata.length > 0 ? (
                   <div className={styles.metadataGrid}>
                     {metadata.map((item) => (
-                      <Link 
-                        key={`${item.type}-${item.id}`} 
+                      <Link
+                        key={`${item.type}-${item.id}`}
                         href={`/${item.type === 'tag' ? 'tags' : 'examinations'}/${item.id}`}
                         passHref
                       >
-                        <div 
+                        <div
                           className={`${styles.metadataItem} ${styles[item.type]}`}
                           style={{ cursor: 'pointer' }}
                         >
@@ -408,9 +553,9 @@ const QuestionPage: React.FC<QuestionPageProps> = ({
       {isClient && isModalOpen && iframeContent && (
         <div className={styles["modal-overlay"]} onClick={toggleModal}>
           <div className={styles["modal-content"]} onClick={(e) => e.stopPropagation()}>
-            <div 
+            <div
               className={styles["modal-iframe-container"]}
-              dangerouslySetInnerHTML={{ __html: iframeContent }} 
+              dangerouslySetInnerHTML={{ __html: iframeContent }}
             />
             <button onClick={toggleModal} className={styles["modal-toggle"]}>
               Close

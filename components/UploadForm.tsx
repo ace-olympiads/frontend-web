@@ -1,8 +1,6 @@
 import React, { useState, ChangeEvent, FormEvent, useEffect } from "react";
-import "react-quill/dist/quill.snow.css";
 import styles from "../styles/Upload.module.css";
 import axios from "axios";
-import "katex/dist/katex.min.css";
 import { InlineMath, BlockMath } from "react-katex";
 import { Item, ConceptData, QuestionData, VideoData, User } from "../types";
 
@@ -27,7 +25,7 @@ const LatexInputField: React.FC<{
   const processImageUrls = (text: string): string => {
     // This regex matches URLs starting with https://
     const urlRegex = /(https?:\/\/[^\s]+(\.(jpg|jpeg|png|gif|svg)))/gi;
-    
+
     // Replace URLs with image tags
     return text.replace(urlRegex, (url) => {
       return `<img src="${url}" width="300" />`;
@@ -36,19 +34,29 @@ const LatexInputField: React.FC<{
 
   const handleInputChange = (e: { target: { value: string; }; }) => {
     let newValue = e.target.value;
-    
+
     // Process the input to convert URLs to image tags
     newValue = processImageUrls(newValue);
-    
+
     setRawInput(newValue);
     setError("");
-    
+
     try {
-      // Basic validation - this won't catch all LaTeX errors but will help
-      if (countOccurrences(newValue, "$") % 2 !== 0) {
+      // Enhanced validation for multiple LaTeX delimiters
+      const dollarCount = countOccurrences(newValue, "$");
+      const parenOpenCount = countOccurrences(newValue, "\\(");
+      const parenCloseCount = countOccurrences(newValue, "\\)");
+      const bracketOpenCount = countOccurrences(newValue, "\\[");
+      const bracketCloseCount = countOccurrences(newValue, "\\]");
+
+      if (dollarCount % 2 !== 0) {
         setError("Warning: Unmatched $ symbols");
+      } else if (parenOpenCount !== parenCloseCount) {
+        setError("Warning: Unmatched \\( \\) delimiters");
+      } else if (bracketOpenCount !== bracketCloseCount) {
+        setError("Warning: Unmatched \\[ \\] delimiters");
       }
-      
+
       const syntheticEvent = {
         target: { name, value: newValue } as EventTarget & HTMLTextAreaElement,
       } as ChangeEvent<HTMLTextAreaElement>;
@@ -61,24 +69,26 @@ const LatexInputField: React.FC<{
 
   // Helper function to count occurrences
   const countOccurrences = (str: string, char: string) => {
-    return (str.match(new RegExp("\\" + char, "g")) || []).length;
+    // Escape special regex characters
+    const escapedChar = char.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    return (str.match(new RegExp(escapedChar, "g")) || []).length;
   };
 
   // Render LaTeX content similar to QuestionViewer's renderLatexContent function
   const renderLatexContent = (content: string) => {
     if (!content) return null;
-  
-    // Improved regex to split input cleanly
-    const segments = content.split(/(\$\$[\s\S]*?\$\$|\$[\s\S]*?\$|<img[^>]+>)/g);
-  
+
+    // Enhanced regex to handle multiple LaTeX delimiters: $$..$$, $...$, \[..\], \(..\), and images
+    const segments = content.split(/(\$\$[\s\S]*?\$\$|\$[\s\S]*?\$|\\\[[\s\S]*?\\\]|\\\([\s\S]*?\\\)|<img[^>]+>)/g);
+
     return (
       <div className="space-y-4">
         <p className="my-2 flex flex-wrap gap-x-1">
           {segments.map((segment: string, index: React.Key) => {
             if (!segment.trim()) return null;
-  
+
             try {
-              // Block math
+              // Block math with $$..$$
               if (segment.startsWith('$$') && segment.endsWith('$$')) {
                 const latex = segment.slice(2, -2).trim();
                 return (
@@ -87,8 +97,18 @@ const LatexInputField: React.FC<{
                   </div>
                 );
               }
-  
-              // Inline math (even multiline) with space wrapping
+
+              // Block math with \[..\]
+              if (segment.startsWith('\\[') && segment.endsWith('\\]')) {
+                const latex = segment.slice(2, -2).trim();
+                return (
+                  <div key={index} className="w-full my-2">
+                    <BlockMath math={latex} errorColor="#cc0000" />
+                  </div>
+                );
+              }
+
+              // Inline math with $...$
               if (segment.startsWith('$') && segment.endsWith('$')) {
                 const latex = segment.slice(1, -1).replace(/\n/g, ' ').trim();
                 return (
@@ -97,22 +117,32 @@ const LatexInputField: React.FC<{
                   </span>
                 );
               }
-  
+
+              // Inline math with \(..\)
+              if (segment.startsWith('\\(') && segment.endsWith('\\)')) {
+                const latex = segment.slice(2, -2).replace(/\n/g, ' ').trim();
+                return (
+                  <span key={index} className="inline">
+                    <InlineMath math={latex} errorColor="#cc0000" />
+                  </span>
+                );
+              }
+
               // Image
               if (segment.startsWith('<img')) {
                 return (
                   <span key={index} className="inline" dangerouslySetInnerHTML={{ __html: segment }} />
                 );
               }
-  
+
               // Plain text — flatten newlines to spaces
               const flattenedText = segment.replace(/\n+/g, ' ');
               return <span key={index}>{flattenedText}</span>;
             } catch (err) {
               console.error("Render error in LaTeX segment:", err);
               return (
-                <span key={index} className="latex-error">
-                  [LaTeX Error]
+                <span key={index} className={styles.latexError || "latex-error"}>
+                  [LaTeX Error: {segment.substring(0, 20)}...]
                 </span>
               );
             }
@@ -121,8 +151,8 @@ const LatexInputField: React.FC<{
       </div>
     );
   };
-  
-  
+
+
 
   return (
     <div className={styles.latexInputContainer || "latex-input-container"}>
@@ -183,7 +213,7 @@ const LatexQuestionView: React.FC<{ questionText: string; solutionText?: string 
       <div className={styles.questionContent || "question-content"}>
         <BlockMath math={questionText} />
       </div>
-      
+
       {solutionText && (
         <>
           <h3>Solution Preview</h3>
@@ -196,27 +226,11 @@ const LatexQuestionView: React.FC<{ questionText: string; solutionText?: string 
   );
 };
 
-const modules = {
-  toolbar: [
-    [{ header: [1, 2, 3, false] }],
-    ["bold", "italic", "underline"],
-    ["link", "image", "formula"],
-  ],
-};
 
-const formats = [
-  "header",
-  "bold",
-  "italic",
-  "underline",
-  "link",
-  "image",
-  "formula",
-];
 
 const UploadForm: React.FC = () => {
   const [user, setUser] = useState<User | null>(null);
-  
+
   useEffect(() => {
     // Get user from localStorage when component mounts
     const userData = localStorage.getItem('user');
@@ -238,26 +252,27 @@ const UploadForm: React.FC = () => {
   const [selectedExaminations, setSelectedExaminations] = useState<Item[]>([]);
   const [newExaminationInputVisible, setNewExaminationInputVisible] = useState(false);
   const [newExaminationInputValue, setNewExaminationInputValue] = useState("");
-  const [previewMode, setPreviewMode] = useState(false);
-  
+  const [previewMode] = useState(false);
+
   const [questionData, setQuestionData] = useState<QuestionData>({
     question_text: "",
     question_text_latex: "",
     video_solution_url: "",
     text_solution: "",
     text_solution_latex: "",
+    simulation_link: "",
     tags: selectedTags,
     examinations: selectedExaminations,
     category: "",
     concept: null,
   });
-  
+
   const [conceptData, setConceptData] = useState<ConceptData>({
     id: -1,
     title: "",
     description: "",
   });
-  
+
   const [videoData, setVideoData] = useState<VideoData>({
     concept: null,
     title: "",
@@ -371,20 +386,20 @@ const UploadForm: React.FC = () => {
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    
+
     if (uploadType === "question") {
       try {
         await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/question/add/`, {
           ...questionData,
           question_text: "h",
           email: user?.email || "anonymous@example.com",
-          author:1,
+          author: 1,
           question_text_latex: questionData.question_text, // Store the raw LaTeX in the latex field
           text_solution_latex: questionData.text_solution, // Store the raw LaTeX solution
           tags: selectedTags.map((tag) => ({ name: tag.name })),
           examinations: selectedExaminations.map((exam) => ({ name: exam.name })),
         });
-        
+
         // Reset form after successful submission
         setQuestionData({
           question_text: "",
@@ -394,6 +409,7 @@ const UploadForm: React.FC = () => {
           examinations: [],
           text_solution: "",
           text_solution_latex: "",
+          simulation_link: "",
           category: "",
           concept: null,
         });
@@ -431,7 +447,7 @@ const UploadForm: React.FC = () => {
 
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    
+
     if (uploadType === "question") {
       setQuestionData((prevData) => ({ ...prevData, [name]: value }));
     } else if (uploadType === "concept") {
@@ -444,7 +460,7 @@ const UploadForm: React.FC = () => {
   return (
     <div className={styles.container}>
       <h1>Upload Form</h1>
-      
+
       <div className={styles.uploadTypeSelector}>
         <label>Select upload type:</label>
         <select
@@ -457,18 +473,18 @@ const UploadForm: React.FC = () => {
           <option value="video">Video for Concept</option>
         </select>
       </div>
-      
+
       {uploadType === "question" && (
         <div>
           {previewMode ? (
-            <LatexQuestionView 
-              questionText={questionData.question_text} 
+            <LatexQuestionView
+              questionText={questionData.question_text}
               solutionText={questionData.text_solution}
             />
           ) : (
             <form onSubmit={handleSubmit}>
               <h2>Question Form</h2>
-              
+
               <div>
                 <LatexInputField
                   label="Question Text (LaTeX):"
@@ -478,7 +494,7 @@ const UploadForm: React.FC = () => {
                   rows={6}
                 />
               </div>
-              
+
               <div>
                 <label>
                   Video Solution URL:
@@ -491,7 +507,21 @@ const UploadForm: React.FC = () => {
                   />
                 </label>
               </div>
-              
+
+              <div>
+                <label>
+                  Simulation/Interactive Link (Optional):
+                  <input
+                    type="url"
+                    name="simulation_link"
+                    value={questionData.simulation_link}
+                    onChange={handleChange}
+                    className={styles.input}
+                    placeholder="https://example.com/simulation"
+                  />
+                </label>
+              </div>
+
               <div>
                 <LatexInputField
                   label="Text Solution (LaTeX):"
@@ -501,7 +531,7 @@ const UploadForm: React.FC = () => {
                   rows={8}
                 />
               </div>
-              
+
               <div>
                 <label>
                   Category:
@@ -517,7 +547,7 @@ const UploadForm: React.FC = () => {
                   </select>
                 </label>
               </div>
-              
+
               <div>
                 <label>
                   Concept:
@@ -536,17 +566,16 @@ const UploadForm: React.FC = () => {
                   </select>
                 </label>
               </div>
-              
+
               <div>
                 <label>Tags</label>
                 <div className={styles["item-element"]}>
                   {tags?.map((tag) => (
                     <div
-                      className={`${styles["item-individual-element"]} ${
-                        selectedTags.some((t) => t.name === tag.name)
-                          ? styles["selected-item"]
-                          : ""
-                      }`}
+                      className={`${styles["item-individual-element"]} ${selectedTags.some((t) => t.name === tag.name)
+                        ? styles["selected-item"]
+                        : ""
+                        }`}
                       key={tag.name}
                       onClick={() => selectTag(tag)}
                     >
@@ -576,19 +605,18 @@ const UploadForm: React.FC = () => {
                   )}
                 </div>
               </div>
-              
+
               <div>
                 <label>Examinations</label>
                 <div className={styles["item-element"]}>
                   {examinations?.map((examination) => (
                     <div
-                      className={`${styles["item-individual-element"]} ${
-                        selectedExaminations.some(
-                          (e) => e.name === examination.name
-                        )
-                          ? styles["selected-item"]
-                          : ""
-                      }`}
+                      className={`${styles["item-individual-element"]} ${selectedExaminations.some(
+                        (e) => e.name === examination.name
+                      )
+                        ? styles["selected-item"]
+                        : ""
+                        }`}
                       key={examination.name}
                       onClick={() => selectExamination(examination)}
                     >
@@ -620,13 +648,13 @@ const UploadForm: React.FC = () => {
                   )}
                 </div>
               </div>
-              
+
               <button type="submit" className={styles.submitButton}>Submit</button>
             </form>
           )}
         </div>
       )}
-      
+
       {uploadType === "concept" && (
         <form onSubmit={handleSubmit}>
           <h2>Concept Form</h2>
@@ -656,7 +684,7 @@ const UploadForm: React.FC = () => {
           <button type="submit" className={styles.submitButton}>Submit</button>
         </form>
       )}
-      
+
       {uploadType === "video" && (
         <form onSubmit={handleSubmit}>
           <h2>Video Form</h2>

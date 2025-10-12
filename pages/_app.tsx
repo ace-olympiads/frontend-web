@@ -1,4 +1,6 @@
 import "../styles/globals.css";
+import "katex/dist/katex.min.css";
+import "react-quill/dist/quill.snow.css";
 import type { AppProps } from "next/app";
 import Navbar from "../components/Navbar";
 import { Toaster } from "react-hot-toast";

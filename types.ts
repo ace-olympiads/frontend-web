@@ -30,6 +30,7 @@ export interface QuestionType {
   video_solution_url: string;
   text_solution?: string;
   text_solution_latex?: string;
+  simulation_link?: string;
   created_at?: string;
   updated_at?: string;
   tags?: Tag[];
@@ -57,6 +58,7 @@ export interface QuestionData {
   video_solution_url: string;
   text_solution: string;
   text_solution_latex: string;
+  simulation_link: string;
   tags: Item[];
   examinations: Item[];
   category: string;
