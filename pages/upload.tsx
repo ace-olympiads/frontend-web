@@ -2,7 +2,6 @@ import { useSessionCompat as useSession } from "../utils/auth-compat";
 import UploadForm from "../components/UploadForm";
 import { useEffect } from "react";
 import { useRouter } from "next/router";
-import { User } from "../types";
 import axiosInstance from "../axios";
 import BackButton from "../components/BackButton";
 

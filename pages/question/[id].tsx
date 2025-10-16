@@ -367,6 +367,77 @@ const QuestionPage: React.FC<QuestionPageProps> = ({
     return updatedHtml;
   }
 
+  // Helper to extract Geogebra embed code from supported URLs
+  const getGeogebraEmbedCode = (url?: string): string | null => {
+    if (!url) return null;
+    try {
+      const trimmed = url.trim();
+      const mMatch = trimmed.match(/geogebra\.org\/m\/(\w+)/i);
+      if (mMatch && mMatch[1]) return mMatch[1];
+      const classicMatch = trimmed.match(/geogebra\.org\/classic\/(\w+)/i);
+      if (classicMatch && classicMatch[1]) return classicMatch[1];
+
+      // Support without protocol or with www
+      const mMatch2 = trimmed.match(/(?:https?:\/\/)?(?:www\.)?geogebra\.org\/m\/(\w+)/i);
+      if (mMatch2 && mMatch2[1]) return mMatch2[1];
+      const classicMatch2 = trimmed.match(/(?:https?:\/\/)?(?:www\.)?geogebra\.org\/classic\/(\w+)/i);
+      if (classicMatch2 && classicMatch2[1]) return classicMatch2[1];
+
+      return null;
+    } catch (err) {
+      console.error('Error parsing geogebra url', err);
+      return null;
+    }
+  };
+
+  const SimulationEmbed: React.FC<{ link?: string; height?: number }> = ({ link, height = 800 }) => {
+    const code = getGeogebraEmbedCode(link);
+    if (!code) return null;
+    const src = `https://www.geogebra.org/classic/${code}?embed`;
+    return (
+      <div className="relative">
+        <iframe
+          src={src}
+          width="100%"
+          height={height}
+          frameBorder="0"
+          allowFullScreen
+          title={`geogebra-${code}`}
+          className="rounded border w-full"
+          onLoad={(e) => {
+            const iframe = e.target as HTMLIFrameElement;
+            try {
+              iframe.contentWindow?.location.href;
+            } catch (error) {
+              console.log('Iframe blocked by security policy');
+            }
+          }}
+          onError={(e) => {
+            console.error('Iframe failed to load:', e);
+            const iframe = e.target as HTMLIFrameElement;
+            const parent = iframe.parentElement;
+            if (parent) {
+              parent.innerHTML = `
+                <div class="p-4 bg-yellow-50 border border-yellow-200 rounded text-center">
+                  <p class="text-yellow-800 mb-2">
+                    <strong>Cannot display embedded content</strong>
+                  </p>
+                  <p class="text-sm text-yellow-700 mb-3">
+                    This website cannot be embedded due to security restrictions.
+                  </p>
+                  <a href="${link}" target="_blank" rel="noopener noreferrer" 
+                     class="inline-flex items-center px-4 py-2 bg-yellow-600 text-white rounded hover:bg-yellow-700 transition-colors">
+                    Open in New Tab ↗
+                  </a>
+                </div>
+              `;
+            }
+          }}
+        />
+      </div>
+    );
+  };
+
   const toggleModal = () => {
     setIsModalOpen(!isModalOpen);
   };
@@ -425,48 +496,52 @@ const QuestionPage: React.FC<QuestionPageProps> = ({
                         Open Simulation in New Tab ↗
                       </a>
                     </div>
-                    <div className="relative">
-                      <iframe
-                        src={question.simulation_link}
-                        width="100%"
-                        height="400"
-                        frameBorder="0"
-                        allowFullScreen
-                        title="Interactive Simulation"
-                        className="rounded border w-full"
-                        onLoad={(e) => {
-                          // Check if iframe loaded successfully
-                          const iframe = e.target as HTMLIFrameElement;
-                          try {
-                            // This will throw an error if the iframe is blocked
-                            iframe.contentWindow?.location.href;
-                          } catch (error) {
-                            console.log('Iframe blocked by security policy');
-                          }
-                        }}
-                        onError={(e) => {
-                          console.error('Iframe failed to load:', e);
-                          const iframe = e.target as HTMLIFrameElement;
-                          const parent = iframe.parentElement;
-                          if (parent) {
-                            parent.innerHTML = `
-                              <div class="p-4 bg-yellow-50 border border-yellow-200 rounded text-center">
-                                <p class="text-yellow-800 mb-2">
-                                  <strong>Cannot display embedded content</strong>
-                                </p>
-                                <p class="text-sm text-yellow-700 mb-3">
-                                  This website cannot be embedded due to security restrictions.
-                                </p>
-                                <a href="${question.simulation_link}" target="_blank" rel="noopener noreferrer" 
-                                   class="inline-flex items-center px-4 py-2 bg-yellow-600 text-white rounded hover:bg-yellow-700 transition-colors">
-                                  Open in New Tab ↗
-                                </a>
-                              </div>
-                            `;
-                          }
-                        }}
-                      />
-                    </div>
+
+                    {/* If the link points to a Geogebra resource, embed the geogebra classic iframe; otherwise fall back to generic iframe */}
+                    {getGeogebraEmbedCode(question.simulation_link) ? (
+                      <SimulationEmbed link={question.simulation_link} height={800} />
+                    ) : (
+                      <div className="relative">
+                        <iframe
+                          src={question.simulation_link}
+                          width="100%"
+                          height="400"
+                          frameBorder="0"
+                          allowFullScreen
+                          title="Interactive Simulation"
+                          className="rounded border w-full"
+                          onLoad={(e) => {
+                            const iframe = e.target as HTMLIFrameElement;
+                            try {
+                              iframe.contentWindow?.location.href;
+                            } catch (error) {
+                              console.log('Iframe blocked by security policy');
+                            }
+                          }}
+                          onError={(e) => {
+                            console.error('Iframe failed to load:', e);
+                            const iframe = e.target as HTMLIFrameElement;
+                            const parent = iframe.parentElement;
+                            if (parent) {
+                              parent.innerHTML = `
+                                <div class="p-4 bg-yellow-50 border border-yellow-200 rounded text-center">
+                                  <p class="text-yellow-800 mb-2">
+                                    <strong>Cannot display embedded content</strong>
+                                  </p>
+                                  <p class="text-sm text-yellow-700 mb-3">
+                                    This website cannot be embedded due to security restrictions.
+                                  </p>
+                                  <a href="${question.simulation_link}" target="_blank" rel="noopener noreferrer" 
+                                     class="inline-flex items-center px-4 py-2 bg-yellow-600 text-white rounded hover:bg-yellow-700 transition-colors">
+                                    Open in New Tab ↗
+                                  </a>
+                                </div>
+                              `;
+                            }
+                          }}
+                        />
+                      </div>
+                    )}
                   </div>
                 </div>
               )}

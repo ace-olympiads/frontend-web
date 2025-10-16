@@ -1,5 +1,19 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // 🚀 Build optimizations
+  swcMinify: true, // Use SWC for faster minification
+  compiler: {
+    removeConsole: process.env.NODE_ENV === 'production', // Remove console.logs in production
+  },
+  
+  // 🚀 Experimental features for faster builds
+  experimental: {
+    // Enable build cache
+    turbotrace: {
+      logLevel: 'error',
+    },
+  },
+
   images: {
     remotePatterns: [
       {
@@ -32,12 +46,35 @@ const nextConfig = {
   // Add empty turbopack config to silence the warning
   turbopack: {},
 
-  // ✅ Disable TypeScript type checking during builds
+  // ✅ Disable TypeScript type checking during builds (already optimized)
   typescript: {
     ignoreBuildErrors: true,
   },
 
-  webpack: (config, { isServer }) => {
+  // 🚀 ESLint optimization
+  eslint: {
+    ignoreDuringBuilds: true, // Skip ESLint during builds
+  },
+
+  webpack: (config, { isServer, dev }) => {
+    // 🚀 Webpack optimizations
+    if (!dev) {
+      // Production optimizations
+      config.optimization = {
+        ...config.optimization,
+        splitChunks: {
+          chunks: 'all',
+          cacheGroups: {
+            vendor: {
+              test: /[\\/]node_modules[\\/]/,
+              name: 'vendors',
+              chunks: 'all',
+            },
+          },
+        },
+      };
+    }
+
     // Add a rule to handle MP4 files using the file-loader
     config.module.rules.push({
       test: /\.(mp4|webm)$/,

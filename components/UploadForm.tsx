@@ -206,7 +206,7 @@ const LatexInputField: React.FC<{
 };
 
 // Component to display the rendered LaTeX question in preview mode
-const LatexQuestionView: React.FC<{ questionText: string; solutionText?: string }> = ({ questionText, solutionText }) => {
+const LatexQuestionView: React.FC<{ questionText: string; solutionText?: string; simulationLink?: string }> = ({ questionText, solutionText, simulationLink }) => {
   return (
     <div className={styles.questionPreview || "question-preview"}>
       <h3>Question Preview</h3>
@@ -222,6 +222,54 @@ const LatexQuestionView: React.FC<{ questionText: string; solutionText?: string 
           </div>
         </>
       )}
+    </div>
+  );
+};
+
+// Helper to extract Geogebra embed code from supported URLs
+const getGeogebraEmbedCode = (url?: string): string | null => {
+  if (!url) return null;
+  try {
+    // Normalize
+    const trimmed = url.trim();
+    // Accept URLs like: https://www.geogebra.org/m/{code} or https://www.geogebra.org/classic/{code}
+    const mMatch = trimmed.match(/geogebra\.org\/m\/(\w+)/i);
+    if (mMatch && mMatch[1]) return mMatch[1];
+    const classicMatch = trimmed.match(/geogebra\.org\/classic\/(\w+)/i);
+    if (classicMatch && classicMatch[1]) return classicMatch[1];
+
+    // Also support simple paths without protocol
+    const mMatch2 = trimmed.match(/(?:www\.)?geogebra\.org\/m\/(\w+)/i);
+    if (mMatch2 && mMatch2[1]) return mMatch2[1];
+    const classicMatch2 = trimmed.match(/(?:www\.)?geogebra\.org\/classic\/(\w+)/i);
+    if (classicMatch2 && classicMatch2[1]) return classicMatch2[1];
+
+    return null;
+  } catch (err) {
+    console.error('Error parsing geogebra url', err);
+    return null;
+  }
+};
+
+// Component to render Geogebra iframe if link is valid
+const SimulationEmbed: React.FC<{ link?: string; width?: number; height?: number }> = ({ link, width = 800, height = 600 }) => {
+  const code = getGeogebraEmbedCode(link);
+  if (!code) return null;
+
+  // prefer classic embed; if original link contained /m/ we use classic endpoint but with the code
+  const src = `https://www.geogebra.org/classic/${code}?embed`;
+
+  return (
+    <div style={{ marginTop: 12 }}>
+      <iframe
+        src={src}
+        width={width}
+        height={height}
+        allowFullScreen
+        style={{ border: '1px solid #e4e4e4', borderRadius: 4 }}
+        frameBorder={0}
+        title={`geogebra-${code}`}
+      />
     </div>
   );
 };
@@ -480,6 +528,7 @@ const UploadForm: React.FC = () => {
             <LatexQuestionView
               questionText={questionData.question_text}
               solutionText={questionData.text_solution}
+              simulationLink={questionData.simulation_link}
             />
           ) : (
             <form onSubmit={handleSubmit}>
@@ -520,6 +569,8 @@ const UploadForm: React.FC = () => {
                     placeholder="https://example.com/simulation"
                   />
                 </label>
+                {/* Render the Geogebra iframe preview when a valid link is present */}
+                <SimulationEmbed link={questionData.simulation_link} width={800} height={600} />
               </div>
 
               <div>
