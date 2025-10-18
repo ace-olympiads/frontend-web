@@ -139,22 +139,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   }
 };
 
-const TagItem: React.FC<{ tag: Tag }> = ({ tag }) => (
-  <Link href={`/tags/${tag.id}`}>
-    <span className={styles.tag} style={{ cursor: 'pointer' }}>
-      {tag.name}
-    </span>
-  </Link>
-);
-
-const ExamItem: React.FC<{ exam: Exam }> = ({ exam }) => (
-  <Link href={`/examinations/${exam.id}`}>
-    <div className={styles.exam} style={{ cursor: 'pointer' }}>
-      {exam.name}
-    </div>
-  </Link>
-);
-
 const SimilarQuestionItem: React.FC<{ question: SimilarQuestion }> = ({ question }) => (
   <div
     className={styles.similarQuestion}
@@ -289,68 +273,6 @@ const QuestionPage: React.FC<QuestionPageProps> = ({
     );
   };
 
-  // Enhanced function to render LaTeX content
-  const renderLatexContent = (content: string) => {
-    if (!content) return null;
-
-    // Enhanced regex to handle multiple LaTeX delimiters: $$..$$, $...$, \[..\], \(..\), and images
-    const segments = content.split(/(\$\$[\s\S]*?\$\$|\$[\s\S]*?\$|\\\[[\s\S]*?\\\]|\\\([\s\S]*?\\\)|<img[^>]+>)/g);
-
-    return (
-      <div className="space-y-4">
-        <div className="my-2 flex flex-wrap gap-x-1">
-          {segments.map((segment: string, index: number) => {
-            if (!segment.trim()) return null;
-
-            try {
-              // Block math
-              if (segment.startsWith("$$") && segment.endsWith("$$")) {
-                const latex = segment.slice(2, -2).trim();
-                return (
-                  <div key={index} className="w-full my-2">
-                    <BlockMath math={latex} errorColor="#cc0000" />
-                  </div>
-                );
-              }
-
-              // Inline math (even multiline) with space wrapping
-              if (segment.startsWith("$") && segment.endsWith("$")) {
-                const latex = segment.slice(1, -1).replace(/\n/g, " ").trim();
-                return (
-                  <span key={index} className="inline">
-                    <InlineMath math={latex} errorColor="#cc0000" />
-                  </span>
-                );
-              }
-
-              // Image
-              if (segment.startsWith("<img")) {
-                return (
-                  <span
-                    key={index}
-                    className="inline"
-                    dangerouslySetInnerHTML={{ __html: segment }}
-                  />
-                );
-              }
-
-              // Plain text — flatten newlines to spaces
-              const flattenedText = segment.replace(/\n+/g, " ");
-              return <span key={index}>{flattenedText}</span>;
-            } catch (err) {
-              console.error("Render error in LaTeX segment:", err);
-              return (
-                <span key={index} className="latex-error">
-                  [LaTeX Error]
-                </span>
-              );
-            }
-          })}
-        </div>
-      </div>
-    );
-  };
-
   function updateIframeContent(iframeHtml: string, removeControls: boolean = false) {
     let updatedHtml = iframeHtml;
 
@@ -393,16 +315,16 @@ const QuestionPage: React.FC<QuestionPageProps> = ({
   const SimulationEmbed: React.FC<{ link?: string; height?: number }> = ({ link, height = 800 }) => {
     const code = getGeogebraEmbedCode(link);
     if (!code) return null;
-    const src = `https://www.geogebra.org/classic/${code}?embed`;
+    const src = `https://www.geogebra.org/material/iframe/id/${code}/width/1000/height/680/border/888888/sfsb/true/smb/false/stb/false/stbh/false/ai/false/asb/false/sri/true/rc/false/ld/false/sdz/true/ctl/false`;
     return (
       <div className="relative">
         <iframe
+          scrolling="no"
+          title="Shortest Path Over a cone"
           src={src}
-          width="100%"
-          height={height}
-          frameBorder="0"
-          allowFullScreen
-          title={`geogebra-${code}`}
+          width="1000px"
+          height="680px"
+          style={{ border: '0px' }}
           className="rounded border w-full"
           onLoad={(e) => {
             const iframe = e.target as HTMLIFrameElement;
@@ -483,23 +405,9 @@ const QuestionPage: React.FC<QuestionPageProps> = ({
                 <div className="simulation-box mt-6">
                   <h2 className="text-xl font-bold mb-2">Interactive Simulation:</h2>
                   <div className="bg-white rounded-lg p-4 shadow">
-                    <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded">
-                      <p className="text-sm text-blue-800 mb-2">
-                        <strong>Note:</strong> Some websites cannot be displayed in embedded frames due to security policies.
-                      </p>
-                      <a
-                        href={question.simulation_link}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
-                      >
-                        Open Simulation in New Tab ↗
-                      </a>
-                    </div>
-
                     {/* If the link points to a Geogebra resource, embed the geogebra classic iframe; otherwise fall back to generic iframe */}
                     {getGeogebraEmbedCode(question.simulation_link) ? (
-                      <SimulationEmbed link={question.simulation_link} height={800} />
+                      <SimulationEmbed link={question.simulation_link} height={700} />
                     ) : (
                       <div className="relative">
                         <iframe
