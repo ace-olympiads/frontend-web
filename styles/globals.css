@@ -16,6 +16,62 @@
   overflow-wrap: break-word;
 }
 
+/* Improved spacing for LaTeX math rendering */
+.katex-display {
+  margin: 1.5em 0 !important;
+  padding: 0.5em 0;
+}
+
+/* Better inline math spacing */
+.katex {
+  margin: 0 0.2em;
+}
+
+/* Improve readability with better line spacing */
+.leading-relaxed {
+  line-height: 1.8 !important;
+}
+
+/* Better text rendering */
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Improve image rendering globally */
+img {
+  image-rendering: crisp-edges;
+  image-rendering: -webkit-optimize-contrast;
+}
+
+/* Better solution box styling */
+.solution-box {
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+}
+
+.solution-box h2 {
+  color: #1a202c;
+  margin-bottom: 1rem;
+  font-weight: 600;
+}
+
+.solution-box .bg-white {
+  padding: 2rem !important;
+  line-height: 1.8;
+  font-size: 1.1rem;
+}
+
+/* Add spacing between lines in math content */
+.leading-relaxed > div {
+  margin-bottom: 0.5rem;
+}
+
+/* Empty line spacing */
+.h-2 {
+  height: 0.5rem;
+}
+
 :root {
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 214, 219, 220;

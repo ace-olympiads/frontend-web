@@ -278,11 +278,38 @@
 }
 
 .question-text {
-  font-size: 16px;
-  line-height: 1.6;
-  margin-bottom: 20px;
+  font-size: 18px;
+  line-height: 1.8;
+  margin-bottom: 30px;
   width: 100%;
   padding-left: 50px;
+  color: #333;
+}
+
+/* Improve LaTeX and math rendering spacing */
+.question-text :global(.katex-display) {
+  margin: 1.5em 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.question-text :global(.katex) {
+  font-size: 1.1em;
+}
+
+/* Better spacing for inline math */
+.question-text :global(span.inline-block) {
+  margin: 0 0.15em;
+}
+
+/* Improve image rendering in questions */
+.question-text img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 30px auto;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .comments-section {
