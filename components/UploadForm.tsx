@@ -21,23 +21,41 @@ const LatexInputField: React.FC<{
     setRawInput(value || "");
   }, [value]);
 
-  // Function to convert URLs to image tags
+  // Function to convert URLs and Markdown image syntax to image tags
   const processImageUrls = (text: string): string => {
-    // This regex matches URLs starting with https://
-    const urlRegex = /(https?:\/\/[^\s]+(\.(jpg|jpeg|png|gif|svg)))/gi;
-
-    // Replace URLs with image tags
-    return text.replace(urlRegex, (url) => {
-      return `<img src="${url}" width="300" />`;
+    // First, clean up any malformed nested img tags
+    text = text.replace(/<img\s+src="<img\s+src="([^"]+)"[^>]*>[^>]*>/gi, '<img src="$1" style="max-width: 600px; height: auto; display: block; margin: 10px 0;" />');
+    
+    // Remove any standalone malformed img tags
+    text = text.replace(/<img\s+src="<img[^>]*>/gi, '');
+    
+    // Handle Markdown image syntax: ![alt text](url)
+    // This handles both with and without alt text
+    text = text.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, (match, alt, url) => {
+      return `<img src="${url.trim()}" alt="${alt}" style="max-width: 600px; height: auto; display: block; margin: 10px 0;" />`;
     });
+
+    // Then handle plain URLs (with or without query parameters)
+    // This regex matches image URLs with common image extensions, including query parameters
+    // Updated to handle URLs that might have special characters in query params
+    const urlRegex = /(https?:\/\/[^\s<)\]]+\.(?:jpg|jpeg|png|gif|svg|webp)(?:\?[^\s<)\]]*)?)/gi;
+
+    // Replace URLs with image tags (only if not already in an img tag)
+    text = text.replace(urlRegex, (url) => {
+      // Check if this URL is already inside an img tag
+      if (text.includes(`<img src="${url}`)) {
+        return url;
+      }
+      return `<img src="${url}" style="max-width: 600px; height: auto; display: block; margin: 10px 0;" />`;
+    });
+
+    return text;
   };
 
   const handleInputChange = (e: { target: { value: string; }; }) => {
     let newValue = e.target.value;
 
-    // Process the input to convert URLs to image tags
-    newValue = processImageUrls(newValue);
-
+    // Store raw input without processing
     setRawInput(newValue);
     setError("");
 
@@ -78,12 +96,15 @@ const LatexInputField: React.FC<{
   const renderLatexContent = (content: string) => {
     if (!content) return null;
 
+    // Process images and markdown in the content for rendering only
+    const processedContent = processImageUrls(content);
+
     // Enhanced regex to handle multiple LaTeX delimiters: $$..$$, $...$, \[..\], \(..\), and images
-    const segments = content.split(/(\$\$[\s\S]*?\$\$|\$[\s\S]*?\$|\\\[[\s\S]*?\\\]|\\\([\s\S]*?\\\)|<img[^>]+>)/g);
+    const segments = processedContent.split(/(\$\$[\s\S]*?\$\$|\$[\s\S]*?\$|\\\[[\s\S]*?\\\]|\\\([\s\S]*?\\\)|<img[^>]*>)/g);
 
     return (
       <div className="space-y-4">
-        <p className="my-2 flex flex-wrap gap-x-1">
+        <div className="my-2">
           {segments.map((segment: string, index: React.Key) => {
             if (!segment.trim()) return null;
 
@@ -128,16 +149,17 @@ const LatexInputField: React.FC<{
                 );
               }
 
-              // Image
+              // Image - render as block element
               if (segment.startsWith('<img')) {
                 return (
-                  <span key={index} className="inline" dangerouslySetInnerHTML={{ __html: segment }} />
+                  <div key={index} className="w-full my-2" dangerouslySetInnerHTML={{ __html: segment }} />
                 );
               }
 
-              // Plain text — flatten newlines to spaces
-              const flattenedText = segment.replace(/\n+/g, ' ');
-              return <span key={index}>{flattenedText}</span>;
+              // Plain text — preserve line breaks but render inline
+              const flattenedText = segment.replace(/\n+/g, ' ').trim();
+              if (!flattenedText) return null;
+              return <span key={index}>{flattenedText} </span>;
             } catch (err) {
               console.error("Render error in LaTeX segment:", err);
               return (
@@ -147,7 +169,7 @@ const LatexInputField: React.FC<{
               );
             }
           })}
-        </p>
+        </div>
       </div>
     );
   };
