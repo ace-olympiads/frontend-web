@@ -99,91 +99,128 @@ const LatexInputField: React.FC<{
     // Process images and markdown in the content for rendering only
     const processedContent = processImageUrls(content);
 
-    // Split by line breaks first to preserve paragraph structure
-    const lines = processedContent.split('\n');
+    // First, extract all block-level math expressions ($$...$$ and \[...\]) across multiple lines
+    // This regex handles multiline by using [\s\S] which matches any character including newlines
+    const blockMathRegex = /(\$\$[\s\S]*?\$\$|\\\[[\s\S]*?\\\]|<img[^>]*>)/g;
     
+    const parts: Array<{ type: 'block-math' | 'text' | 'image', content: string }> = [];
+    let lastIndex = 0;
+    let match;
+
+    while ((match = blockMathRegex.exec(processedContent)) !== null) {
+      // Add text before the match
+      if (match.index > lastIndex) {
+        parts.push({
+          type: 'text',
+          content: processedContent.substring(lastIndex, match.index)
+        });
+      }
+
+      // Add the block math or image
+      const matched = match[0];
+      if (matched.startsWith('<img')) {
+        parts.push({ type: 'image', content: matched });
+      } else {
+        parts.push({ type: 'block-math', content: matched });
+      }
+
+      lastIndex = match.index + matched.length;
+    }
+
+    // Add remaining text
+    if (lastIndex < processedContent.length) {
+      parts.push({
+        type: 'text',
+        content: processedContent.substring(lastIndex)
+      });
+    }
+
     return (
       <div className="leading-relaxed">
-        {lines.map((line, lineIndex) => {
-          // Skip empty lines but render them as spacing
-          if (!line.trim()) {
-            return <div key={`line-${lineIndex}`} className="h-2" />;
+        {parts.map((part, partIndex) => {
+          if (part.type === 'block-math') {
+            // Extract latex from delimiters
+            let latex = part.content;
+            if (latex.startsWith('$$') && latex.endsWith('$$')) {
+              latex = latex.slice(2, -2).trim();
+            } else if (latex.startsWith('\\[') && latex.endsWith('\\]')) {
+              latex = latex.slice(2, -2).trim();
+            }
+
+            return (
+              <div key={`block-${partIndex}`} className="my-6 overflow-x-auto">
+                <BlockMath math={latex} errorColor="#cc0000" />
+              </div>
+            );
           }
 
-          // Enhanced regex to handle multiple LaTeX delimiters: $$..$$, $...$, \[..\], \(..\), and images
-          const segments = line.split(/(\$\$[\s\S]*?\$\$|\$[\s\S]*?\$|\\\[[\s\S]*?\\\]|\\\([\s\S]*?\\\)|<img[^>]*>)/g);
+          if (part.type === 'image') {
+            return (
+              <div key={`image-${partIndex}`} className="my-6 w-full" dangerouslySetInnerHTML={{ __html: part.content }} />
+            );
+          }
 
+          // For text parts, process inline math and regular text line by line
+          const lines = part.content.split('\n');
           return (
-            <div key={`line-${lineIndex}`} className="mb-2">
-              {segments.map((segment: string, index: React.Key) => {
-                if (!segment.trim()) return null;
-
-                try {
-                  // Block math with $$..$$
-                  if (segment.startsWith('$$') && segment.endsWith('$$')) {
-                    const latex = segment.slice(2, -2).trim();
-                    return (
-                      <div key={index} className="my-6 overflow-x-auto">
-                        <BlockMath math={latex} errorColor="#cc0000" />
-                      </div>
-                    );
-                  }
-
-                  // Block math with \[..\]
-                  if (segment.startsWith('\\[') && segment.endsWith('\\]')) {
-                    const latex = segment.slice(2, -2).trim();
-                    return (
-                      <div key={index} className="my-6 overflow-x-auto">
-                        <BlockMath math={latex} errorColor="#cc0000" />
-                      </div>
-                    );
-                  }
-
-                  // Inline math with $...$
-                  if (segment.startsWith('$') && segment.endsWith('$')) {
-                    const latex = segment.slice(1, -1).trim();
-                    return (
-                      <span key={index} className="inline-block mx-1">
-                        <InlineMath math={latex} errorColor="#cc0000" />
-                      </span>
-                    );
-                  }
-
-                  // Inline math with \(..\)
-                  if (segment.startsWith('\\(') && segment.endsWith('\\)')) {
-                    const latex = segment.slice(2, -2).trim();
-                    return (
-                      <span key={index} className="inline-block mx-1">
-                        <InlineMath math={latex} errorColor="#cc0000" />
-                      </span>
-                    );
-                  }
-
-                  // Image - render as block element with proper spacing
-                  if (segment.startsWith('<img')) {
-                    return (
-                      <div key={index} className="my-6 w-full" dangerouslySetInnerHTML={{ __html: segment }} />
-                    );
-                  }
-
-                  // Plain text - preserve meaningful spaces
-                  const textContent = segment.trim();
-                  if (!textContent) return null;
-                  
-                  return (
-                    <span key={index} className="inline">
-                      {textContent}
-                      {' '}
-                    </span>
-                  );
-                } catch (err) {
-                  console.error("Render error in LaTeX segment:", err);
-                  return (
-                    <span key={index} className={styles.latexError || "latex-error"}>
-                      [LaTeX Error: {segment.substring(0, 20)}...]
-                    </span>
-                  );
+            <div key={`text-${partIndex}`}>
+              {lines.map((line, lineIndex) => {
+                // Skip empty lines but render them as spacing
+                if (!line.trim()) {
+                  return <div key={`line-${lineIndex}`} className="h-2" />;
                 }
+
+                // Split by inline math delimiters: $...$ and \(...\)
+                // Use a more robust regex that handles nested braces better
+                const segments = line.split(/(\$[^\$]+\$|\\\([^)]*\\\))/g);
+
+                return (
+                  <div key={`line-${lineIndex}`} className="mb-2">
+                    {segments.map((segment: string, index: number) => {
+                      if (!segment.trim()) return null;
+
+                      try {
+                        // Inline math with $...$
+                        if (segment.startsWith('$') && segment.endsWith('$') && segment.length > 2) {
+                          const latex = segment.slice(1, -1).trim();
+                          return (
+                            <span key={index} className="inline-block mx-1">
+                              <InlineMath math={latex} errorColor="#cc0000" />
+                            </span>
+                          );
+                        }
+
+                        // Inline math with \(..\)
+                        if (segment.startsWith('\\(') && segment.endsWith('\\)')) {
+                          const latex = segment.slice(2, -2).trim();
+                          return (
+                            <span key={index} className="inline-block mx-1">
+                              <InlineMath math={latex} errorColor="#cc0000" />
+                            </span>
+                          );
+                        }
+
+                        // Plain text - preserve meaningful spaces
+                        const textContent = segment.trim();
+                        if (!textContent) return null;
+                        
+                        return (
+                          <span key={index} className="inline">
+                            {textContent}
+                            {' '}
+                          </span>
+                        );
+                      } catch (err) {
+                        console.error("Render error in LaTeX segment:", err);
+                        return (
+                          <span key={index} className={styles.latexError || "latex-error"}>
+                            [LaTeX Error: {segment.substring(0, 20)}...]
+                          </span>
+                        );
+                      }
+                    })}
+                  </div>
+                );
               })}
             </div>
           );
